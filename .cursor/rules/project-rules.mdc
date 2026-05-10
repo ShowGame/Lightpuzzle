@@ -1,0 +1,814 @@
+---
+description: Cocos Creator小游戏通用开发框架和规范 - Manager模式、事件驱动、单例数据管理；LightPuzzle 初始化沉淀(§9)；跨项目可复用 Toast/存档(DebugMockSave)/音频(MusicManager)/RoundBox/MenuOverlayWindow
+alwaysApply: true
+---
+
+# Cocos Creator 小游戏通用开发框架规范
+
+## 项目架构模式
+
+### 1. Manager 模式
+每个功能模块使用独立的 Manager 类管理，职责单一：
+
+```typescript
+// 功能模块管理器示例
+@ccclass('XXXManager')
+export class XXXManager extends Component {
+    @property(Node)
+    containerNode: Node = null;
+    
+    protected onLoad(): void {
+        // 注册事件监听
+        SOME_EVENT.on(EVENT_ENUM.SOME_EVENT, this.onSomeEvent, this);
+        this.init();
+    }
+    
+    protected onDestroy(): void {
+        // 必须取消事件监听
+        SOME_EVENT.off(EVENT_ENUM.SOME_EVENT, this.onSomeEvent, this);
+    }
+    
+    init() {
+        // 初始化逻辑
+    }
+}
+```
+
+**常见的 Manager 类型：**
+- `GameManager`: 游戏核心逻辑、游戏状态管理
+- `MenuManager`: 菜单场景管理、场景切换
+- `MusicManager`: 音频管理（BGM、音效）、持久化节点
+- `DataManager`: 全局数据管理（单例模式）
+- `GameUIManager`: 游戏场景 HUD / 返回菜单等（仅 Game 场景）
+- `LevelManager`: 关卡管理
+
+**规范：**
+- 每个 Manager 负责单一功能模块
+- 在 `onLoad()` 中初始化，`onDestroy()` 中清理
+- 使用事件系统与其他模块通信，避免直接引用
+
+### 2. 单例数据管理
+
+```typescript
+// 全局数据管理器（单例模式）
+export class DataManager {
+    private static _instance: any = null;
+    
+    static get instance() {
+        return this.getInstance<DataManager>();
+    }
+    
+    static getInstance<T>(): T {
+        if (this._instance === null) {
+            this._instance = new this();
+        }
+        return this._instance;
+    }
+    
+    // 游戏数据
+    gameObjects: GameObject[] = [];     // 所有游戏对象
+    records: GameObject[] = [];        // 操作记录（用于撤销等功能）
+    currentLevel: LevelConfig = null;   // 当前关卡配置
+    gameStatus: GAME_STATE_ENUM;        // 游戏状态
+    
+    // Getter/Setter 可以触发自动保存
+    private _level: number = 1;
+    public get level() {
+        return this._level;
+    }
+    
+    public set level(data: number) {
+        this._level = data;
+        this.save();  // 自动保存
+    }
+    
+    // 初始化数据
+    reset() {
+        this.gameObjects = [];
+        this.records = [];
+        this.currentLevel = null;
+        this.gameStatus = GAME_STATE_ENUM.INIT;
+    }
+    
+    // 保存数据
+    save() {
+        // 保存逻辑（本地存储、服务器等）
+    }
+    
+    // 读取数据
+    restore() {
+        // 读取逻辑
+    }
+}
+```
+
+**使用规范：**
+- 所有全局数据通过 `DataManager.instance` 访问
+- 重要数据修改时自动触发保存（通过 setter）
+- 提供 `reset()` 方法用于重置数据
+- 提供 `save()` 和 `restore()` 方法用于数据持久化
+
+### 3. 事件驱动系统
+
+```typescript
+// Event.ts - 事件定义
+import { EventTarget } from "cc";
+
+// 定义事件对象
+export const SOME_EVENT = new EventTarget();
+export const PLAY_AUDIO = new EventTarget();
+export const GAME_STATE_CHANGE = new EventTarget();
+
+// Enum.ts - 事件类型枚举
+export enum EVENT_ENUM {
+    SOME_EVENT = 'SOME_EVENT',
+    PLAY_AUDIO = 'PLAY_AUDIO',
+    GAME_STATE_CHANGE = 'GAME_STATE_CHANGE',
+}
+```
+
+**使用规范：**
+- 所有跨模块通信使用事件系统，避免直接引用
+- 事件命名：`模块名_动作` 或 `动作_模块名`（如 `GAME_STATE_CHANGE`）
+- 必须成对使用：`on()` 和 `off()`，在 `onDestroy()` 中清理
+- 事件对象统一在 `Event.ts` 中定义
+
+```typescript
+// ✅ GOOD - 正确的事件使用
+protected onLoad(): void {
+    SOME_EVENT.on(EVENT_ENUM.SOME_EVENT, this.onSomeEvent, this);
+}
+
+protected onDestroy(): void {
+    SOME_EVENT.off(EVENT_ENUM.SOME_EVENT, this.onSomeEvent, this);
+}
+
+// 触发事件
+SOME_EVENT.emit(EVENT_ENUM.SOME_EVENT, data);
+
+// ❌ BAD - 忘记清理事件监听
+protected onLoad(): void {
+    SOME_EVENT.on(EVENT_ENUM.SOME_EVENT, this.onSomeEvent, this);
+    // 缺少 onDestroy 中的清理
+}
+```
+
+### 4. 枚举集中管理
+
+```typescript
+// Enum.ts - 所有枚举集中定义
+export enum GAME_STATE_ENUM {
+    INIT,      // 初始化
+    RUNNING,   // 运行中
+    PAUSED,    // 暂停
+    LOSED,     // 失败
+    COMPLETE,  // 完成
+}
+
+// 使用字符串枚举提高可读性和调试体验
+export enum SCENE_ENUM {
+    MENU = 'Menu',
+    GAME = 'Game',
+    SETTING = 'Setting',
+}
+```
+
+**规范：**
+- 所有枚举定义在 `Enum.ts` 中
+- 需要序列化或调试的场景使用字符串枚举
+- 枚举值使用大写字母和下划线
+- 添加注释说明每个枚举值的含义
+
+### 5. 类型定义规范
+
+```typescript
+// type.d.ts - 全局类型定义
+// 关卡配置接口
+interface LevelConfig {
+    levelId: number;
+    levelName: string;
+    // ... 根据游戏需求定义配置字段
+}
+
+// 游戏对象接口
+interface GameObjectData {
+    id: number;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    // ... 根据游戏需求定义数据字段
+}
+```
+
+**规范：**
+- 所有接口定义在 `type.d.ts` 中
+- 使用 `interface` 而非 `type`（除非需要联合类型或工具类型）
+- 添加清晰的注释说明字段用途
+- 接口命名使用 `PascalCase`，以 `Type`、`Config`、`Data` 等后缀区分用途
+
+## 代码组织规范
+
+### 1. 文件结构
+
+```
+assets/
+├── RoundBox.ts           # 圆角 UI 组件（路径固定，供 ToastManager / MenuOverlayWindow 等引用）
+├── Scripts/
+│   ├── MenuOverlayWindow.ts   # 菜单弹层（依赖 ../RoundBox、./Utils/*）
+│   ├── Manager/
+│   │   ├── ToastManager.ts    # Toast（import RoundBox 使用 ../../RoundBox）
+│   │   ├── MusicManager.ts
+│   │   ├── DataManager.ts
+│   │   ├── GameManager.ts
+│   │   ├── MenuManager.ts
+│   │   ├── GameUIManager.ts
+│   │   └── LevelManager.ts
+│   ├── Games/
+│   │   └── OpticalPuzzle/     # 光学解谜玩法（示例：Core / Application / Presentation / Config）
+│   │       ├── Core/
+│   │       ├── Application/
+│   │       ├── Presentation/
+│   │       └── Config/
+│   ├── GameObject/        # 游戏对象类
+│   ├── Config/            # 全局配置数据
+│   ├── Utils/
+│   │   ├── Utils.ts
+│   │   ├── Enum.ts
+│   │   └── Event.ts
+│   └── Component/
+└── Prefab/                # 如 Toast.prefab 等
+```
+
+> **路径约定**：`RoundBox.ts` 放在 **`assets/` 根**；`ToastManager` 在 `Scripts/Manager/` 下用 **`import { RoundBox } from '../../RoundBox'`**；`MenuOverlayWindow` 在 `Scripts/` 根下用 **`import { RoundBox } from '../RoundBox'`**。移动 `RoundBox` 时需同步改全仓 import。
+
+### 2. 代码注释规范
+
+```typescript
+// ✅ GOOD - 清晰的注释
+// 游戏主容器节点
+@property(Node)
+gameContainerNode: Node = null;
+
+// 开始游戏
+gameStart() {
+    // 读取存档数据
+    DataManager.instance.restore();
+    // 初始化游戏
+    this.initGame(DataManager.instance.level);
+}
+
+// ❌ BAD - 缺少注释或注释不清
+@property(Node)
+node1: Node = null;
+
+gameStart() {
+    DataManager.instance.restore();
+    this.initGame(DataManager.instance.level);
+}
+```
+
+**规范：**
+- 所有 `@property` 属性添加注释说明用途
+- 关键方法添加注释说明功能
+- 复杂逻辑添加行内注释
+- 使用中文注释（根据项目需求）
+
+### 3. 代码分组
+
+使用 `#region` 组织相关方法：
+
+```typescript
+//#region 初始化方法
+init() { }
+initGame() { }
+reset() { }
+//#endregion
+
+//#region 事件回调
+onSomeEvent() { }
+onStateChange() { }
+//#endregion
+
+//#region 工具方法
+calculatePosition() { }
+checkCondition() { }
+//#endregion
+```
+
+### 4. 属性绑定规范
+
+```typescript
+// ✅ GOOD - 清晰的属性命名和注释
+// 游戏主容器节点
+@property(Node)
+gameContainerNode: Node = null;
+
+// 玩家预制体
+@property(Prefab)
+playerPrefab: Prefab = null;
+
+// ❌ BAD - 命名不清
+@property(Node)
+node1: Node = null;
+@property(Prefab)
+prefab1: Prefab = null;
+```
+
+**规范：**
+- 属性命名要有意义，能清楚表达用途
+- 使用驼峰命名法
+- 添加注释说明属性用途
+- 避免使用 `node1`、`prefab1` 等无意义命名
+
+## 游戏对象设计规范
+
+### 1. 游戏对象类结构
+
+```typescript
+@ccclass('GameObject')
+export class GameObject extends Component {
+    // 数据属性
+    id: number;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    type: number;
+    
+    // 状态属性（使用私有变量 + getter/setter）
+    private _state: GAME_OBJECT_STATE;
+    
+    // Getter/Setter 用于触发事件或执行副作用
+    get state() {
+        return this._state;
+    }
+    
+    set state(data: GAME_OBJECT_STATE) {
+        if (this._state !== data) {
+            this._state = data;
+            // 触发状态变更事件
+            STATE_CHANGE.emit(EVENT_ENUM.STATE_CHANGE, this);
+            this.updateDisplay();
+        }
+    }
+    
+    // 初始化方法
+    init(data: GameObjectData) {
+        Object.assign(this, data);
+        // 注册到数据管理器
+        DataManager.instance.gameObjects.push(this);
+        this.updateDisplay();
+    }
+    
+    // 更新显示方法
+    updateDisplay() {
+        this.node.setPosition(this.x, this.y);
+        const transform = this.node.getComponent(UITransform);
+        if (transform) {
+            transform.width = this.width;
+            transform.height = this.height;
+        }
+    }
+    
+    // 保存原始状态用于重置
+    saveState() {
+        // 保存当前状态
+    }
+    
+    // 恢复状态
+    restoreState() {
+        // 恢复保存的状态
+    }
+}
+```
+
+**规范：**
+- 使用 `init()` 方法初始化对象数据
+- 使用 `updateDisplay()` 或 `render()` 方法更新显示
+- 重要状态变更通过 setter 触发事件
+- 保存原始状态用于重置功能
+- 对象创建后注册到 DataManager
+
+### 2. 坐标和布局计算规范
+
+```typescript
+// ✅ GOOD - 清晰的坐标计算
+// 计算居中布局
+const containerWidth = this.containerNode.getComponent(UITransform).width;
+const itemWidth = this.itemPrefab.data.getComponent(UITransform).width;
+const itemCount = items.length;
+const startX = -(itemCount * itemWidth) / 2 + itemWidth / 2;
+items.forEach((item, index) => {
+    item.x = startX + index * itemWidth;
+});
+
+// ❌ BAD - 硬编码或计算不清
+items[0].x = 100;
+items[1].x = 200;
+items[2].x = 300;
+```
+
+**规范：**
+- 使用相对坐标计算，避免硬编码
+- 根据容器大小和元素数量动态计算位置
+- 考虑屏幕适配，使用相对值而非绝对值
+- 复杂布局计算封装成独立方法
+
+## 配置数据规范
+
+### 1. 配置数据结构
+
+```typescript
+// Level.ts - 关卡配置
+export const levels: LevelConfig[] = [
+    {
+        levelId: 1,
+        levelName: '第一关',
+        // 根据游戏需求定义配置字段
+        // 例如：难度、时间限制、目标分数等
+    },
+    {
+        levelId: 2,
+        levelName: '第二关',
+        // ...
+    },
+];
+```
+
+**规范：**
+- 配置数据与代码逻辑分离
+- 使用接口定义配置结构（在 `type.d.ts` 中）
+- 配置数据集中管理，便于修改和扩展
+- 添加注释说明每个配置项的用途
+
+### 2. 配置加载流程
+
+```typescript
+initGame(levelId: number) {
+    // 1. 获取关卡配置
+    const levelConfig = levels.find(level => level.levelId === levelId);
+    if (!levelConfig) {
+        console.error('关卡配置不存在:', levelId);
+        return;
+    }
+    
+    // 2. 设置当前关卡配置
+    DataManager.instance.currentLevel = levelConfig;
+    
+    // 3. 根据配置初始化游戏
+    this.initGameObjects(levelConfig);
+    this.initUI(levelConfig);
+    
+    // 4. 设置游戏状态
+    DataManager.instance.gameStatus = GAME_STATE_ENUM.RUNNING;
+}
+```
+
+## 音频管理规范
+
+### 1. 音频管理器
+
+```typescript
+@ccclass('MusicManager')
+export class MusicManager extends Component {
+    @property(AudioClip)
+    clickButton: AudioClip = null;
+    
+    @property(AudioSource)
+    audioSource: AudioSource = null;
+    
+    protected onLoad(): void {
+        // 持久化节点，跨场景不销毁
+        director.addPersistRootNode(this.node);
+        
+        // 监听场景切换
+        director.on(Director.EVENT_AFTER_SCENE_LAUNCH, this.onAfterSceneLaunch, this);
+        
+        // 监听音效播放事件
+        PLAY_AUDIO.on(EVENT_ENUM.PLAY_AUDIO, this.onAudioPlay, this);
+    }
+    
+    onAfterSceneLaunch() {
+        const sceneName = director.getScene()?.name;
+        this.updateBackGroundMusic(sceneName);
+    }
+    
+    updateBackGroundMusic(sceneName: string) {
+        // 根据场景切换背景音乐
+        this.audioSource.stop();
+        // 设置对应场景的BGM
+        if (this.audioSource.clip) {
+            this.audioSource.play();
+        }
+    }
+    
+    onAudioPlay(type: AUDIO_EFFECT_ENUM) {
+        switch(type) {
+            case AUDIO_EFFECT_ENUM.CLICKBUTTON:
+                this.audioSource.playOneShot(this.clickButton);
+                break;
+            // ... 其他音效
+        }
+    }
+    
+    protected onDestroy(): void {
+        director.off(Director.EVENT_AFTER_SCENE_LAUNCH, this.onAfterSceneLaunch, this);
+        PLAY_AUDIO.off(EVENT_ENUM.PLAY_AUDIO, this.onAudioPlay, this);
+    }
+}
+```
+
+**规范：**
+- 使用事件系统触发音效播放，避免直接调用
+- 背景音乐根据场景自动切换
+- 音效使用 `playOneShot()`，BGM 使用 `play()`
+- 音频管理器节点设置为持久化，跨场景不销毁
+- 在 `onDestroy()` 中清理事件监听
+
+## 场景管理规范
+
+### 1. 场景切换
+
+```typescript
+// 预加载场景（在 onLoad 中）
+director.preloadScene(SCENE_ENUM.MENU);
+
+// 切换场景
+director.loadScene(SCENE_ENUM.GAME);
+```
+
+### 2. 场景枚举
+
+```typescript
+export enum SCENE_ENUM {
+    MENU = 'Menu',
+    GAME = 'Game',
+    SETTING = 'Setting',
+}
+```
+
+**规范：**
+- 使用枚举管理场景名称，避免硬编码字符串
+- 场景名称与枚举值保持一致
+- 切换场景前可以预加载，提升体验
+
+## 工具函数规范
+
+### 1. 工具函数组织
+
+```typescript
+// Utils.ts
+/**
+ * 打乱数组
+ * @param arr 要打乱的数组
+ * @returns 打乱后的新数组
+ */
+export function shuffle<T>(arr: T[]): T[] {
+    const result = [...arr];
+    // 实现逻辑
+    return result;
+}
+
+/**
+ * 生成随机数
+ * @param min 最小值
+ * @param max 最大值
+ * @returns 随机数
+ */
+export function random(min: number, max: number): number {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+```
+
+**规范：**
+- 所有工具函数放在 `Utils.ts` 中
+- 使用 `export function` 导出
+- 添加 JSDoc 注释说明用途和参数
+- 使用泛型提高复用性
+- 纯函数优先，避免副作用
+
+## 最佳实践总结
+
+1. **模块解耦**：使用事件系统而非直接引用，降低耦合度
+2. **数据集中**：全局数据通过 DataManager 统一管理
+3. **类型安全**：使用 TypeScript 接口和枚举，提高代码可维护性
+4. **代码组织**：使用 #region 分组相关方法，提高可读性
+5. **资源管理**：及时清理事件监听和资源引用，避免内存泄漏
+6. **注释清晰**：关键逻辑和方法添加注释，便于维护
+7. **命名规范**：使用有意义的变量和方法名，提高代码可读性
+8. **配置分离**：配置数据独立于代码逻辑，便于调整和扩展
+9. **单一职责**：每个 Manager 只负责一个功能模块
+10. **错误处理**：添加必要的错误检查和日志输出
+
+## 常见问题避免
+
+1. ❌ **忘记清理事件监听** → ✅ 在 `onDestroy()` 中清理所有事件监听
+2. ❌ **直接引用其他 Manager** → ✅ 使用事件系统进行模块间通信
+3. ❌ **硬编码配置值** → ✅ 使用配置数据文件管理
+4. ❌ **缺少类型定义** → ✅ 在 `type.d.ts` 中定义接口和类型
+5. ❌ **坐标计算混乱** → ✅ 使用相对坐标计算，避免硬编码
+6. ❌ **方法职责不清** → ✅ 每个方法只做一件事，保持单一职责
+7. ❌ **缺少错误处理** → ✅ 添加必要的空值检查和错误处理
+8. ❌ **命名不规范** → ✅ 使用有意义的命名，遵循驼峰命名法
+
+## 下一阶段（多小游戏）通用规则框架
+
+> 目标：让每个新小游戏都能在同一套骨架上快速落地，而不是每次“从零搭结构”。
+
+### 1. 统一开发阶段（四段式）
+
+每个小游戏必须按以下阶段推进，避免边做边改导致返工：
+
+1. **Prototype（原型验证）**
+   - 只验证核心玩法是否有趣（1 个核心循环）
+   - 不做美术打磨，不做复杂 UI 动效
+   - 输出：可玩最小版本 + 玩法结论
+2. **Vertical Slice（完整切片）**
+   - 做出 1 个“接近上线质量”的完整关卡/局内流程
+   - 覆盖：输入、反馈、胜负、结算、音效、存档
+   - 输出：质量基准样板
+3. **Production（内容扩展）**
+   - 按模板批量扩展关卡、数值、内容资源
+   - 输出：可发布内容规模
+4. **Polish（发布收口）**
+   - 性能、稳定性、体验、包体、异常处理统一收口
+   - 输出：发布候选版本（RC）
+
+### 2. 统一模块边界（跨小游戏不变）
+
+无论玩法类型，固定使用以下边界，保证可复用：
+
+- **Core（核心规则层）**：纯规则、胜负判定、回合/时间推进，不依赖 UI
+- **Application（流程编排层）**：开局、暂停、结算、重开、关卡切换
+- **Presentation（表现层）**：UI、动画、音频、特效、震动反馈
+- **Infrastructure（基础设施层）**：存档、配置加载、日志、埋点、资源管理
+
+硬性约束：
+- Core 不允许直接访问 Node、Prefab、AudioSource
+- Presentation 不承载核心规则判断
+- 跨层通信优先事件和显式接口，禁止隐式全局耦合
+
+### 3. 统一目录模板（新游戏开箱即用）
+
+建议每个小游戏放在独立目录，如 `assets/Scripts/Games/<GameName>/`：
+
+```
+Games/<GameName>/
+├── Core/                 # 纯玩法规则（可单测）
+├── Application/          # 流程编排与状态流转
+├── Presentation/         # 视图表现、交互反馈
+├── Config/               # 关卡与数值配置
+├── AssetsBinding/        # 预制体和资源引用映射
+└── Tests/                # 规则测试与关键流程测试
+```
+
+迁移原则：
+- 旧游戏可逐步迁移，不要求一次性重构
+- 新游戏必须按模板创建，避免结构继续分叉
+
+### 4. 统一状态机模型（最小必备）
+
+每个小游戏至少具备以下状态，状态名全项目复用：
+
+- `BOOT`：初始化
+- `READY`：待开始（可展示教学/倒计时）
+- `RUNNING`：进行中
+- `PAUSED`：暂停
+- `SETTLEMENT`：结算展示
+- `FINISHED`：流程完成（准备退出或下一局）
+
+规则：
+- 状态切换必须由 Application 层统一驱动
+- 不允许在多个 Manager 中各自维护“隐式状态”
+- 每次状态切换可选触发埋点和日志，便于回放问题
+
+### 5. 统一配置策略（玩法与数值解耦）
+
+配置分层：
+- **StaticConfig**：关卡结构、生成规则、资源映射
+- **BalanceConfig**：难度曲线、分数、时间、奖励参数
+- **RuntimeSnapshot**：运行时存档（续玩/复盘）
+
+规则：
+- 配置可热更新（至少支持重启后生效）
+- 逻辑层禁止硬编码关键数值（如时间限制、得分阈值）
+- 配置字段变更必须同步类型定义与默认值
+
+### 6. 统一质量门禁（进入可提测前必须满足）
+
+每个小游戏在“可提测”前至少满足：
+
+- **功能**：主循环可完整走通 20 局无阻断错误
+- **稳定性**：无明显内存泄漏（事件/定时器/节点释放）
+- **性能**：目标机型下帧率稳定、无持续卡顿尖峰
+- **容错**：关键入口有空值与异常保护，不崩溃
+- **可维护**：关键模块具备注释、类型、清晰命名
+
+### 7. 统一复盘与迭代节奏
+
+每个小游戏版本迭代后都应产出最小复盘记录：
+
+- 本轮目标是否达成（玩法/性能/留存指标）
+- 新增技术债与后续偿还计划
+- 可抽取为“公共能力”的模块清单（进入共享层）
+
+建议节奏：
+- 小步快跑，1~2 周一个可玩增量
+- 每个增量都能独立回滚，避免大版本耦合风险
+
+### 8. Agent 执行优先级（后续让 AI 协作更稳定）
+
+当需要 AI 参与开发新小游戏时，默认按以下顺序执行：
+
+1. 先搭目录与类型骨架（不急着写复杂逻辑）
+2. 再实现 Core 最小规则闭环
+3. 再接入 UI/音频/动画反馈
+4. 最后补性能、容错、日志、测试
+
+这样可以保证“先可玩、再好玩、后精修”，同时最大化规则复用率。
+
+### 9. LightPuzzle 仓库初始化沉淀（光学解谜 · 给 Agent）
+
+> 本仓库为 **LightPuzzle（光学解谜）** 工程。若 `assets/Scripts` 为空或新克隆后需「一次性搭骨架」，**默认按本节执行**，无需用户重复说明。策划与排期以根目录 **`小游戏设计文档.md`**、**`框架搭建说明.md`**、**`项目开发排期.md`**、**`美术音乐素材清单.md`** 为准；本节只固定 **路径、职责与最小依赖**。
+
+#### 9.1 目录与分层
+
+- **`assets/Scripts/Games/OpticalPuzzle/Core/`** — 纯规则（禁止引用 `Node`/`Prefab`）；网格、`OpticalPuzzleCore`、`OpticalPuzzleTypes`。
+- **`.../Application/`** — `OpticalPuzzleSession`（关卡加载、历史栈、**撤回 5 步**、重置）、`OpticalPuzzleStateMachine`（`BOOT`/`READY`/`RUNNING`/`PAUSED`/`SETTLEMENT`/`FINISHED`）；`onStateChanged` 携带 **`OpticalSessionNotifyReason`**：`load` | `move` | `undo` | `reset`（供音效/UI 区分）。
+- **`.../Presentation/`** — `OpticalPuzzleRoot`（创建 Session、`DataManager.restore`、广播快照）、`OpticalPuzzleBoardView`（`Graphics` 占位棋盘）、`OpticalPuzzleInputHud`（四向 **Button** + 撤回/重置；未绑定时 **方向键/WASD + Z/R** 仅作开发调试，与《小游戏设计文档》正式操作不一致时发版前须改）。
+- **`.../Config/`** — `OpticalPuzzleLevelSchema`、`DEV_LEVEL_MINIMAL` 等；`IOpticalPiece.type` 用 **`string`** 以支持 `portal-0a` 等 id。
+
+#### 9.2 `assets/Scripts` 根与 Manager
+
+- **`Utils/Event.ts`**：`PLAY_AUDIO`、`PLAY_BGM`、`GAME_STATE_CHANGE`、`OPTICAL_PUZZLE`。
+- **`Utils/Enum.ts`**：`EVENT_ENUM`（含 `OPTICAL_SNAPSHOT_CHANGED`）、`AUDIO_EFFECT_ENUM`、`SCENE_ENUM`、`GAME_STATE_ENUM`；新增事件键**集中**在此与 `Event.ts`。
+- **`Manager/DataManager.ts`**：单例 + `sys.localStorage`；本仓 Key 示例 **`LightPuzzle_player_v1`**；字段如 `opticalCurrentLevelId`、`bgmOn`、`sfxOn`；`merge` + `save`/`restore`。
+- **`Manager/MusicManager.ts`**：`addPersistRootNode` + `PLAY_AUDIO` 监听；`onDestroy` 必须 `off`。
+- **其它 Manager**（`GameManager`、`MenuManager`、`GameUIManager`、`LevelManager` 等）可为占位 `Component`，随玩法再填。
+- **`Manager/ToastManager.ts`**：`import { RoundBox } from '../../RoundBox'` → 指向 **`assets/RoundBox.ts`**；预制体子节点约定 **`text`**（`Label`）、**`bg`**（`UITransform` + 可选 `RoundBox`）。
+
+#### 9.3 与 `assets/` 根脚本的路径契约
+
+| 脚本 | `RoundBox` 引用 | 说明 |
+|------|-----------------|------|
+| `assets/Scripts/Manager/ToastManager.ts` | `from '../../RoundBox'` | 自 `Manager/` 上两级到 `assets/` |
+| `assets/Scripts/MenuOverlayWindow.ts` | `from '../RoundBox'` | 自 `Scripts/` 上一级到 `assets/` |
+
+**禁止**将 `RoundBox.ts` 移入 `Scripts/` 子目录而不改全仓 import；若改用 `db://assets/RoundBox` 需全项目统一。
+
+#### 9.4 菜单弹层（MenuOverlayWindow）
+
+- **脚本**：`assets/Scripts/MenuOverlayWindow.ts` — 绑定 `closeButtonNode`；可选子节点 **`bg`** 点击关闭；`onEnable` 内 `getComponentsInChildren(RoundBox)` 并 **`forceRefreshRender`**，避免首帧空纹理（与 Toast 注释同理）。
+- **依赖**：`../RoundBox`、`./Utils/Enum`、`./Utils/Event`（与 `ToastManager` 共用 `CLICK_BUTTON` 等）。
+
+#### 9.5 编辑器挂接（最小可运行）
+
+1. 场景 **`Menu`**（或局内场景）**Canvas** 下：`OpticalPuzzleRoot` + `OpticalPuzzleBoardView` + `OpticalPuzzleInputHud`（可同节点或子节点）。
+2. 单独持久化节点：`MusicManager`（`AudioSource`、可选 `clickButton` 等 Clip）。
+3. 按需：`ToastManager` + `Prefab/Toast.prefab`；菜单弹层挂 `MenuOverlayWindow`。
+
+#### 9.6 资源 `.meta` 批量生成
+
+- 脚本：**`tools/gen-optical-meta.ps1`** — 为 `assets/Scripts` 下目录与 `.ts` 生成 `.meta`（UUID）；执行后于 Creator **刷新资源**。
+
+#### 9.7 Agent 执行顺序（本仓库增量）
+
+1. 若缺目录/`Games/OpticalPuzzle` 骨架 → 先补全 **§9.1～9.2** 与 `Enum`/`Event`/`DataManager`/`MusicManager` 最小实现。  
+2. 再补 **Presentation** 与场景挂接 **§9.5**。  
+3. 再接入 **Toast / MenuOverlay / RoundBox**（路径按 **§9.3**）。  
+4. 最后对齐《小游戏设计文档》玩法（推箱子、光追、`colorMode` 等），**Core 仍不依赖场景**。
+
+### 10. 跨项目可复用资产（从本仓库沉淀）
+
+后续多款小游戏应优先复用以下能力，避免重复造轮子；新工程可直接拷贝对应脚本与预制体，或抽到独立 `Common/` / 子模块后再引用。
+
+**1）Toast 提示（预制体 + 管理器）**
+
+- **脚本**：`assets/Scripts/Manager/ToastManager.ts` — 负责实例化、排队打断、显示时长与淡出；与 `RoundBox` 配合可避免改宽后首帧闪一下（见脚本内注释）。
+- **预制体**：`assets/Prefab/Toast.prefab` — 约定根节点下子节点：`text`（`Label`）、`bg`（`UITransform` 可调宽度）；换皮时同步替换背景图等资源即可。
+- **规范**：Toast 属于 Presentation 层通用反馈；跨游戏复用时保持子节点命名与 `ToastManager` 一致，或改 Manager 时集中改一处解析逻辑。
+
+**2）存档策略（读写 + 本地调试 Mock）**
+
+- **模式**：`DataManager`（`assets/Scripts/Manager/DataManager.ts`）示范了「存储 Key + JSON 序列化 + `merge*` 合并默认值 + `restore` / `save`」；新项目替换 `PLAYER_DATA_STORAGE_KEY`、持久化结构与 `merge*` 即可复用同一套路。
+- **存储一致性**：同文件内对 `sys.localStorage` 与浏览器 `window.localStorage` 的统读统写，避免预览环境读到空档或旧数据；跨游戏若仍用 Web 预览可保留该思路。
+- **本地测试**：`assets/Scripts/Config/DebugMockSave.ts` — `USE_DEBUG_MOCK_SAVE` + `MOCK_PLAYER_DATA` 仅在进程内首次初始化时写入再 `restore`，避免切场景二次 init 覆盖调试修改；**发版前必须关 Mock**（`USE_DEBUG_MOCK_SAVE = false`）。
+- **规范**：玩法相关的 `RuntimeSnapshot` 与长期 `PlayerData` 分层（见上文「统一配置策略」）；Mock 只用于开发机，不得依赖 Mock 行为做线上逻辑分支。
+
+**3）音频（BGM + 音效）**
+
+- **脚本**：`assets/Scripts/Manager/MusicManager.ts` — 持久化节点上的 `AudioSource`，通过 `PLAY_BGM` / `PLAY_AUDIO`（`assets/Scripts/Utils/Event.ts`）与枚举（`AUDIO_EFFECT_ENUM` 等）驱动背景音乐与音效。
+- **规范**：新游戏可删减具体 `@property(AudioClip)` 字段，但保留「BGM 与音效分轨、事件触发、场景切换时暂停/恢复」的结构；Core 层仍不直接持有 `AudioSource`，仅发事件由 Presentation / Manager 播放。
+
+**4）RoundBox（圆角 UI + 半透明）**
+
+- **脚本**：`assets/RoundBox.ts` — 基于 `UIRenderer` 的圆角矩形，支持圆角半径、分段、按角开关等；与 `UIOpacity` 配合可做半透明（与 Toast、菜单等一致）。
+- **API**：`setDisplaySpriteFrame` 用于运行时换图（皮肤）；节点未 `onEnable` 时需注意首帧刷新（见 `MenuOverlayWindow`、`CardRandNum` 等处的处理经验）。
+- **规范**：需要圆角面板、卡片底图、Toast 背景等 UI 时优先用 `RoundBox`，避免多处重复 Shader/网格逻辑；半透明在父或根节点用 `UIOpacity` 统一控制（参见 `assets/Scripts/Utils/Utils.ts` 中与 Toast/换皮相关的注释）。
+
+**5）菜单弹层（MenuOverlayWindow）**
+
+- **脚本**：`assets/Scripts/MenuOverlayWindow.ts` — 与 Toast 同属菜单/弹窗表现；依赖 **`../RoundBox`**、**`./Utils/Enum`**、**`./Utils/Event`**；详见上文 **「§9.4」** 与路径表 **「§9.3」**。
+
+**迁移提示**：从本仓库拷贝上述文件时，一并检查依赖（`Enum`、`Event`、贴图/Material）；若抽到多项目公共库，在规则或 README 中固定版本与 breaking 变更，避免各游戏分叉实现。
