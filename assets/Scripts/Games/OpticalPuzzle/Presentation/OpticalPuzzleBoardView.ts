@@ -36,10 +36,15 @@ export class OpticalPuzzleBoardView extends Component {
         for (let y = 0; y < snapshot.height; y++) {
             for (let x = 0; x < snapshot.width; x++) {
                 const t = snapshot.terrain[y * snapshot.width + x];
-                g.fillColor =
-                    t === TerrainKind.Wall
-                        ? new Color(55, 58, 70, 255)
-                        : new Color(32, 36, 48, 255);
+                if (t === TerrainKind.Wall) {
+                    g.fillColor = new Color(55, 58, 70, 255);
+                } else if (t === TerrainKind.Source) {
+                    g.fillColor = new Color(240, 200, 90, 255);
+                } else if (t === TerrainKind.Target) {
+                    g.fillColor = new Color(90, 200, 130, 255);
+                } else {
+                    g.fillColor = new Color(32, 36, 48, 255);
+                }
                 g.rect(ox + x * cell + 1, oy - (y + 1) * cell + 1, cell - 2, cell - 2);
                 g.fill();
             }

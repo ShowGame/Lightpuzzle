@@ -14,7 +14,8 @@ const DIR_DY: ReadonlyArray<number> = [0, -1, 0, 1];
  * 当前仅实现「地板 + 墙框」上的四向行走占位；推箱子与光追后续接入。
  */
 export class OpticalPuzzleCore {
-    private _levelId = '';
+    private _levelId = 0;
+    private _levelName = '';
     private _w = 0;
     private _h = 0;
     private _terrain: TerrainKind[] = [];
@@ -29,6 +30,7 @@ export class OpticalPuzzleCore {
             );
         }
         this._levelId = level.levelId;
+        this._levelName = level.levelName;
         this._w = level.width;
         this._h = level.height;
         this._terrain = level.terrain.slice();
@@ -39,6 +41,7 @@ export class OpticalPuzzleCore {
     getSnapshot(): OpticalBoardSnapshot {
         return {
             levelId: this._levelId,
+            levelName: this._levelName,
             width: this._w,
             height: this._h,
             terrain: this._terrain.slice(),

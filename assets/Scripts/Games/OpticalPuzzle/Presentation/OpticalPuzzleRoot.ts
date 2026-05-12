@@ -3,6 +3,8 @@ import { DataManager } from '../../../Manager/DataManager';
 import { AUDIO_EFFECT_ENUM, EVENT_ENUM } from '../../../Utils/Enum';
 import { OPTICAL_PUZZLE, PLAY_AUDIO } from '../../../Utils/Event';
 import { OpticalPuzzleSession, type OpticalSessionNotifyReason } from '../Application/OpticalPuzzleSession';
+import { getOpticalLevelById } from '../Config/OpticalPuzzleLevels';
+import { DEV_LEVEL_MINIMAL } from '../Config/OpticalPuzzleLevelSchema';
 import { OpticalPuzzleBoardView } from './OpticalPuzzleBoardView';
 import { OpticalPuzzleInputHud } from './OpticalPuzzleInputHud';
 
@@ -37,7 +39,13 @@ export class OpticalPuzzleRoot extends Component {
         }
 
         this._session.onStateChanged = (reason) => this._onSessionChanged(reason);
-        this._session.startWithDevLevel();
+        const id = DataManager.instance.opticalCurrentLevelId;
+        const resolved = getOpticalLevelById(id);
+        const level = resolved ?? DEV_LEVEL_MINIMAL;
+        if (!resolved) {
+            console.warn(`[OpticalPuzzleRoot] 未知关卡 id=${id}，使用 DEV_LEVEL_MINIMAL`);
+        }
+        this._session.loadLevel(level);
 
         if (this.inputHud) {
             this.inputHud.setup(this._session);

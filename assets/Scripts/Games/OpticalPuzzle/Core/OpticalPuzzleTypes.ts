@@ -37,7 +37,8 @@ export enum ColorMode {
 
 /** Application / Presentation 使用的只读棋盘快照（后续扩展 pieces、光路等） */
 export interface OpticalBoardSnapshot {
-    levelId: string;
+    levelId: number;
+    levelName: string;
     width: number;
     height: number;
     terrain: TerrainKind[];

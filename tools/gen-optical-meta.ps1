@@ -28,6 +28,7 @@ $tsFiles = @(
   (Join-Path $op 'Application\OpticalPuzzleSession.ts'),
   (Join-Path $op 'Application\OpticalPuzzleStateMachine.ts'),
   (Join-Path $op 'Config\OpticalPuzzleLevelSchema.ts'),
+  (Join-Path $op 'Config\OpticalPuzzleLevels.ts'),
   (Join-Path $op 'Presentation\OpticalPuzzleRoot.ts'),
   (Join-Path $op 'Presentation\OpticalPuzzleBoardView.ts'),
   (Join-Path $op 'Presentation\OpticalPuzzleInputHud.ts')
