@@ -6,7 +6,7 @@ import { PLAY_AUDIO } from './Utils/Event';
 const { ccclass, property } = _decorator;
 
 /**
- * 菜单简单弹层：挂在窗口根节点上，关闭键（及可选子节点 `bg` 衬底）点击后隐藏本节点，行为与集卡册关闭一致。
+ * 菜单简单弹层：挂在窗口根节点上，关闭键（及可选子节点 `bg` 衬底）点击后隐藏本节点
  */
 @ccclass('MenuOverlayWindow')
 export class MenuOverlayWindow extends Component {

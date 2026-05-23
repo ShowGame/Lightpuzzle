@@ -39,6 +39,18 @@ export class OpticalPuzzleRoot extends Component {
         }
 
         this._session.onStateChanged = (reason) => this._onSessionChanged(reason);
+
+        if (this.inputHud) {
+            this.inputHud.setup(this._session);
+        } else {
+            console.warn('[OpticalPuzzleRoot] 未绑定 OpticalPuzzleInputHud');
+        }
+
+        this.reloadCurrentLevel();
+    }
+
+    /** 按 DataManager.opticalCurrentLevelId 重载关卡（局内跳关时调用） */
+    reloadCurrentLevel(): void {
         const id = DataManager.instance.opticalCurrentLevelId;
         const resolved = getOpticalLevelById(id);
         const level = resolved ?? DEV_LEVEL_MINIMAL;
@@ -46,12 +58,6 @@ export class OpticalPuzzleRoot extends Component {
             console.warn(`[OpticalPuzzleRoot] 未知关卡 id=${id}，使用 DEV_LEVEL_MINIMAL`);
         }
         this._session.loadLevel(level);
-
-        if (this.inputHud) {
-            this.inputHud.setup(this._session);
-        } else {
-            console.warn('[OpticalPuzzleRoot] 未绑定 OpticalPuzzleInputHud');
-        }
     }
 
     protected onDestroy(): void {
