@@ -1,21 +1,48 @@
-import type { IOpticalLevelConfig, IOpticalLevelGridSource } from './OpticalPuzzleLevelSchema';
-import { parseGridToLevelConfig } from './OpticalPuzzleLevelSchema';
+import type { IOpticalLevelConfig, IOpticalLevelLayeredSource } from './OpticalPuzzleLevelSchema';
+import { parseLayeredGridsToLevelConfig } from './OpticalPuzzleLevelSchema';
 
 /**
- * 关卡源数据：`levelId`（整数）+ `levelName` + `height` + `width` + `grid`。
- * 字符含义见 `IOpticalLevelGridData`（`OpticalPuzzleLevelSchema.ts`）文件内注释。
+ * 关卡源数据：每关须完整配置四层同尺寸网格（`staticLayout` / `objects` / `colors` / `directions`）。
+ * 含义见 `OpticalPuzzleLevelSchema.ts`；层 3/4 仅在光源、目标、元件处标注，其余为 `.`。
  */
-export const OPTICAL_LEVEL_GRID_SOURCES: IOpticalLevelGridSource[] = [
+export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
     {
         levelId: 1,
         levelName: '教学',
         height: 7,
         width: 7,
-        grid: [
+        staticLayout: [
             '#######',
             '#.....#',
             '#.....#',
+            '#.....#',
+            '#.....#',
+            '#.....#',
+            '#######',
+        ],
+        objects: [
+            '#######',
+            '#..S..#',
+            '#.....#',
             '#..@..#',
+            '#.....#',
+            '#..E..#',
+            '#######',
+        ],
+        colors: [
+            '#######',
+            '#..W..#',
+            '#.....#',
+            '#.....#',
+            '#.....#',
+            '#..W..#',
+            '#######',
+        ],
+        directions: [
+            '#######',
+            '#..s..#',
+            '#.....#',
+            '#.....#',
             '#.....#',
             '#.....#',
             '#######',
@@ -23,12 +50,45 @@ export const OPTICAL_LEVEL_GRID_SOURCES: IOpticalLevelGridSource[] = [
     },
     {
         levelId: 2,
-        levelName: '十字墙',
+        levelName: '绕十字',
         height: 9,
         width: 9,
-        grid: [
+        staticLayout: [
             '#########',
-            '#@......#',
+            '#.......#',
+            '#.......#',
+            '#...#...#',
+            '#..###..#',
+            '#...#...#',
+            '#.......#',
+            '#.......#',
+            '#########',
+        ],
+        objects: [
+            '#########',
+            '#S.@...E#',
+            '#.......#',
+            '#...#...#',
+            '#..###..#',
+            '#...#...#',
+            '#.......#',
+            '#.......#',
+            '#########',
+        ],
+        colors: [
+            '#########',
+            '#W.....W#',
+            '#.......#',
+            '#...#...#',
+            '#..###..#',
+            '#...#...#',
+            '#.......#',
+            '#.......#',
+            '#########',
+        ],
+        directions: [
+            '#########',
+            '#s......#',
             '#.......#',
             '#...#...#',
             '#..###..#',
@@ -43,9 +103,36 @@ export const OPTICAL_LEVEL_GRID_SOURCES: IOpticalLevelGridSource[] = [
         levelName: '柱廊',
         height: 7,
         width: 11,
-        grid: [
+        staticLayout: [
             '###########',
-            '#@........#',
+            '#.........#',
+            '#..#...#..#',
+            '#.........#',
+            '#....#...##',
+            '#.........#',
+            '###########',
+        ],
+        objects: [
+            '###########',
+            '#S..@....E#',
+            '#..#...#..#',
+            '#.........#',
+            '#....#...##',
+            '#.........#',
+            '###########',
+        ],
+        colors: [
+            '###########',
+            '#W.......W#',
+            '#..#...#..#',
+            '#.........#',
+            '#....#...##',
+            '#.........#',
+            '###########',
+        ],
+        directions: [
+            '###########',
+            '#s........#',
             '#..#...#..#',
             '#.........#',
             '#....#...##',
@@ -55,15 +142,48 @@ export const OPTICAL_LEVEL_GRID_SOURCES: IOpticalLevelGridSource[] = [
     },
     {
         levelId: 4,
-        levelName: '门洞',
+        levelName: '穿门洞',
         height: 9,
         width: 13,
-        grid: [
+        staticLayout: [
             '#############',
             '#...........#',
             '#.....#.....#',
             '#.....#.....#',
-            '#.@.........#',
+            '#...........#',
+            '#.....#.....#',
+            '#.....#.....#',
+            '#...........#',
+            '#############',
+        ],
+        objects: [
+            '#############',
+            '#S..........#',
+            '#.....#.....#',
+            '#.....#.....#',
+            '#..@........#',
+            '#.....#.....#',
+            '#.....#.....#',
+            '#..........E#',
+            '#############',
+        ],
+        colors: [
+            '#############',
+            '#W..........#',
+            '#.....#.....#',
+            '#.....#.....#',
+            '#...........#',
+            '#.....#.....#',
+            '#.....#.....#',
+            '#..........W#',
+            '#############',
+        ],
+        directions: [
+            '#############',
+            '#s..........#',
+            '#.....#.....#',
+            '#.....#.....#',
+            '#...........#',
             '#.....#.....#',
             '#.....#.....#',
             '#...........#',
@@ -75,7 +195,20 @@ export const OPTICAL_LEVEL_GRID_SOURCES: IOpticalLevelGridSource[] = [
         levelName: '光源与目标',
         height: 11,
         width: 9,
-        grid: [
+        staticLayout: [
+            '#########',
+            '#.......#',
+            '#.......#',
+            '#.......#',
+            '#.......#',
+            '#.......#',
+            '#.......#',
+            '#.......#',
+            '#.......#',
+            '#.......#',
+            '#########',
+        ],
+        objects: [
             '#########',
             '#...S...#',
             '#.......#',
@@ -88,13 +221,49 @@ export const OPTICAL_LEVEL_GRID_SOURCES: IOpticalLevelGridSource[] = [
             '#...E...#',
             '#########',
         ],
+        colors: [
+            '#########',
+            '#...W...#',
+            '#.......#',
+            '#.......#',
+            '#.......#',
+            '#.......#',
+            '#.......#',
+            '#.......#',
+            '#.......#',
+            '#...W...#',
+            '#########',
+        ],
+        directions: [
+            '#########',
+            '#...s...#',
+            '#.......#',
+            '#.......#',
+            '#.......#',
+            '#.......#',
+            '#.......#',
+            '#.......#',
+            '#.......#',
+            '#.......#',
+            '#########',
+        ],
     },
     {
         levelId: 6,
         levelName: '双目标',
         height: 8,
         width: 10,
-        grid: [
+        staticLayout: [
+            '##########',
+            '#........#',
+            '#........#',
+            '#........#',
+            '#........#',
+            '#........#',
+            '#........#',
+            '##########',
+        ],
+        objects: [
             '##########',
             '#....S...#',
             '#........#',
@@ -104,11 +273,31 @@ export const OPTICAL_LEVEL_GRID_SOURCES: IOpticalLevelGridSource[] = [
             '#.E....E.#',
             '##########',
         ],
+        colors: [
+            '##########',
+            '#....W...#',
+            '#........#',
+            '#........#',
+            '#........#',
+            '#........#',
+            '#.W....W.#',
+            '##########',
+        ],
+        directions: [
+            '##########',
+            '#....s...#',
+            '#........#',
+            '#........#',
+            '#........#',
+            '#........#',
+            '#........#',
+            '##########',
+        ],
     },
 ];
 
-export const OPTICAL_LEVELS: IOpticalLevelConfig[] = OPTICAL_LEVEL_GRID_SOURCES.map((src) =>
-    parseGridToLevelConfig(src),
+export const OPTICAL_LEVELS: IOpticalLevelConfig[] = OPTICAL_LEVEL_LAYERED_SOURCES.map((src) =>
+    parseLayeredGridsToLevelConfig(src),
 );
 
 const _byId = new Map<number, IOpticalLevelConfig>(OPTICAL_LEVELS.map((lv) => [lv.levelId, lv]));

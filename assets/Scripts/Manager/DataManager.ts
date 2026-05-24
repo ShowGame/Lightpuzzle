@@ -16,7 +16,7 @@ const LEGACY_OPTICAL_LEVEL_ID: Readonly<Record<string, number>> = {
 
 /** 持久化数据结构（可按玩法扩展字段） */
 export interface IPlayerPersistData {
-    /** 光学解谜当前关卡整数 id，与 `IOpticalLevelGridSource.levelId` 对齐 */
+    /** 光学解谜当前关卡整数 id，与 `IOpticalLevelLayeredSource.levelId` 对齐 */
     opticalCurrentLevelId: number;
     bgmOn: boolean;
     sfxOn: boolean;

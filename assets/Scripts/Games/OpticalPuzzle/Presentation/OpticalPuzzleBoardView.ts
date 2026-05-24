@@ -16,7 +16,7 @@ export class OpticalPuzzleBoardView extends Component {
     private _graphics: Graphics | null = null;
 
     protected onLoad(): void {
-        this._graphics = this.getComponent(Graphics) ?? this.addComponent(Graphics);
+        this._ensureGraphics();
         let ut = this.getComponent(UITransform);
         if (!ut) {
             ut = this.addComponent(UITransform);
@@ -24,8 +24,16 @@ export class OpticalPuzzleBoardView extends Component {
         }
     }
 
+    /** 父节点 onLoad 可能早于本组件，绘制前须保证 Graphics 已存在 */
+    private _ensureGraphics(): Graphics | null {
+        if (!this._graphics?.isValid) {
+            this._graphics = this.getComponent(Graphics) ?? this.addComponent(Graphics);
+        }
+        return this._graphics;
+    }
+
     render(snapshot: OpticalBoardSnapshot): void {
-        const g = this._graphics;
+        const g = this._ensureGraphics();
         if (!g) {
             return;
         }
