@@ -1,4 +1,6 @@
 /** 网格四向，与文档一致：0 右 1 上 2 左 3 下（可按实现统一调整，全项目一致即可） */
+import type { PieceConnectivity } from './OpticalPieceConnectivity';
+
 export enum Direction {
     Right = 0,
     Up = 1,
@@ -35,7 +37,32 @@ export enum ColorMode {
     FilterBlue = 'filterBlue',
 }
 
-/** Application / Presentation 使用的只读棋盘快照（后续扩展 pieces、光路等） */
+/** 光源格（与关卡 sources 顺序一致） */
+export interface OpticalSourceSnapshot {
+    x: number;
+    y: number;
+    colorKey: string;
+    direction: Direction;
+}
+
+/** 目标格点亮状态（与关卡 targets 顺序一致） */
+export interface OpticalTargetSnapshot {
+    x: number;
+    y: number;
+    colorKey: string;
+    lit: boolean;
+}
+
+/** 光学元件（通道 0～4 + 朝向 + 层 3 颜色，用于棋盘绘制） */
+export interface OpticalPieceSnapshot {
+    x: number;
+    y: number;
+    connectivity: PieceConnectivity;
+    direction: Direction;
+    colorKey: string;
+}
+
+/** Application / Presentation 使用的只读棋盘快照 */
 export interface OpticalBoardSnapshot {
     levelId: number;
     levelName: string;
@@ -43,11 +70,18 @@ export interface OpticalBoardSnapshot {
     height: number;
     terrain: TerrainKind[];
     player: { x: number; y: number };
+    sources: OpticalSourceSnapshot[];
+    targets: OpticalTargetSnapshot[];
+    pieces: OpticalPieceSnapshot[];
+    /** 全部目标已按对应颜色点亮 */
+    allTargetsLit: boolean;
 }
 
 export enum MoveAttemptResult {
-    /** 主角发生位移（含成功推动时主角仍是一步） */
+    /** 主角走入空地 */
     PlayerMoved = 'player_moved',
-    /** 被墙、边界或当前规则下的阻挡挡住 */
+    /** 主角推动一块光学元件成功（仅推动一格，不可推两格连体） */
+    PiecePushed = 'piece_pushed',
+    /** 被墙、边界、光源/目标格或推不动挡住 */
     Blocked = 'blocked',
 }

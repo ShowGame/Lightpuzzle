@@ -1,13 +1,14 @@
 import { DEV_LEVEL_MINIMAL, type IOpticalLevelConfig } from '../Config/OpticalPuzzleLevelSchema';
-import { OpticalPuzzleCore } from '../Core/OpticalPuzzleCore';
+import { OpticalPuzzleCore, type OpticalPlayStateSnapshot } from '../Core/OpticalPuzzleCore';
+import type { OpticalBeamSnapshot } from '../Core/OpticalPuzzleCore';
 import { Direction, MoveAttemptResult, type OpticalBoardSnapshot } from '../Core/OpticalPuzzleTypes';
+import { AUDIO_EFFECT_ENUM, EVENT_ENUM } from '../../../Utils/Enum';
+import { PLAY_AUDIO } from '../../../Utils/Event';
 import { OpticalGameFlowState } from './OpticalPuzzleStateMachine';
 
 const UNDO_BATCH = 5;
 
-export type OpticalSessionNotifyReason = 'load' | 'move' | 'undo' | 'reset';
-
-type HistoryEntry = ReturnType<OpticalPuzzleCore['cloneDeepTerrainAndPlayer']>;
+export type OpticalSessionNotifyReason = 'load' | 'move' | 'push' | 'undo' | 'reset' | 'complete';
 
 /**
  * 关卡会话：加载配置、维护历史栈、撤回 5 步、重置。
@@ -17,7 +18,7 @@ export class OpticalPuzzleSession {
     readonly core = new OpticalPuzzleCore();
 
     private _level: IOpticalLevelConfig | null = null;
-    private _history: HistoryEntry[] = [];
+    private _history: OpticalPlayStateSnapshot[] = [];
     private _flow: OpticalGameFlowState = OpticalGameFlowState.BOOT;
 
     /** Presentation 订阅；参数用于区分移动 / 撤回 / 重置等（音效与埋点） */
@@ -45,15 +46,33 @@ export class OpticalPuzzleSession {
         return this.core.getSnapshot();
     }
 
+    getBeamSnapshot(): OpticalBeamSnapshot {
+        return this.core.getBeamSnapshot();
+    }
+
     /** 四向按钮入口 */
     applyDirection(dir: Direction): void {
         if (this._flow !== OpticalGameFlowState.RUNNING) {
             return;
         }
         const r = this.core.tryMove(dir);
-        if (r === MoveAttemptResult.PlayerMoved) {
+        if (r === MoveAttemptResult.Blocked) {
+            if (this.core.hasPieceAhead(dir)) {
+                PLAY_AUDIO.emit(EVENT_ENUM.PLAY_AUDIO, AUDIO_EFFECT_ENUM.OPTICAL_PIECE_PUSH_FAIL);
+            }
+            return;
+        }
+        if (r === MoveAttemptResult.PlayerMoved || r === MoveAttemptResult.PiecePushed) {
             this._pushHistory();
-            this._emit('move');
+            if (this.core.isAllTargetsLit()) {
+                this._flow = OpticalGameFlowState.SETTLEMENT;
+                this._emit('complete');
+            } else if (r === MoveAttemptResult.PiecePushed) {
+                PLAY_AUDIO.emit(EVENT_ENUM.PLAY_AUDIO, AUDIO_EFFECT_ENUM.OPTICAL_PIECE_PUSH_SUCCESS);
+                this._emit('push');
+            } else {
+                this._emit('move');
+            }
         }
     }
 
@@ -67,7 +86,7 @@ export class OpticalPuzzleSession {
             this._history.pop();
         }
         const snap = this._history[this._history.length - 1];
-        this.core.restoreTerrainAndPlayer(snap);
+        this.core.restorePlayState(snap);
         this._emit('undo');
     }
 
@@ -83,7 +102,7 @@ export class OpticalPuzzleSession {
     }
 
     private _pushHistory(): void {
-        this._history.push(this.core.cloneDeepTerrainAndPlayer());
+        this._history.push(this.core.clonePlayState());
     }
 
     private _emit(reason: OpticalSessionNotifyReason): void {

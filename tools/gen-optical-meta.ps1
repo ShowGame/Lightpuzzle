@@ -23,7 +23,14 @@ $tsFiles = @(
   (Join-Path $root 'Manager\GameManager.ts'),
   (Join-Path $root 'Manager\MenuManager.ts'),
   (Join-Path $root 'Manager\GameUIManager.ts'),
+  (Join-Path $root 'Manager\ToastManager.ts'),
+  (Join-Path $root 'MenuOverlayWindow.ts'),
   (Join-Path $op 'Core\OpticalPuzzleTypes.ts'),
+  (Join-Path $op 'Core\OpticalLightColor.ts'),
+  (Join-Path $op 'Core\OpticalBeamTracer.ts'),
+  (Join-Path $op 'Core\OpticalPieceConnectivity.ts'),
+  (Join-Path $op 'Core\OpticalColorMix.ts'),
+  (Join-Path $op 'Core\OpticalMirrorReflection.ts'),
   (Join-Path $op 'Core\OpticalPuzzleCore.ts'),
   (Join-Path $op 'Application\OpticalPuzzleSession.ts'),
   (Join-Path $op 'Application\OpticalPuzzleStateMachine.ts'),
@@ -31,6 +38,9 @@ $tsFiles = @(
   (Join-Path $op 'Config\OpticalPuzzleLevels.ts'),
   (Join-Path $op 'Presentation\OpticalPuzzleRoot.ts'),
   (Join-Path $op 'Presentation\OpticalPuzzleBoardView.ts'),
+  (Join-Path $op 'Presentation\OpticalPuzzleBeamView.ts'),
+  (Join-Path $op 'Presentation\OpticalPuzzlePieceGlyph.ts'),
+  (Join-Path $op 'Presentation\OpticalPuzzleColorUtil.ts'),
   (Join-Path $op 'Presentation\OpticalPuzzleInputHud.ts')
 )
 $dirMeta = @'
@@ -55,14 +65,20 @@ $tsMeta = @'
   "userData": {}
 }
 '@
-foreach ($d in $dirs) {
+function Ensure-Meta($path, $template) {
+  if (Test-Path $path) {
+    return
+  }
   $u = [guid]::NewGuid().ToString()
-  $p = Join-Path $d '.meta'
-  $dirMeta.Replace('__UUID__', $u) | Set-Content -Path $p -Encoding UTF8
+  $content = $template.Replace('__UUID__', $u)
+  $utf8NoBom = New-Object System.Text.UTF8Encoding $false
+  [System.IO.File]::WriteAllText($path, $content, $utf8NoBom)
+  Write-Host "created $path"
+}
+foreach ($d in $dirs) {
+  Ensure-Meta (Join-Path $d '.meta') $dirMeta
 }
 foreach ($f in $tsFiles) {
-  $u = [guid]::NewGuid().ToString()
-  $p = $f + '.meta'
-  $tsMeta.Replace('__UUID__', $u) | Set-Content -Path $p -Encoding UTF8
+  Ensure-Meta ($f + '.meta') $tsMeta
 }
-Write-Host 'meta ok'
+Write-Host 'meta ok (existing .meta preserved)'

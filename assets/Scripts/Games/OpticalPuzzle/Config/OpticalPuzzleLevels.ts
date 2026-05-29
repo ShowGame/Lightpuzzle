@@ -4,6 +4,7 @@ import { parseLayeredGridsToLevelConfig } from './OpticalPuzzleLevelSchema';
 /**
  * 关卡源数据：每关须完整配置四层同尺寸网格（`staticLayout` / `objects` / `colors` / `directions`）。
  * 含义见 `OpticalPuzzleLevelSchema.ts`；层 3/4 仅在光源、目标、元件处标注，其余为 `.`。
+ * 元件：层 2 写数字 `0`～`4`（通道类型）；层 4 `w/a/s/d` 旋转朝向。
  */
 export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
     {
@@ -67,7 +68,7 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         objects: [
             '#########',
             '#S.@...E#',
-            '#.......#',
+            '#..1.1..#',
             '#...#...#',
             '#..###..#',
             '#...#...#',
@@ -78,7 +79,7 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         colors: [
             '#########',
             '#W.....W#',
-            '#.......#',
+            '#..W.W..#',
             '#...#...#',
             '#..###..#',
             '#...#...#',
@@ -89,7 +90,7 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         directions: [
             '#########',
             '#s......#',
-            '#.......#',
+            '#..d.w..#',
             '#...#...#',
             '#..###..#',
             '#...#...#',
@@ -115,8 +116,8 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         objects: [
             '###########',
             '#S..@....E#',
-            '#..#...#..#',
-            '#.........#',
+            '#..#.1.#..#',
+            '#....1....#',
             '#....#...##',
             '#.........#',
             '###########',
@@ -124,8 +125,8 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         colors: [
             '###########',
             '#W.......W#',
-            '#..#...#..#',
-            '#.........#',
+            '#..#.W.#..#',
+            '#....W....#',
             '#....#...##',
             '#.........#',
             '###########',
@@ -133,8 +134,8 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         directions: [
             '###########',
             '#s........#',
-            '#..#...#..#',
-            '#.........#',
+            '#..#.w.#..#',
+            '#....a....#',
             '#....#...##',
             '#.........#',
             '###########',

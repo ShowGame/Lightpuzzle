@@ -1,4 +1,6 @@
 import type { ColorMode, Direction } from '../Core/OpticalPuzzleTypes';
+import type { PieceConnectivity } from '../Core/OpticalPieceConnectivity';
+import { parseConnectivityChar } from '../Core/OpticalPieceConnectivity';
 import { ColorMode as ColorModeEnum, Direction as DirEnum, PieceType, TerrainKind } from '../Core/OpticalPuzzleTypes';
 
 export interface IOpticalLightSource {
@@ -16,10 +18,14 @@ export interface IOpticalTarget {
 
 export interface IOpticalPiece {
     id: string;
+    /** 统一通道类型 0～4（旧 `type` 字段保留兼容，新逻辑以本字段为准） */
+    connectivity: PieceConnectivity;
     type: string;
     colorMode: ColorMode;
     x: number;
     y: number;
+    /** 层 4 朝向：w 默认，d/s/a 为相对默认右转 90°×1/2/3（`.` 同 w） */
+    direction: Direction;
     portalGroup?: string;
 }
 
@@ -35,9 +41,21 @@ export interface IOpticalPiece {
  * - `@` 玩家出生（全关唯一）
  * - `S` 光源（颜色见层 3，朝向见层 4）
  * - `E` 目标（期望颜色见层 3，层 4 一般为 `.`）
- * - 元件类型（每格仅几何类型，颜色在层 3）：`o` glass，`-` glass-h，`|` glass-v，
- *   `/` mirror-slash，`\\` mirror-backslash，`T` splitter-t，`+` splitter-cross，
- *   `{` portal-a，`}` portal-b
+ * - 元件通道（层 2 推荐数字 `0`～`4`，层 4 `w/a/s/d` 旋转；`.` 同 `w`）：
+ *
+ *   默认朝向通道图（`○` 为格心留空光路，线为有开口的通道臂）：
+ *
+ *   0 挡光        1 上+右         2 上+下         3 上+左+右       4 四面
+ *   ┌───┐         ┌───┐           ┌───┐           ┌───┐           ┌───┐
+ *   │███│         │  │           │  │           │  │ │         │  │  │
+ *   │███│         │  ○─│           │  ○  │           │ ─○─ │         │  ○  │
+ *   │███│         │    │           │  │  │           │  │ │         │  │  │
+ *   └───┘         └───┘           └───┘           └───┘           └───┘
+ *
+ *   传播约定：向下传播 = 从上方进入（见 `propagationToEntrySide`）。
+ *   混色：见 `OpticalColorMix.ts`（红绿蓝白 + 黄青紫二次色）。
+ *
+ *   旧字符兼容：`/`→1，`|`→2，`T`→3，`+`→4，`o`→4，`-`→2（默认 `d` 横向）。
  *
  * ── 层 3 `colors`（光色 RGBW，仅标注有物件的格子）──
  * - `#` 墙；无物件的地板 / 玩家格为 `.`（不要整图铺 `W`）
@@ -46,7 +64,7 @@ export interface IOpticalPiece {
  *
  * ── 层 4 `directions`（朝向，仅标注需要朝向的物件）──
  * - `#` 墙；无物件 / 玩家 / 目标为 `.`
- * - `S`、定向元件等写 `w` `a` `s` `d`；未写 `.` 时解析默认（如光源朝下）
+ * - 光源 `S`：`.` 默认朝下；定向元件与 `/` 镜：`w` 默认朝向，`.` 同 `w`，`d`/`s`/`a` 为相对默认旋转 90°/180°/270°
  */
 export interface IOpticalLevelLayeredData {
     height: number;
@@ -75,13 +93,22 @@ export interface IOpticalLevelConfig {
     targets: IOpticalTarget[];
 }
 
-/** 层 2：几何类型 → PieceType（颜色由层 3 决定） */
+/** 旧层 2 字符 → 通道类型（`-` 须在层 4 写 `d` 表横向） */
+const LEGACY_OBJ_CONNECTIVITY: Readonly<Record<string, PieceConnectivity>> = {
+    '/': 1,
+    '|': 2,
+    '-': 2,
+    o: 4,
+    T: 3,
+    '+': 4,
+};
+
+/** 层 2：几何类型 → PieceType（遗留；新关卡请用数字 0～4） */
 const OBJECT_PIECE_CHAR: Readonly<Record<string, PieceType>> = {
     o: PieceType.Glass,
     '-': PieceType.GlassH,
     '|': PieceType.GlassV,
     '/': PieceType.MirrorSlash,
-    '\\': PieceType.MirrorBackslash,
     T: PieceType.SplitterT,
     '+': PieceType.SplitterCross,
 };
@@ -117,7 +144,22 @@ function objectUsesDirection(obj: string): boolean {
     if (obj === 'S') {
         return true;
     }
-    return obj === '-' || obj === '|' || obj === 'T' || obj === '+';
+    if (parseConnectivityChar(obj) !== null) {
+        return obj !== '0';
+    }
+    return obj === '/' || obj === '-' || obj === '|' || obj === 'T' || obj === '+';
+}
+
+/** 元件层 4：`.` 与 `w` 同为默认朝向（Up） */
+function parsePieceRotation(ch: string, levelId: number, x: number, y: number): DirEnum {
+    return parseDirectionCell(ch, levelId, x, y, DirEnum.Up);
+}
+
+/**
+ * `/` 镜基件 + 旋转 → 通道 1（遗留解析；新关直接写数字 `1`）。
+ */
+function legacyMirrorConnectivity(_rot: DirEnum): PieceConnectivity {
+    return 1;
 }
 
 /**
@@ -153,12 +195,14 @@ export function overlayLayersFromObjects(objects: readonly string[]): {
             if (obj === '#') {
                 c += '#';
                 d += '#';
-            } else if (obj === 'S' || obj === 'E' || OBJECT_PIECE_CHAR[obj]) {
+            } else if (obj === 'S' || obj === 'E' || parseConnectivityChar(obj) !== null || OBJECT_PIECE_CHAR[obj] || obj === '/') {
                 c += 'W';
                 if (obj === 'S') {
                     d += 's';
-                } else if (objectUsesDirection(obj)) {
-                    d += 's';
+                } else if (obj === '-') {
+                    d += 'd';
+                } else if (obj === '/' || parseConnectivityChar(obj) !== null || objectUsesDirection(obj)) {
+                    d += 'w';
                 } else {
                     d += '.';
                 }
@@ -306,19 +350,23 @@ export function parseLayeredGridsToLevelConfig(src: IOpticalLevelLayeredSource):
     let pieceSeq = 0;
 
     const pushPiece = (
+        connectivity: PieceConnectivity,
         pieceType: PieceType,
         colorMode: ColorModeEnum,
         x: number,
         y: number,
+        pieceDirection: DirEnum,
         portalGroup?: string,
     ): void => {
         terrain.push(TerrainKind.Floor);
         pieces.push({
             id: `piece_${levelId}_${pieceSeq++}`,
+            connectivity,
             type: pieceType,
             colorMode,
             x,
             y,
+            direction: pieceDirection,
             portalGroup,
         });
     };
@@ -409,13 +457,14 @@ export function parseLayeredGridsToLevelConfig(src: IOpticalLevelLayeredSource):
                     const g = portalGroupSeq++;
                     portalStack.push(g);
                     pushPiece(
+                        0,
                         PieceType.PortalA,
                         parseColorCell(col, levelId, x, y),
                         x,
                         y,
+                        parsePieceRotation(dir, levelId, x, y),
                         String(g),
                     );
-                    parseDirectionCell(dir, levelId, x, y, DirEnum.Down);
                     break;
                 }
                 case '}': {
@@ -424,25 +473,63 @@ export function parseLayeredGridsToLevelConfig(src: IOpticalLevelLayeredSource):
                     }
                     const g = portalStack.pop()!;
                     pushPiece(
+                        0,
                         PieceType.PortalB,
                         parseColorCell(col, levelId, x, y),
                         x,
                         y,
+                        parsePieceRotation(dir, levelId, x, y),
                         String(g),
                     );
-                    parseDirectionCell(dir, levelId, x, y, DirEnum.Down);
+                    break;
+                }
+                case '/': {
+                    const rot = parsePieceRotation(dir, levelId, x, y);
+                    pushPiece(
+                        legacyMirrorConnectivity(rot),
+                        PieceType.Glass,
+                        parseColorCell(col, levelId, x, y),
+                        x,
+                        y,
+                        rot,
+                    );
                     break;
                 }
                 default: {
-                    const pieceType = OBJECT_PIECE_CHAR[obj];
-                    if (pieceType) {
+                    const connDigit = parseConnectivityChar(obj);
+                    if (connDigit !== null) {
+                        if (connDigit === 0 && !isEmptyChar(dir)) {
+                            throw new Error(
+                                `[parseLayeredGrids] id=${levelId}: 挡光元件 0（${x},${y}）层4 应为 .`,
+                            );
+                        }
                         pushPiece(
+                            connDigit,
+                            PieceType.Glass,
+                            parseColorCell(col, levelId, x, y),
+                            x,
+                            y,
+                            connDigit === 0
+                                ? DirEnum.Up
+                                : parsePieceRotation(dir, levelId, x, y),
+                        );
+                        break;
+                    }
+                    const legacyConn = LEGACY_OBJ_CONNECTIVITY[obj];
+                    const pieceType = OBJECT_PIECE_CHAR[obj];
+                    if (legacyConn !== undefined && pieceType) {
+                        const rot =
+                            obj === '-'
+                                ? parseDirectionCell(dir, levelId, x, y, DirEnum.Right)
+                                : parsePieceRotation(dir, levelId, x, y);
+                        pushPiece(
+                            legacyConn,
                             pieceType,
                             parseColorCell(col, levelId, x, y),
                             x,
                             y,
+                            rot,
                         );
-                        parseDirectionCell(dir, levelId, x, y, DirEnum.Down);
                         break;
                     }
                     throw new Error(
