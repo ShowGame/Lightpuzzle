@@ -1,23 +1,30 @@
-/** 光色键（与关卡层 3 RGBW 解析的 colorKey 一致） */
+/** 光色键：基础四色 + 混色二次色（层 3 `Y`/`C`/`P` 或混色输出） */
 export type LightColorKey = 'white' | 'red' | 'green' | 'blue';
+
+export type BeamColorKey = LightColorKey | 'yellow' | 'cyan' | 'purple';
 
 import type { ColorMode } from './OpticalPuzzleTypes';
 import { ColorMode as ColorModeEnum } from './OpticalPuzzleTypes';
 
-const VALID_KEYS: ReadonlySet<string> = new Set(['white', 'red', 'green', 'blue']);
+const BASE_KEYS: ReadonlySet<string> = new Set(['white', 'red', 'green', 'blue']);
 const MIXED_KEYS: ReadonlySet<string> = new Set(['yellow', 'cyan', 'purple']);
 
+export function isBeamColorKey(key: string): key is BeamColorKey {
+    return BASE_KEYS.has(key) || MIXED_KEYS.has(key);
+}
+
+/** 基础四色（元件层 3 等）；未知回落为 white */
 export function normalizeLightColorKey(key?: string): LightColorKey {
-    if (key && VALID_KEYS.has(key)) {
+    if (key && BASE_KEYS.has(key)) {
         return key as LightColorKey;
     }
     return 'white';
 }
 
-/** 光追用色键：保留黄/青/紫等混色结果，未知则回落为白 */
-export function resolveBeamColorKey(key?: string): string {
-    if (key && (VALID_KEYS.has(key) || MIXED_KEYS.has(key))) {
-        return key;
+/** 光追 / S/E 用色键：保留黄/青/紫，未知则回落为 white */
+export function resolveBeamColorKey(key?: string): BeamColorKey {
+    if (key && isBeamColorKey(key)) {
+        return key as BeamColorKey;
     }
     return 'white';
 }

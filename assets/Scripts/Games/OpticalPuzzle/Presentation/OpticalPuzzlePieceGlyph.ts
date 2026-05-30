@@ -6,11 +6,39 @@ import {
 import { Direction } from '../Core/OpticalPuzzleTypes';
 import { pieceChannelColors } from './OpticalPuzzleColorUtil';
 
-const ARM_WIDTH = 5;
-const HOLE_RATIO = 0.34;
+const ARM_WIDTH_RATIO = 0.14;
+const HOLE_RATIO = 0.3;
+const ARM_INSET = 3;
 
-const SCREEN_DX: ReadonlyArray<number> = [1, 0, -1, 0];
-const SCREEN_DY: ReadonlyArray<number> = [0, 1, 0, -1];
+const SCREEN_DIR_DX: ReadonlyArray<number> = [1, 0, -1, 0];
+const SCREEN_DIR_DY: ReadonlyArray<number> = [0, 1, 0, -1];
+
+function drawThickArm(
+    g: Graphics,
+    cx: number,
+    cy: number,
+    dir: Direction,
+    holeR: number,
+    armLen: number,
+    halfW: number,
+): void {
+    const dx = SCREEN_DIR_DX[dir];
+    const dy = SCREEN_DIR_DY[dir];
+    const px = -dy * halfW;
+    const py = dx * halfW;
+    const x0 = cx + dx * holeR;
+    const y0 = cy + dy * holeR;
+    const x1 = cx + dx * (holeR + armLen);
+    const y1 = cy + dy * (holeR + armLen);
+
+    g.moveTo(x0 + px, y0 + py);
+    g.lineTo(x1 + px, y1 + py);
+    g.lineTo(x1 - px, y1 - py);
+    g.lineTo(x0 - px, y0 - py);
+    g.close();
+    g.fill();
+    g.stroke();
+}
 
 /**
  * 绘制统一通道元件占位：格心留空（后期换图），开口方向画直角通道臂。
@@ -28,8 +56,9 @@ export function drawConnectivityGlyph(
     const cx = left + size * 0.5;
     const cy = top - size * 0.5;
     const holeR = size * HOLE_RATIO * 0.5;
-    const armLen = size * 0.5 - holeR - 4;
-    const inset = 4;
+    const armLen = size * 0.5 - holeR - ARM_INSET;
+    const halfW = size * ARM_WIDTH_RATIO * 0.5;
+    const inset = ARM_INSET;
 
     if (connectivity === 0) {
         g.fillColor = new Color(48, 52, 64, 255);
@@ -43,22 +72,19 @@ export function drawConnectivityGlyph(
     }
 
     const channelColors = pieceChannelColors(colorKey);
-    g.strokeColor = channelColors.stroke;
-    g.lineWidth = ARM_WIDTH;
     g.fillColor = channelColors.fill;
+    g.strokeColor = channelColors.stroke;
+    g.lineWidth = 2;
 
     const dirs = openDirectionsForPiece(connectivity, pieceDirection);
     for (const d of dirs) {
-        const sx = cx + SCREEN_DX[d] * holeR;
-        const sy = cy + SCREEN_DY[d] * holeR;
-        const ex = cx + SCREEN_DX[d] * (holeR + armLen);
-        const ey = cy + SCREEN_DY[d] * (holeR + armLen);
-        g.moveTo(sx, sy);
-        g.lineTo(ex, ey);
-        g.stroke();
+        drawThickArm(g, cx, cy, d, holeR, armLen, halfW);
     }
 
-    g.strokeColor = new Color(28, 32, 42, 200);
+    g.fillColor = channelColors.stroke;
+    g.circle(cx, cy, holeR);
+    g.fill();
+    g.strokeColor = channelColors.stroke;
     g.lineWidth = 2;
     g.circle(cx, cy, holeR);
     g.stroke();

@@ -57,9 +57,10 @@ export interface IOpticalPiece {
  *
  *   旧字符兼容：`/`→1，`|`→2，`T`→3，`+`→4，`o`→4，`-`→2（默认 `d` 横向）。
  *
- * ── 层 3 `colors`（光色 RGBW，仅标注有物件的格子）──
+ * ── 层 3 `colors`（光色，仅标注有物件的格子）──
  * - `#` 墙；无物件的地板 / 玩家格为 `.`（不要整图铺 `W`）
- * - 层 2 为 `S` / `E` / 光学元件时写 `W`/`R`/`G`/`B`；该格写 `.` 表示默认 `W`
+ * - `S` / `E`：`W`/`R`/`G`/`B`/`Y`/`C`/`P`（白/红/绿/蓝/黄/青/紫）；`.` 表示默认 `W`
+ * - 光学元件：仅 `W`/`R`/`G`/`B`（`.` 同 `W`）
  * - 关卡数据须四层齐全；`overlayLayersFromObjects` 仅作编辑辅助，不替代正式配置
  *
  * ── 层 4 `directions`（朝向，仅标注需要朝向的物件）──
@@ -120,8 +121,11 @@ const DIR_CHAR: Readonly<Record<string, DirEnum>> = {
     s: DirEnum.Down,
 };
 
-/** 层 3 光色字符（RGBW；`W` 为默认白光） */
-export type Layer3ColorChar = 'W' | 'R' | 'G' | 'B';
+/** 层 3 光学元件光色（RGBW；`.` 为默认 `W`） */
+export type Layer3PieceColorChar = 'W' | 'R' | 'G' | 'B';
+
+/** 层 3 光源/目标光色（含二次色 Y/C/P） */
+export type Layer3SourceTargetColorChar = Layer3PieceColorChar | 'Y' | 'C' | 'P';
 
 /**
  * 由静态层生成层 3/4 全占位（墙 `#`，其余 `.`）。仅适合无 objects 信息时；有关卡物件请用 `overlayLayersFromObjects`。
@@ -231,14 +235,24 @@ function assertLayer3Padding(
     }
 }
 
-/** 解析层 3 光色（仅用于 S / E / 光学元件）；`.` 表示默认 `W` */
-function resolveLayer3Color(
+function normalizeLayer3ColorChar(ch: string): string {
+    if (ch === 'w') {
+        return 'W';
+    }
+    if (ch.length === 1 && ch >= 'a' && ch <= 'z') {
+        return ch.toUpperCase();
+    }
+    return ch;
+}
+
+/** 解析层 3 元件色（仅 W/R/G/B） */
+function resolveLayer3PieceColor(
     ch: string,
     levelId: number,
     x: number,
     y: number,
-): Layer3ColorChar {
-    const upper = ch === 'w' ? 'W' : ch;
+): Layer3PieceColorChar {
+    const upper = normalizeLayer3ColorChar(ch);
     if (isEmptyChar(ch) || upper === 'W') {
         return 'W';
     }
@@ -246,11 +260,30 @@ function resolveLayer3Color(
         return upper;
     }
     throw new Error(
-        `[parseLayeredGrids] id=${levelId}: 层3（${x},${y}）须为 W/R/G/B 或 .，当前 '${ch}'`,
+        `[parseLayeredGrids] id=${levelId}: 元件层3（${x},${y}）须为 W/R/G/B 或 .，当前 '${ch}'`,
     );
 }
 
-function layer3ToColorMode(c: Layer3ColorChar): ColorModeEnum {
+/** 解析层 3 光源/目标色（W/R/G/B/Y/C/P） */
+function resolveLayer3SourceTargetColor(
+    ch: string,
+    levelId: number,
+    x: number,
+    y: number,
+): Layer3SourceTargetColorChar {
+    const upper = normalizeLayer3ColorChar(ch);
+    if (isEmptyChar(ch) || upper === 'W') {
+        return 'W';
+    }
+    if (upper === 'R' || upper === 'G' || upper === 'B' || upper === 'Y' || upper === 'C' || upper === 'P') {
+        return upper;
+    }
+    throw new Error(
+        `[parseLayeredGrids] id=${levelId}: 光源/目标层3（${x},${y}）须为 W/R/G/B/Y/C/P 或 .，当前 '${ch}'`,
+    );
+}
+
+function layer3ToColorMode(c: Layer3PieceColorChar): ColorModeEnum {
     switch (c) {
         case 'W':
             return ColorModeEnum.Through;
@@ -263,7 +296,7 @@ function layer3ToColorMode(c: Layer3ColorChar): ColorModeEnum {
     }
 }
 
-function layer3ToColorKey(c: Layer3ColorChar): string {
+function layer3ToColorKey(c: Layer3SourceTargetColorChar): string {
     switch (c) {
         case 'W':
             return 'white';
@@ -273,15 +306,21 @@ function layer3ToColorKey(c: Layer3ColorChar): string {
             return 'green';
         case 'B':
             return 'blue';
+        case 'Y':
+            return 'yellow';
+        case 'C':
+            return 'cyan';
+        case 'P':
+            return 'purple';
     }
 }
 
 function parseColorCell(ch: string, levelId: number, x: number, y: number): ColorModeEnum {
-    return layer3ToColorMode(resolveLayer3Color(ch, levelId, x, y));
+    return layer3ToColorMode(resolveLayer3PieceColor(ch, levelId, x, y));
 }
 
 function parseColorKey(ch: string, levelId: number, x: number, y: number): string {
-    return layer3ToColorKey(resolveLayer3Color(ch, levelId, x, y));
+    return layer3ToColorKey(resolveLayer3SourceTargetColor(ch, levelId, x, y));
 }
 
 function parseDirectionCell(

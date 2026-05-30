@@ -124,9 +124,9 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         ],
         colors: [
             '###########',
-            '#W.......W#',
-            '#..#.W.#..#',
-            '#....W....#',
+            '#W.......P#',
+            '#..#.R.#..#',
+            '#....B....#',
             '#....#...##',
             '#.........#',
             '###########',
@@ -134,7 +134,7 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         directions: [
             '###########',
             '#s........#',
-            '#..#.w.#..#',
+            '#..#.s.#..#',
             '#....a....#',
             '#....#...##',
             '#.........#',

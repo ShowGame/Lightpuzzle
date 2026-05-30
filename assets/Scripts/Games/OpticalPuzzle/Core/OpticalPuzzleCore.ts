@@ -4,7 +4,7 @@ import type {
     IOpticalPiece,
     IOpticalTarget,
 } from '../Config/OpticalPuzzleLevelSchema';
-import { normalizeLightColorKey, colorModeToKey } from './OpticalLightColor';
+import { colorModeToKey, resolveBeamColorKey } from './OpticalLightColor';
 import {
     type OpticalBeamSegment,
     type OpticalBeamTraceInput,
@@ -197,7 +197,7 @@ export class OpticalPuzzleCore {
         return this._sources.map((s) => ({
             x: s.x,
             y: s.y,
-            colorKey: normalizeLightColorKey(s.colorKey),
+            colorKey: resolveBeamColorKey(s.colorKey),
             direction: s.direction,
         }));
     }
@@ -216,7 +216,7 @@ export class OpticalPuzzleCore {
         return this._targets.map((t, i) => ({
             x: t.x,
             y: t.y,
-            colorKey: normalizeLightColorKey(t.colorKey),
+            colorKey: resolveBeamColorKey(t.colorKey),
             lit: this._targetLit[i] ?? false,
         }));
     }

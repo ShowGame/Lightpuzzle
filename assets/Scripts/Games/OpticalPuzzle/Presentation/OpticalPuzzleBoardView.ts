@@ -3,6 +3,7 @@ import {
     Color,
     Component,
     Graphics,
+    Node,
     UITransform,
 } from 'cc';
 import type { OpticalBoardSnapshot } from '../Core/OpticalPuzzleTypes';
@@ -16,10 +17,13 @@ import { drawConnectivityGlyph } from './OpticalPuzzlePieceGlyph';
 
 const { ccclass } = _decorator;
 
-/** 棋盘占位绘制：墙/地板/光源/目标/通道元件/主角（后续换 Sprite） */
+const CELL = 56;
+
+/** 棋盘占位绘制：墙/地板/光源/目标/主角；元件在光路之上单独层绘制 */
 @ccclass('OpticalPuzzleBoardView')
 export class OpticalPuzzleBoardView extends Component {
     private _graphics: Graphics | null = null;
+    private _pieceGraphics: Graphics | null = null;
 
     protected onLoad(): void {
         this._ensureGraphics();
@@ -37,15 +41,72 @@ export class OpticalPuzzleBoardView extends Component {
         return this._graphics;
     }
 
+    /** 光路层之上的元件层（避免窄光线完全盖住元件本色） */
+    private _ensurePieceGraphics(): Graphics | null {
+        if (this._pieceGraphics?.isValid) {
+            return this._pieceGraphics;
+        }
+        const root = this.node.parent ?? this.node;
+        let layer = root.getChildByName('PieceLayer');
+        if (!layer) {
+            layer = new Node('PieceLayer');
+            root.addChild(layer);
+            const ut = layer.addComponent(UITransform);
+            const boardUt = this.node.getComponent(UITransform);
+            if (boardUt) {
+                ut.setContentSize(boardUt.contentSize);
+            } else {
+                ut.setContentSize(700, 700);
+            }
+            const beam = root.getChildByName('BeamLayer');
+            if (beam) {
+                layer.setSiblingIndex(beam.getSiblingIndex() + 1);
+            }
+        }
+        this._pieceGraphics = layer.getComponent(Graphics) ?? layer.addComponent(Graphics);
+        return this._pieceGraphics;
+    }
+
+    private _cellLayout(snapshot: OpticalBoardSnapshot): { cell: number; ox: number; oy: number } {
+        const cell = CELL;
+        return {
+            cell,
+            ox: (-snapshot.width * cell) / 2,
+            oy: (snapshot.height * cell) / 2,
+        };
+    }
+
+    /** 仅绘制元件（须在 BeamView.render 之后调用） */
+    renderPiecesOverlay(snapshot: OpticalBoardSnapshot): void {
+        const g = this._ensurePieceGraphics();
+        if (!g) {
+            return;
+        }
+        g.clear();
+        const { cell, ox, oy } = this._cellLayout(snapshot);
+        const inner = cell - 2;
+        for (const piece of snapshot.pieces) {
+            const left = ox + piece.x * cell + 1;
+            const top = oy - piece.y * cell - 1;
+            drawConnectivityGlyph(
+                g,
+                left,
+                top,
+                inner,
+                piece.connectivity,
+                piece.direction,
+                piece.colorKey,
+            );
+        }
+    }
+
     render(snapshot: OpticalBoardSnapshot): void {
         const g = this._ensureGraphics();
         if (!g) {
             return;
         }
         g.clear();
-        const cell = 56;
-        const ox = (-snapshot.width * cell) / 2;
-        const oy = (snapshot.height * cell) / 2;
+        const { cell, ox, oy } = this._cellLayout(snapshot);
 
         const sourceAt = new Map<string, string>();
         for (const s of snapshot.sources) {
@@ -74,21 +135,6 @@ export class OpticalPuzzleBoardView extends Component {
                 g.rect(ox + x * cell + 1, oy - (y + 1) * cell + 1, cell - 2, cell - 2);
                 g.fill();
             }
-        }
-
-        const inner = cell - 2;
-        for (const piece of snapshot.pieces) {
-            const left = ox + piece.x * cell + 1;
-            const top = oy - piece.y * cell - 1;
-            drawConnectivityGlyph(
-                g,
-                left,
-                top,
-                inner,
-                piece.connectivity,
-                piece.direction,
-                piece.colorKey,
-            );
         }
 
         const { x: px, y: py } = snapshot.player;
