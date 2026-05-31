@@ -1,4 +1,8 @@
 import type { IOpticalLightSource, IOpticalPiece, IOpticalTarget } from '../Config/OpticalPuzzleLevelSchema';
+import {
+    mergeOverlappingBeamSegments,
+    recomputeTargetLitFromSegments,
+} from './OpticalBeamOverlapMerge';
 import { mixLightColors } from './OpticalColorMix';
 import { colorModeToKey, lightMatchesTarget, resolveBeamColorKey } from './OpticalLightColor';
 import {
@@ -158,6 +162,18 @@ function traceOneSource(
             continue;
         }
 
+        if (terrain[cellIndex(w, cx, cy)] === TerrainKind.Source) {
+            pushSegment(
+                outSegments,
+                ax,
+                ay,
+                cx + 0.5 - DIR_DX[dir] * 0.5,
+                cy + 0.5 - DIR_DY[dir] * 0.5,
+                colorKey,
+            );
+            continue;
+        }
+
         const piece = pieceAt.get(cellIndex(w, cx, cy));
         if (!piece || piece.connectivity === 0) {
             if (piece) {
@@ -252,12 +268,15 @@ export function traceBeams(input: OpticalBeamTraceInput): OpticalBeamTraceResult
         targetAt.set(cellIndex(w, t.x, t.y), i);
     });
 
-    const targetLit = targets.map(() => false);
-    const segments: OpticalBeamSegment[] = [];
+    const rawSegments: OpticalBeamSegment[] = [];
+    const scratchTargetLit = targets.map(() => false);
 
     for (const src of sources) {
-        traceOneSource(src, input, pieceAt, targetAt, targetLit, segments);
+        traceOneSource(src, input, pieceAt, targetAt, scratchTargetLit, rawSegments);
     }
+
+    const segments = mergeOverlappingBeamSegments(rawSegments);
+    const targetLit = recomputeTargetLitFromSegments(segments, targets);
 
     return { segments, targetLit };
 }
