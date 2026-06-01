@@ -58,15 +58,14 @@ export function drawConnectivityGlyph(
     const holeR = size * HOLE_RATIO * 0.5;
     const armLen = size * 0.5 - holeR - ARM_INSET;
     const halfW = size * ARM_WIDTH_RATIO * 0.5;
-    const inset = ARM_INSET;
 
     if (connectivity === 0) {
         g.fillColor = new Color(48, 52, 64, 255);
-        g.rect(left + inset, top - size + inset, size - inset * 2, size - inset * 2);
+        g.rect(left, top - size, size, size);
         g.fill();
         g.strokeColor = new Color(90, 94, 108, 255);
         g.lineWidth = 2;
-        g.rect(left + inset, top - size + inset, size - inset * 2, size - inset * 2);
+        g.rect(left, top - size, size, size);
         g.stroke();
         return;
     }

@@ -26,7 +26,9 @@ const { ccclass } = _decorator;
 
 
 
-const CELL = 56;
+import { OPTICAL_CELL_SIZE } from './OpticalPuzzleLayout';
+
+const CELL = OPTICAL_CELL_SIZE;
 
 const EPS = 1e-3;
 

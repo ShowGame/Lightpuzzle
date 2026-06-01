@@ -14,10 +14,10 @@ import {
     targetLitFillColor,
 } from './OpticalPuzzleColorUtil';
 import { drawConnectivityGlyph } from './OpticalPuzzlePieceGlyph';
+import { FLOOR_FILL, OPTICAL_CELL_SIZE } from './OpticalPuzzleLayout';
+import { cellScreenRect, fillWallCell } from './OpticalPuzzleWallDraw';
 
 const { ccclass } = _decorator;
-
-const CELL = 56;
 
 /** 棋盘占位绘制：墙/地板/光源/目标/主角；元件在光路之上单独层绘制 */
 @ccclass('OpticalPuzzleBoardView')
@@ -68,7 +68,7 @@ export class OpticalPuzzleBoardView extends Component {
     }
 
     private _cellLayout(snapshot: OpticalBoardSnapshot): { cell: number; ox: number; oy: number } {
-        const cell = CELL;
+        const cell = OPTICAL_CELL_SIZE;
         return {
             cell,
             ox: (-snapshot.width * cell) / 2,
@@ -84,15 +84,14 @@ export class OpticalPuzzleBoardView extends Component {
         }
         g.clear();
         const { cell, ox, oy } = this._cellLayout(snapshot);
-        const inner = cell - 2;
         for (const piece of snapshot.pieces) {
-            const left = ox + piece.x * cell + 1;
-            const top = oy - piece.y * cell - 1;
+            const { left, bottom, size } = cellScreenRect(ox, oy, piece.x, piece.y, cell);
+            const top = bottom + size;
             drawConnectivityGlyph(
                 g,
                 left,
                 top,
-                inner,
+                size,
                 piece.connectivity,
                 piece.direction,
                 piece.colorKey,
@@ -120,26 +119,36 @@ export class OpticalPuzzleBoardView extends Component {
         for (let y = 0; y < snapshot.height; y++) {
             for (let x = 0; x < snapshot.width; x++) {
                 const t = snapshot.terrain[y * snapshot.width + x];
+                const { left, bottom, size } = cellScreenRect(ox, oy, x, y, cell);
+
                 if (t === TerrainKind.Wall) {
-                    g.fillColor = new Color(55, 58, 70, 255);
-                } else if (t === TerrainKind.Source) {
+                    fillWallCell(g, snapshot, x, y, left, bottom, size);
+                    continue;
+                }
+
+                if (t === TerrainKind.Source) {
                     g.fillColor = sourceFillColor(sourceAt.get(`${x},${y}`));
+                    g.rect(left, bottom, size, size);
+                    g.fill();
                 } else if (t === TerrainKind.Target) {
                     const tgt = targetAt.get(`${x},${y}`);
                     g.fillColor = tgt?.lit
                         ? targetLitFillColor(tgt.colorKey)
                         : targetDimFillColor(tgt?.colorKey);
-                } else {
-                    g.fillColor = new Color(32, 36, 48, 255);
+                    g.rect(left, bottom, size, size);
+                    g.fill();
+                } else if (FLOOR_FILL.a > 0) {
+                    g.fillColor = FLOOR_FILL;
+                    g.rect(left, bottom, size, size);
+                    g.fill();
                 }
-                g.rect(ox + x * cell + 1, oy - (y + 1) * cell + 1, cell - 2, cell - 2);
-                g.fill();
             }
         }
 
         const { x: px, y: py } = snapshot.player;
+        const playerRect = cellScreenRect(ox, oy, px, py, cell);
         g.fillColor = new Color(120, 210, 255, 255);
-        g.rect(ox + px * cell + 8, oy - (py + 1) * cell + 8, cell - 16, cell - 16);
+        g.rect(playerRect.left, playerRect.bottom, playerRect.size, playerRect.size);
         g.fill();
     }
 }

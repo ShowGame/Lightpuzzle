@@ -45,9 +45,9 @@ export interface IOpticalPiece {
  *
  *   默认朝向通道图（`○` 为格心留空光路，线为有开口的通道臂）：
  *
- *   0 挡光        1 上+右         2 上+下         3 上+左+右       4 四面
+ *   0 挡光（无通道；层 4 仍写 `w/a/s/d` 或 `.`，`.` 同 `w`，朝向不影响光路与占位绘制）
+ *                 1 上+右         2 上+下         3 上+左+右       4 四面
  *   ┌───┐         ┌───┐           ┌───┐           ┌───┐           ┌───┐
- *   │███│         │  │           │  │           │  │ │         │  │  │
  *   │███│         │  ○─│           │  ○  │           │ ─○─ │         │  ○  │
  *   │███│         │    │           │  │  │           │  │ │         │  │  │
  *   └───┘         └───┘           └───┘           └───┘           └───┘
@@ -149,7 +149,7 @@ function objectUsesDirection(obj: string): boolean {
         return true;
     }
     if (parseConnectivityChar(obj) !== null) {
-        return obj !== '0';
+        return true;
     }
     return obj === '/' || obj === '-' || obj === '|' || obj === 'T' || obj === '+';
 }
@@ -537,20 +537,13 @@ export function parseLayeredGridsToLevelConfig(src: IOpticalLevelLayeredSource):
                 default: {
                     const connDigit = parseConnectivityChar(obj);
                     if (connDigit !== null) {
-                        if (connDigit === 0 && !isEmptyChar(dir)) {
-                            throw new Error(
-                                `[parseLayeredGrids] id=${levelId}: 挡光元件 0（${x},${y}）层4 应为 .`,
-                            );
-                        }
                         pushPiece(
                             connDigit,
                             PieceType.Glass,
                             parseColorCell(col, levelId, x, y),
                             x,
                             y,
-                            connDigit === 0
-                                ? DirEnum.Up
-                                : parsePieceRotation(dir, levelId, x, y),
+                            parsePieceRotation(dir, levelId, x, y),
                         );
                         break;
                     }
