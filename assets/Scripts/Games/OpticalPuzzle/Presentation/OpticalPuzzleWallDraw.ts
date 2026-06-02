@@ -13,6 +13,7 @@ import {
     WALL_OVERLAY_ARM,
     WALL_OVERLAY_CONNECT_PAD,
     WALL_OVERLAY_CONNECT_PAD_H,
+    WALL_OVERLAY_CORE_SIZE,
     WALL_OVERLAY_FILL,
 } from './OpticalPuzzleLayout';
 
@@ -395,19 +396,19 @@ function fillOverlayCornerSquare(
             fillRect(g, color, coreX - arm, coreY - arm, arm, arm);
             break;
         case 'br':
-            fillRect(g, color, coreX + WALL_CORE_SIZE, coreY - arm, arm, arm);
+            fillRect(g, color, coreX + WALL_OVERLAY_CORE_SIZE, coreY - arm, arm, arm);
             break;
         case 'tl':
-            fillRect(g, color, coreX - arm, coreY + WALL_CORE_SIZE, arm, arm);
+            fillRect(g, color, coreX - arm, coreY + WALL_OVERLAY_CORE_SIZE, arm, arm);
             break;
         case 'tr':
-            fillRect(g, color, coreX + WALL_CORE_SIZE, coreY + WALL_CORE_SIZE, arm, arm);
+            fillRect(g, color, coreX + WALL_OVERLAY_CORE_SIZE, coreY + WALL_OVERLAY_CORE_SIZE, arm, arm);
             break;
     }
 }
 
 /**
- * 叠层：28×28 墙心 + 四向 4px 臂 + 四角 4×4 补块；邻墙连通时先上下、后左右补至格边界。
+ * 叠层：20×20 墙心 + 四向 8px 臂 + 四角 8×8 补块；邻墙连通时先上下、后左右补至格边界。
  */
 function fillWallOverlayLayer(
     g: Graphics,
@@ -417,18 +418,19 @@ function fillWallOverlayLayer(
     left: number,
     bottom: number,
     size: number,
-    inset: number,
 ): void {
     const arm = WALL_OVERLAY_ARM;
-    const coreX = left + inset;
-    const coreY = bottom + inset;
+    const coreSize = WALL_OVERLAY_CORE_SIZE;
+    const overlayInset = (size - coreSize) * 0.5;
+    const coreX = left + overlayInset;
+    const coreY = bottom + overlayInset;
 
-    fillRect(g, WALL_OVERLAY_FILL, coreX, coreY, WALL_CORE_SIZE, WALL_CORE_SIZE);
+    fillRect(g, WALL_OVERLAY_FILL, coreX, coreY, coreSize, coreSize);
 
-    fillRect(g, WALL_OVERLAY_FILL, coreX, coreY - arm, WALL_CORE_SIZE, arm);
-    fillRect(g, WALL_OVERLAY_FILL, coreX, coreY + WALL_CORE_SIZE, WALL_CORE_SIZE, arm);
-    fillRect(g, WALL_OVERLAY_FILL, coreX - arm, coreY, arm, WALL_CORE_SIZE);
-    fillRect(g, WALL_OVERLAY_FILL, coreX + WALL_CORE_SIZE, coreY, arm, WALL_CORE_SIZE);
+    fillRect(g, WALL_OVERLAY_FILL, coreX, coreY - arm, coreSize, arm);
+    fillRect(g, WALL_OVERLAY_FILL, coreX, coreY + coreSize, coreSize, arm);
+    fillRect(g, WALL_OVERLAY_FILL, coreX - arm, coreY, arm, coreSize);
+    fillRect(g, WALL_OVERLAY_FILL, coreX + coreSize, coreY, arm, coreSize);
 
     const tlRound = isWallCornerRound(snapshot, gx, gy, 'tl');
     const blRound = isWallCornerRound(snapshot, gx, gy, 'bl');
@@ -437,12 +439,12 @@ function fillWallOverlayLayer(
 
     const blCx = coreX;
     const blCy = coreY;
-    const brCx = coreX + WALL_CORE_SIZE;
+    const brCx = coreX + coreSize;
     const brCy = coreY;
     const tlCx = coreX;
-    const tlCy = coreY + WALL_CORE_SIZE;
-    const trCx = coreX + WALL_CORE_SIZE;
-    const trCy = coreY + WALL_CORE_SIZE;
+    const tlCy = coreY + coreSize;
+    const trCx = coreX + coreSize;
+    const trCy = coreY + coreSize;
 
     if (tlRound) {
         fillCornerQuarter(g, tlCx, tlCy, arm, 'tl', WALL_OVERLAY_FILL);
@@ -468,7 +470,7 @@ function fillWallOverlayLayer(
         fillOverlayCornerSquare(g, coreX, coreY, arm, 'br', WALL_OVERLAY_FILL);
     }
 
-    fillWallOverlayConnectExtensions(g, snapshot, gx, gy, left, bottom, size, inset);
+    fillWallOverlayConnectExtensions(g, snapshot, gx, gy, left, bottom, size, overlayInset);
 }
 
 /**
@@ -504,7 +506,7 @@ function applyWallBlockInnerCornerPatch(
 
 /**
  * 叠层连通扩展：先上下、后左右。
- * 邻格为墙 → 沿十字臂带宽补缝；越界 → 整侧 inset 带补满。
+ * 邻格为墙 → 沿十字臂带宽补缝；越界 → 整侧 overlayInset 带补满。
  */
 function fillWallOverlayConnectExtensions(
     g: Graphics,
@@ -514,53 +516,54 @@ function fillWallOverlayConnectExtensions(
     left: number,
     bottom: number,
     size: number,
-    inset: number,
+    overlayInset: number,
 ): void {
     const arm = WALL_OVERLAY_ARM;
+    const coreSize = WALL_OVERLAY_CORE_SIZE;
     const padV = WALL_OVERLAY_CONNECT_PAD;
     const padH = WALL_OVERLAY_CONNECT_PAD_H;
-    const gapV = inset - arm + padV;
-    const gapH = inset - arm + padV;
-    const coreX = left + inset;
-    const coreY = bottom + inset;
+    const gapV = overlayInset - arm + padV;
+    const gapH = overlayInset - arm + padV;
+    const coreX = left + overlayInset;
+    const coreY = bottom + overlayInset;
     const top = bottom + size;
     const right = left + size;
-    const crossSpan = WALL_CORE_SIZE + arm * 2;
+    const crossSpan = coreSize + arm * 2;
 
     if (isOutOfBounds(snapshot, gx, gy + 1)) {
-        fillRect(g, WALL_OVERLAY_FILL, left, bottom, size, inset);
+        fillRect(g, WALL_OVERLAY_FILL, left, bottom, size, overlayInset);
     } else if (isWall(snapshot, gx, gy + 1)) {
         fillRect(g, WALL_OVERLAY_FILL, coreX - arm, bottom, crossSpan, gapV);
     }
 
     if (isOutOfBounds(snapshot, gx, gy - 1)) {
-        fillRect(g, WALL_OVERLAY_FILL, left, top - inset, size, inset);
+        fillRect(g, WALL_OVERLAY_FILL, left, top - overlayInset, size, overlayInset);
     } else if (isWall(snapshot, gx, gy - 1)) {
         fillRect(
             g,
             WALL_OVERLAY_FILL,
             coreX - arm,
-            coreY + WALL_CORE_SIZE + arm - padV,
+            coreY + coreSize + arm - padV,
             crossSpan,
             gapV,
         );
     }
 
     if (isOutOfBounds(snapshot, gx - 1, gy)) {
-        fillRect(g, WALL_OVERLAY_FILL, left, bottom, inset, size);
+        fillRect(g, WALL_OVERLAY_FILL, left, bottom, overlayInset, size);
     } else if (isWall(snapshot, gx - 1, gy)) {
         fillRect(g, WALL_OVERLAY_FILL, left - padH, coreY - arm, gapH + padH, crossSpan);
     }
 
     if (isOutOfBounds(snapshot, gx + 1, gy)) {
-        fillRect(g, WALL_OVERLAY_FILL, right - inset, bottom, inset, size);
+        fillRect(g, WALL_OVERLAY_FILL, right - overlayInset, bottom, overlayInset, size);
     } else if (isWall(snapshot, gx + 1, gy)) {
         fillRect(g, WALL_OVERLAY_FILL, right - gapH, coreY - arm, gapH + padH, crossSpan);
     }
 }
 
 /**
- * 墙格：内层 28×28 + 臂 14 + 角补；叠层 #3093bc 墙心 + 臂 4 + 角补 4×4。
+ * 墙格：外层 28×28 + 臂 14 + 角补；叠层 #3093bc 墙心 20×20 + 臂 8 + 角补 8×8。
  */
 export function fillWallCell(
     g: Graphics,
@@ -621,5 +624,5 @@ export function fillWallCell(
 
     applyWallBlockInnerCornerPatch(g, snapshot, gx, gy, left, bottom, right, top, p);
 
-    fillWallOverlayLayer(g, snapshot, gx, gy, left, bottom, size, inset);
+    fillWallOverlayLayer(g, snapshot, gx, gy, left, bottom, size);
 }

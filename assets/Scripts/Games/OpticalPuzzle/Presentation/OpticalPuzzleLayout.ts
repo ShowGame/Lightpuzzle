@@ -27,8 +27,11 @@ export const WALL_BLOCK_PATCH_FILL = new Color(0x30, 0x93, 0xbc, 255);
 /** 叠层统一色（墙心 + 外臂 + 角补） #3093bc */
 export const WALL_OVERLAY_FILL = new Color(0x30, 0x93, 0xbc, 255);
 
-/** 叠层四向臂厚度 / 角补边长（自墙心面向外，4×4） */
-export const WALL_OVERLAY_ARM = 4;
+/** 叠层墙心正方形边长 */
+export const WALL_OVERLAY_CORE_SIZE = 20;
+
+/** 叠层四向臂厚度 / 角补边长（自墙心面向外，8×8） */
+export const WALL_OVERLAY_ARM = 8;
 
 /** 叠层邻墙连通扩展额外重叠（消除接缝，用于上下） */
 export const WALL_OVERLAY_CONNECT_PAD = 1;
@@ -38,3 +41,43 @@ export const WALL_OVERLAY_CONNECT_PAD_H = 1;
 
 /** 地板（透明） */
 export const FLOOR_FILL = new Color(0x12, 0x37, 0x49, 0);
+
+/** 光路总宽度（与 BeamView 一致） */
+export const BEAM_LINE_WIDTH = 9;
+
+/** 光路最内层白芯占全宽比例（与 BeamView 一致） */
+export const BEAM_CORE_WIDTH_RATIO = 0.125;
+
+/** 光路渐变叠层数（与 BeamView 一致） */
+export const BEAM_GRADIENT_STEPS = 8;
+
+/** 光路半宽（随格宽等比缩放） */
+export function beamHalfRadius(cellSize: number = OPTICAL_CELL_SIZE): number {
+    return (BEAM_LINE_WIDTH / 2) * (cellSize / OPTICAL_CELL_SIZE);
+}
+
+/** 光路内白芯半径（= 最内层描边线宽的一半，随格宽等比缩放） */
+export function beamCoreRadius(cellSize: number = OPTICAL_CELL_SIZE): number {
+    const scale = cellSize / OPTICAL_CELL_SIZE;
+    return BEAM_LINE_WIDTH * BEAM_CORE_WIDTH_RATIO * 0.5 * scale;
+}
+
+/** 关卡棋盘逻辑宽度（像素，未缩放） */
+export function boardPixelWidth(levelWidth: number, cellSize: number = OPTICAL_CELL_SIZE): number {
+    return levelWidth * cellSize;
+}
+
+/**
+ * 按关卡列数计算 layerPlay 等比缩放，使棋盘宽撑满 targetWidth。
+ */
+export function computePlayLayerScale(
+    levelWidth: number,
+    targetWidth: number,
+    cellSize: number = OPTICAL_CELL_SIZE,
+): number {
+    const boardWidth = boardPixelWidth(levelWidth, cellSize);
+    if (boardWidth <= 0 || targetWidth <= 0) {
+        return 1;
+    }
+    return targetWidth / boardWidth;
+}

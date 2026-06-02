@@ -32,6 +32,7 @@ export interface OpticalBeamSnapshot {
 /** 撤回栈条目：玩家位置 + 元件布局（地形本关不变） */
 export interface OpticalPlayStateSnapshot {
     player: { x: number; y: number };
+    playerFacing: Direction;
     pieces: IOpticalPiece[];
 }
 
@@ -47,6 +48,7 @@ export class OpticalPuzzleCore {
     private _terrain: TerrainKind[] = [];
     private _px = 0;
     private _py = 0;
+    private _playerFacing: Direction = Direction.Left;
     private _sources: IOpticalLightSource[] = [];
     private _targets: IOpticalTarget[] = [];
     private _pieces: IOpticalPiece[] = [];
@@ -67,6 +69,7 @@ export class OpticalPuzzleCore {
         this._terrain = level.terrain.slice();
         this._px = level.player.x;
         this._py = level.player.y;
+        this._playerFacing = Direction.Left;
         this._sources = level.sources.map((s) => ({ ...s }));
         this._targets = level.targets.map((t) => ({ ...t }));
         this._pieces = level.pieces.map((p) => ({ ...p }));
@@ -81,6 +84,7 @@ export class OpticalPuzzleCore {
             height: this._h,
             terrain: this._terrain.slice(),
             player: { x: this._px, y: this._py },
+            playerFacing: this._playerFacing,
             sources: this._buildSourceSnapshots(),
             targets: this._buildTargetSnapshots(),
             pieces: this._buildPieceSnapshots(),
@@ -103,8 +107,12 @@ export class OpticalPuzzleCore {
         return this._targetLit.every(Boolean);
     }
 
+    /** 更新朝向（与是否移动成功无关，由输入层在 tryMove 前调用） */
+    setPlayerFacing(dir: Direction): void {
+        this._playerFacing = dir;
+    }
+
     /**
-     * 四向移动：仅可推、不可拉；一次只推一块；
      * 推动方向若连续两格都有元件则推不动。
      */
     tryMove(dir: Direction): MoveAttemptResult {
@@ -145,6 +153,7 @@ export class OpticalPuzzleCore {
     clonePlayState(): OpticalPlayStateSnapshot {
         return {
             player: { x: this._px, y: this._py },
+            playerFacing: this._playerFacing,
             pieces: this._pieces.map((p) => ({ ...p })),
         };
     }
@@ -152,6 +161,7 @@ export class OpticalPuzzleCore {
     restorePlayState(data: OpticalPlayStateSnapshot): void {
         this._px = data.player.x;
         this._py = data.player.y;
+        this._playerFacing = data.playerFacing ?? Direction.Left;
         this._pieces = data.pieces.map((p) => ({ ...p }));
         this._recomputeLighting();
     }

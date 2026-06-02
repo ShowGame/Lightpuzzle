@@ -8,7 +8,7 @@ import { OpticalGameFlowState } from './OpticalPuzzleStateMachine';
 
 const UNDO_BATCH = 5;
 
-export type OpticalSessionNotifyReason = 'load' | 'move' | 'push' | 'undo' | 'reset' | 'complete';
+export type OpticalSessionNotifyReason = 'load' | 'move' | 'face' | 'push' | 'undo' | 'reset' | 'complete';
 
 /**
  * 关卡会话：加载配置、维护历史栈、撤回 5 步、重置。
@@ -55,11 +55,13 @@ export class OpticalPuzzleSession {
         if (this._flow !== OpticalGameFlowState.RUNNING) {
             return;
         }
+        this.core.setPlayerFacing(dir);
         const r = this.core.tryMove(dir);
         if (r === MoveAttemptResult.Blocked) {
             if (this.core.hasPieceAhead(dir)) {
                 PLAY_AUDIO.emit(EVENT_ENUM.PLAY_AUDIO, AUDIO_EFFECT_ENUM.OPTICAL_PIECE_PUSH_FAIL);
             }
+            this._emit('face');
             return;
         }
         if (r === MoveAttemptResult.PlayerMoved || r === MoveAttemptResult.PiecePushed) {

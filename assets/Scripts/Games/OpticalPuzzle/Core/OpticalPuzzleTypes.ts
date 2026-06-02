@@ -70,6 +70,8 @@ export interface OpticalBoardSnapshot {
     height: number;
     terrain: TerrainKind[];
     player: { x: number; y: number };
+    /** 主角朝向（决定双眼在格内的偏移，默认左） */
+    playerFacing: Direction;
     sources: OpticalSourceSnapshot[];
     targets: OpticalTargetSnapshot[];
     pieces: OpticalPieceSnapshot[];

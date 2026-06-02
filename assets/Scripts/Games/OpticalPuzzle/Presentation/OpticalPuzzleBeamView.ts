@@ -16,7 +16,7 @@ import { computeCrossBeamOverlays, type OpticalCrossBeamOverlay } from '../Core/
 
 import type { OpticalBeamSnapshot } from '../Core/OpticalPuzzleCore';
 
-import { mixLightColors, type MixedLightColorKey } from '../Core/OpticalColorMix';
+import { mixLightColors } from '../Core/OpticalColorMix';
 
 import type { OpticalBeamSegment } from '../Core/OpticalBeamTracer';
 
@@ -26,139 +26,16 @@ const { ccclass } = _decorator;
 
 
 
-import { OPTICAL_CELL_SIZE } from './OpticalPuzzleLayout';
-
+import { beamColorFromKey } from './OpticalPuzzleColorUtil';
+import {
+    coreWhiteFor,
+    lerpBeamColor,
+    strokeBeamSegmentGradient,
+} from './OpticalPuzzleBeamGradient';
+import { BEAM_CORE_WIDTH_RATIO, BEAM_GRADIENT_STEPS, BEAM_LINE_WIDTH, OPTICAL_CELL_SIZE } from './OpticalPuzzleLayout';
 const CELL = OPTICAL_CELL_SIZE;
 
 const EPS = 1e-3;
-
-/** 光路总宽度（由外向内多层叠绘） */
-
-const BEAM_LINE_WIDTH = 9;
-
-const BEAM_GRADIENT_STEPS = 8;
-
-/** 最内层白芯占全宽比例（过小会看不出渐变） */
-
-const BEAM_CORE_WIDTH_RATIO = 0.125;
-
-
-
-function colorKeyToBeamColor(key: string): Color {
-
-    const k = key as MixedLightColorKey;
-
-    switch (k) {
-
-        case 'red':
-
-            return new Color(255, 72, 72, 230);
-
-        case 'green':
-
-            return new Color(72, 220, 110, 230);
-
-        case 'blue':
-
-            return new Color(72, 140, 255, 230);
-
-        case 'yellow':
-
-            return new Color(255, 220, 72, 230);
-
-        case 'cyan':
-
-            return new Color(72, 220, 230, 230);
-
-        case 'purple':
-
-            return new Color(180, 90, 255, 230);
-
-        default:
-
-            return new Color(255, 255, 255, 235);
-
-    }
-
-}
-
-
-
-function lerpBeamColor(from: Color, to: Color, t: number): Color {
-
-    return new Color(
-
-        from.r + (to.r - from.r) * t,
-
-        from.g + (to.g - from.g) * t,
-
-        from.b + (to.b - from.b) * t,
-
-        from.a + (to.a - from.a) * t,
-
-    );
-
-}
-
-
-
-function coreWhiteFor(beamColor: Color): Color {
-
-    return new Color(255, 255, 255, Math.min(255, beamColor.a + 15));
-
-}
-
-
-
-/** 由外向内叠绘：外层本色 → 中心白芯（每层整宽描边，内层覆盖中心） */
-
-function strokeBeamSegment(
-
-    g: Graphics,
-
-    x0: number,
-
-    y0: number,
-
-    x1: number,
-
-    y1: number,
-
-    beamColor: Color,
-
-): void {
-
-    const coreWhite = coreWhiteFor(beamColor);
-
-    const steps = BEAM_GRADIENT_STEPS;
-
-    const coreRatio = BEAM_CORE_WIDTH_RATIO;
-
-
-
-    g.lineCap = Graphics.LineCap.BUTT;
-
-    g.lineJoin = Graphics.LineJoin.ROUND;
-
-
-
-    for (let i = steps - 1; i >= 0; i--) {
-
-        const t = steps <= 1 ? 1 : i / (steps - 1);
-
-        g.lineWidth = BEAM_LINE_WIDTH * (coreRatio + (1 - coreRatio) * t);
-
-        g.strokeColor = lerpBeamColor(coreWhite, beamColor, t);
-
-        g.moveTo(x0, y0);
-
-        g.lineTo(x1, y1);
-
-        g.stroke();
-
-    }
-
-}
 
 
 
@@ -180,7 +57,7 @@ function crossLayerStrokeColor(colorKeys: readonly string[], t: number): Color {
 
     if (unique.length === 1) {
 
-        const beam = colorKeyToBeamColor(unique[0]);
+        const beam = beamColorFromKey(unique[0]);
 
         return lerpBeamColor(coreWhiteFor(beam), beam, t);
 
@@ -190,7 +67,7 @@ function crossLayerStrokeColor(colorKeys: readonly string[], t: number): Color {
 
     const layerColors = unique.map((key) => {
 
-        const beam = colorKeyToBeamColor(key);
+        const beam = beamColorFromKey(key);
 
         return lerpBeamColor(coreWhiteFor(beam), beam, t);
 
@@ -200,7 +77,7 @@ function crossLayerStrokeColor(colorKeys: readonly string[], t: number): Color {
 
     const mixedKey = mixLightColors(unique);
 
-    const mixedBeam = colorKeyToBeamColor(mixedKey);
+    const mixedBeam = beamColorFromKey(mixedKey);
 
     const mixedLayer = lerpBeamColor(coreWhiteFor(mixedBeam), mixedBeam, t);
 
@@ -535,7 +412,7 @@ export class OpticalPuzzleBeamView extends Component {
 
             for (const piece of pieces) {
 
-                strokeBeamSegment(
+                strokeBeamSegmentGradient(
 
                     g,
 
@@ -547,7 +424,7 @@ export class OpticalPuzzleBeamView extends Component {
 
                     oy - piece.y1 * CELL,
 
-                    colorKeyToBeamColor(piece.colorKey),
+                    beamColorFromKey(piece.colorKey),
 
                 );
 

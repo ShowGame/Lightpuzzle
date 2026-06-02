@@ -1,14 +1,22 @@
-import { Color, Graphics } from 'cc';
+import { Graphics } from 'cc';
 import {
     openDirectionsForPiece,
     type PieceConnectivity,
 } from '../Core/OpticalPieceConnectivity';
 import { Direction } from '../Core/OpticalPuzzleTypes';
-import { pieceChannelColors } from './OpticalPuzzleColorUtil';
+import { pieceBaseFillColor, pieceChannelColors } from './OpticalPuzzleColorUtil';
+import { OPTICAL_CELL_SIZE } from './OpticalPuzzleLayout';
 
 const ARM_WIDTH_RATIO = 0.14;
 const HOLE_RATIO = 0.3;
-const ARM_INSET = 3;
+/** 臂端距格边留白（0 = 延至格缘） */
+const ARM_EDGE_INSET = 1;
+/** 元件格底圆角（设计像素，随格宽等比缩放） */
+const PIECE_CORNER_RADIUS = 4;
+
+function scaledPieceCornerRadius(size: number): number {
+    return PIECE_CORNER_RADIUS * (size / OPTICAL_CELL_SIZE);
+}
 
 const SCREEN_DIR_DX: ReadonlyArray<number> = [1, 0, -1, 0];
 const SCREEN_DIR_DY: ReadonlyArray<number> = [0, 1, 0, -1];
@@ -55,18 +63,18 @@ export function drawConnectivityGlyph(
 ): void {
     const cx = left + size * 0.5;
     const cy = top - size * 0.5;
+    const bottom = top - size;
+    const cornerR = scaledPieceCornerRadius(size);
+
+    g.fillColor = pieceBaseFillColor(colorKey);
+    g.roundRect(left, bottom, size, size, cornerR);
+    g.fill();
+
     const holeR = size * HOLE_RATIO * 0.5;
-    const armLen = size * 0.5 - holeR - ARM_INSET;
+    const armLen = size * 0.5 - holeR - ARM_EDGE_INSET;
     const halfW = size * ARM_WIDTH_RATIO * 0.5;
 
     if (connectivity === 0) {
-        g.fillColor = new Color(48, 52, 64, 255);
-        g.rect(left, top - size, size, size);
-        g.fill();
-        g.strokeColor = new Color(90, 94, 108, 255);
-        g.lineWidth = 2;
-        g.rect(left, top - size, size, size);
-        g.stroke();
         return;
     }
 

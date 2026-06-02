@@ -1,4 +1,4 @@
-import { _decorator, Component } from 'cc';
+import { _decorator, Component, find, Node, UITransform, Vec3 } from 'cc';
 import { DataManager } from '../../../Manager/DataManager';
 import { AUDIO_EFFECT_ENUM, EVENT_ENUM } from '../../../Utils/Enum';
 import { OPTICAL_PUZZLE, PLAY_AUDIO } from '../../../Utils/Event';
@@ -8,6 +8,7 @@ import { DEV_LEVEL_MINIMAL } from '../Config/OpticalPuzzleLevelSchema';
 import { OpticalPuzzleBeamView } from './OpticalPuzzleBeamView';
 import { OpticalPuzzleBoardView } from './OpticalPuzzleBoardView';
 import { OpticalPuzzleInputHud } from './OpticalPuzzleInputHud';
+import { computePlayLayerScale } from './OpticalPuzzleLayout';
 
 const { ccclass, property } = _decorator;
 
@@ -25,6 +26,14 @@ export class OpticalPuzzleRoot extends Component {
 
     @property(OpticalPuzzleInputHud)
     inputHud: OpticalPuzzleInputHud | null = null;
+
+    /** 玩法区容器（默认向上查找名为 layerPlay 的父节点） */
+    @property(Node)
+    layerPlay: Node | null = null;
+
+    /** 棋盘左右留白（设计像素，从 Canvas 可用宽中扣除） */
+    @property
+    playAreaWidthPadding = 0;
 
     private readonly _session = new OpticalPuzzleSession();
 
@@ -75,6 +84,7 @@ export class OpticalPuzzleRoot extends Component {
             console.warn(`[OpticalPuzzleRoot] 未知关卡 id=${id}，使用 DEV_LEVEL_MINIMAL`);
         }
         this._session.loadLevel(level);
+        this._applyPlayLayerScale(level.width);
     }
 
     protected onDestroy(): void {
@@ -92,10 +102,53 @@ export class OpticalPuzzleRoot extends Component {
         if (reason === 'complete') {
             PLAY_AUDIO.emit(EVENT_ENUM.PLAY_AUDIO, AUDIO_EFFECT_ENUM.OPTICAL_LEVEL_COMPLETE);
         }
+        if (reason === 'move' || reason === 'face' || reason === 'push') {
+            this.boardView?.notifyPlayerDirectionInput();
+        }
+        if (reason === 'load' || reason === 'reset') {
+            this.boardView?.resetPlayerEyeIdle();
+        }
 
         this.boardView?.render(snap);
         this.beamView?.render(beam);
+        this.boardView?.renderTargetsOverlay(snap);
         this.boardView?.renderPiecesOverlay(snap);
         OPTICAL_PUZZLE.emit(EVENT_ENUM.OPTICAL_SNAPSHOT_CHANGED, snap);
+    }
+
+    /** 按关卡 width 缩放 layerPlay，使棋盘宽撑满 Canvas 可用宽度 */
+    private _applyPlayLayerScale(levelWidth: number): void {
+        const playLayer = this._resolveLayerPlay();
+        if (!playLayer?.isValid) {
+            return;
+        }
+        const targetWidth = this._resolvePlayAreaWidth();
+        const scale = computePlayLayerScale(levelWidth, targetWidth);
+        playLayer.setScale(new Vec3(scale, scale, 1));
+    }
+
+    private _resolveLayerPlay(): Node | null {
+        if (this.layerPlay?.isValid) {
+            return this.layerPlay;
+        }
+        let node: Node | null = this.node;
+        while (node) {
+            if (node.name === 'layerPlay') {
+                return node;
+            }
+            node = node.parent;
+        }
+        return this.node.parent;
+    }
+
+    /** Canvas 设计宽（Widget 拉伸后即为当前屏宽坐标） */
+    private _resolvePlayAreaWidth(): number {
+        const canvas = find('Canvas');
+        const canvasWidth = canvas?.getComponent(UITransform)?.contentSize.width ?? 0;
+        const padding = Math.max(0, this.playAreaWidthPadding);
+        if (canvasWidth > padding) {
+            return canvasWidth - padding;
+        }
+        return canvasWidth > 0 ? canvasWidth : 750;
     }
 }

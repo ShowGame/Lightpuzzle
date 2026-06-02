@@ -6,6 +6,7 @@ import {
     KeyCode,
     _decorator,
     input,
+    sys,
 } from 'cc';
 import { OpticalPuzzleSession } from '../Application/OpticalPuzzleSession';
 import { Direction } from '../Core/OpticalPuzzleTypes';
@@ -15,7 +16,7 @@ import { PLAY_AUDIO } from '../../../Utils/Event';
 const { ccclass, property } = _decorator;
 
 /**
- * 四向、撤回、重置。未绑定 Button 时可用方向键 / WASD + Z 撤回 + R 重置（开发便利）。
+ * 四向、撤回、重置。键盘：方向键 / WASD 移动，Z 撤回，R 重置（与 UI 按钮可同时使用）。
  */
 @ccclass('OpticalPuzzleInputHud')
 export class OpticalPuzzleInputHud extends Component {
@@ -48,9 +49,7 @@ export class OpticalPuzzleInputHud extends Component {
         this.btnRight?.node.on(Button.EventType.CLICK, this._onRight, this);
         this.btnUndo?.node.on(Button.EventType.CLICK, this._onUndo, this);
         this.btnReset?.node.on(Button.EventType.CLICK, this._onReset, this);
-        if (!this._hasAnyDirButton()) {
-            input.on(Input.EventType.KEY_DOWN, this._onKeyDown, this);
-        }
+        input.on(Input.EventType.KEY_DOWN, this._onKeyDown, this);
     }
 
     teardown(): void {
@@ -66,10 +65,6 @@ export class OpticalPuzzleInputHud extends Component {
 
     protected onDestroy(): void {
         this.teardown();
-    }
-
-    private _hasAnyDirButton(): boolean {
-        return !!(this.btnUp || this.btnDown || this.btnLeft || this.btnRight);
     }
 
     private _playUiClick(): void {
@@ -102,27 +97,62 @@ export class OpticalPuzzleInputHud extends Component {
         this._session?.resetLevel();
     }
 
+    private _directionFromKey(keyCode: number): Direction | null {
+        switch (keyCode) {
+            case KeyCode.ARROW_UP:
+            case KeyCode.KEY_W:
+            case 38:
+                return Direction.Up;
+            case KeyCode.ARROW_DOWN:
+            case KeyCode.KEY_S:
+            case 40:
+                return Direction.Down;
+            case KeyCode.ARROW_LEFT:
+            case KeyCode.KEY_A:
+            case 37:
+                return Direction.Left;
+            case KeyCode.ARROW_RIGHT:
+            case KeyCode.KEY_D:
+            case 39:
+                return Direction.Right;
+            default:
+                return null;
+        }
+    }
+
+    /** 浏览器预览时避免方向键触发页面滚动 */
+    private _suppressBrowserKeyDefault(e: EventKeyboard, keyCode: number): void {
+        if (!sys.isBrowser) {
+            return;
+        }
+        const isArrow =
+            keyCode === KeyCode.ARROW_UP ||
+            keyCode === KeyCode.ARROW_DOWN ||
+            keyCode === KeyCode.ARROW_LEFT ||
+            keyCode === KeyCode.ARROW_RIGHT ||
+            keyCode === 37 ||
+            keyCode === 38 ||
+            keyCode === 39 ||
+            keyCode === 40;
+        if (!isArrow) {
+            return;
+        }
+        const raw = (e as unknown as { rawEvent?: KeyboardEvent }).rawEvent;
+        raw?.preventDefault?.();
+    }
+
     private _onKeyDown(e: EventKeyboard): void {
         if (!this._session) {
             return;
         }
-        switch (e.keyCode) {
-            case KeyCode.ARROW_UP:
-            case KeyCode.KEY_W:
-                this._session.applyDirection(Direction.Up);
-                break;
-            case KeyCode.ARROW_DOWN:
-            case KeyCode.KEY_S:
-                this._session.applyDirection(Direction.Down);
-                break;
-            case KeyCode.ARROW_LEFT:
-            case KeyCode.KEY_A:
-                this._session.applyDirection(Direction.Left);
-                break;
-            case KeyCode.ARROW_RIGHT:
-            case KeyCode.KEY_D:
-                this._session.applyDirection(Direction.Right);
-                break;
+        const keyCode = e.keyCode as number;
+        const dir = this._directionFromKey(keyCode);
+        if (dir !== null) {
+            this._suppressBrowserKeyDefault(e, keyCode);
+            this._session.applyDirection(dir);
+            return;
+        }
+        switch (keyCode) {
             case KeyCode.KEY_Z:
                 this._session.undoBatch();
                 break;

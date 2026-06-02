@@ -297,14 +297,19 @@ export function mergeOverlappingBeamSegments(segments: readonly OpticalBeamSegme
     return mergeCollinearBeamSegments(merged);
 }
 
-function segmentEndsOnTargetEdge(seg: OpticalBeamSegment, tx: number, ty: number): boolean {
-    const x = seg.x1;
-    const y = seg.y1;
+function pointOnTargetEdge(x: number, y: number, tx: number, ty: number): boolean {
     const onWest = Math.abs(x - tx) < EPS && y >= ty - EPS && y <= ty + 1 + EPS;
     const onEast = Math.abs(x - (tx + 1)) < EPS && y >= ty - EPS && y <= ty + 1 + EPS;
     const onNorth = Math.abs(y - ty) < EPS && x >= tx - EPS && x <= tx + 1 + EPS;
     const onSouth = Math.abs(y - (ty + 1)) < EPS && x >= tx - EPS && x <= tx + 1 + EPS;
     return onWest || onEast || onNorth || onSouth;
+}
+
+function segmentEndsOnTargetEdge(seg: OpticalBeamSegment, tx: number, ty: number): boolean {
+    return (
+        pointOnTargetEdge(seg.x0, seg.y0, tx, ty) ||
+        pointOnTargetEdge(seg.x1, seg.y1, tx, ty)
+    );
 }
 
 /** 按合并后的光段重算目标点亮（重叠光路先混色再判定） */
