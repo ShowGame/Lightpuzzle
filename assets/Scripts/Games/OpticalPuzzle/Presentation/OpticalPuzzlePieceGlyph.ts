@@ -50,29 +50,33 @@ function drawThickArm(
 
 /**
  * 绘制统一通道元件占位：格心留空（后期换图），开口方向画直角通道臂。
- * 默认朝向图示见 `OpticalPuzzleLevelSchema.ts` 文件头注释。
+ * @param width 格宽（挤压动画时可非正方形）
+ * @param height 格高，默认与 width 相同
  */
 export function drawConnectivityGlyph(
     g: Graphics,
     left: number,
     top: number,
-    size: number,
+    width: number,
     connectivity: PieceConnectivity,
     pieceDirection: Direction,
     colorKey?: string,
+    height?: number,
 ): void {
-    const cx = left + size * 0.5;
-    const cy = top - size * 0.5;
-    const bottom = top - size;
-    const cornerR = scaledPieceCornerRadius(size);
+    const h = height ?? width;
+    const refSize = Math.min(width, h);
+    const cx = left + width * 0.5;
+    const cy = top - h * 0.5;
+    const bottom = top - h;
+    const cornerR = scaledPieceCornerRadius(refSize);
 
     g.fillColor = pieceBaseFillColor(colorKey);
-    g.roundRect(left, bottom, size, size, cornerR);
+    g.roundRect(left, bottom, width, h, cornerR);
     g.fill();
 
-    const holeR = size * HOLE_RATIO * 0.5;
-    const armLen = size * 0.5 - holeR - ARM_EDGE_INSET;
-    const halfW = size * ARM_WIDTH_RATIO * 0.5;
+    const holeR = refSize * HOLE_RATIO * 0.5;
+    const armLen = refSize * 0.5 - holeR - ARM_EDGE_INSET;
+    const halfW = refSize * ARM_WIDTH_RATIO * 0.5;
 
     if (connectivity === 0) {
         return;

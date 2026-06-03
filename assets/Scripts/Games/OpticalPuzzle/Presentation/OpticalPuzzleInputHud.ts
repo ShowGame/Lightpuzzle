@@ -4,6 +4,7 @@ import {
     EventKeyboard,
     Input,
     KeyCode,
+    Node,
     _decorator,
     input,
     sys,
@@ -12,11 +13,14 @@ import { OpticalPuzzleSession } from '../Application/OpticalPuzzleSession';
 import { Direction } from '../Core/OpticalPuzzleTypes';
 import { AUDIO_EFFECT_ENUM, EVENT_ENUM } from '../../../Utils/Enum';
 import { PLAY_AUDIO } from '../../../Utils/Event';
+import { ensureActionButtonViews } from './OpticalPuzzleActionButtonView';
+import type { OpticalPuzzleBoardView } from './OpticalPuzzleBoardView';
+import { ensureDirButtonViews } from './OpticalPuzzleDirButtonView';
 
 const { ccclass, property } = _decorator;
 
 /**
- * 四向、撤回、重置。键盘：方向键 / WASD 移动，Z 撤回，R 重置（与 UI 按钮可同时使用）。
+ * 四向、撤回、重置。键盘：方向键 / WASD 移动，Z 撤回 1 步，R 重置（与 UI 按钮可同时使用）。
  */
 @ccclass('OpticalPuzzleInputHud')
 export class OpticalPuzzleInputHud extends Component {
@@ -39,10 +43,52 @@ export class OpticalPuzzleInputHud extends Component {
     btnReset: Button | null = null;
 
     private _session: OpticalPuzzleSession | null = null;
+    private _boardView: OpticalPuzzleBoardView | null = null;
 
-    setup(session: OpticalPuzzleSession): void {
+    protected onLoad(): void {
+        this._autoBindButtons();
+    }
+
+    /** 未在检查器拖引用时，按 DirPad / ActionPad 子节点名自动绑定并补 Button */
+    private _autoBindButtons(): void {
+        const dirPad = this.node.getChildByName('DirPad');
+        ensureDirButtonViews(dirPad);
+        this.btnUp = this._resolveButton(dirPad, 'BtnUp', this.btnUp);
+        this.btnDown = this._resolveButton(dirPad, 'BtnDown', this.btnDown);
+        this.btnLeft = this._resolveButton(dirPad, 'BtnLeft', this.btnLeft);
+        this.btnRight = this._resolveButton(dirPad, 'BtnRight', this.btnRight);
+        const actionPad = this.node.getChildByName('ActionPad');
+        ensureActionButtonViews(actionPad);
+        this.btnUndo = this._resolveButton(actionPad, 'BtnUndo', this.btnUndo);
+        this.btnReset = this._resolveButton(actionPad, 'BtnReset', this.btnReset);
+    }
+
+    private _resolveButton(
+        parent: Node | null,
+        childName: string,
+        existing: Button | null,
+    ): Button | null {
+        if (existing?.isValid) {
+            return existing;
+        }
+        const node = parent?.getChildByName(childName) ?? null;
+        if (!node) {
+            return null;
+        }
+        let btn = node.getComponent(Button);
+        if (!btn) {
+            btn = node.addComponent(Button);
+            btn.transition = Button.Transition.SCALE;
+        }
+        btn.zoomScale = 0.95;
+        return btn;
+    }
+
+    setup(session: OpticalPuzzleSession, boardView?: OpticalPuzzleBoardView): void {
         this.teardown();
+        this._autoBindButtons();
         this._session = session;
+        this._boardView = boardView ?? null;
         this.btnUp?.node.on(Button.EventType.CLICK, this._onUp, this);
         this.btnDown?.node.on(Button.EventType.CLICK, this._onDown, this);
         this.btnLeft?.node.on(Button.EventType.CLICK, this._onLeft, this);
@@ -61,6 +107,18 @@ export class OpticalPuzzleInputHud extends Component {
         this.btnUndo?.node.off(Button.EventType.CLICK, this._onUndo, this);
         this.btnReset?.node.off(Button.EventType.CLICK, this._onReset, this);
         this._session = null;
+        this._boardView = null;
+    }
+
+    private _isMoveInputLocked(): boolean {
+        return this._boardView?.isMoveAnimating() ?? false;
+    }
+
+    private _applyDirection(dir: Direction): void {
+        if (!this._session || this._isMoveInputLocked()) {
+            return;
+        }
+        this._session.applyDirection(dir);
     }
 
     protected onDestroy(): void {
@@ -72,19 +130,19 @@ export class OpticalPuzzleInputHud extends Component {
     }
 
     private _onUp(): void {
-        this._session?.applyDirection(Direction.Up);
+        this._applyDirection(Direction.Up);
     }
 
     private _onDown(): void {
-        this._session?.applyDirection(Direction.Down);
+        this._applyDirection(Direction.Down);
     }
 
     private _onLeft(): void {
-        this._session?.applyDirection(Direction.Left);
+        this._applyDirection(Direction.Left);
     }
 
     private _onRight(): void {
-        this._session?.applyDirection(Direction.Right);
+        this._applyDirection(Direction.Right);
     }
 
     private _onUndo(): void {
@@ -149,7 +207,7 @@ export class OpticalPuzzleInputHud extends Component {
         const dir = this._directionFromKey(keyCode);
         if (dir !== null) {
             this._suppressBrowserKeyDefault(e, keyCode);
-            this._session.applyDirection(dir);
+            this._applyDirection(dir);
             return;
         }
         switch (keyCode) {

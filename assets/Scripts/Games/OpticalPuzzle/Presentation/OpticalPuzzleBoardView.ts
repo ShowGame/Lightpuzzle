@@ -6,9 +6,19 @@ import {
     Node,
     UITransform,
 } from 'cc';
+import type { OpticalSessionNotifyReason } from '../Application/OpticalPuzzleSession';
 import type { OpticalBoardSnapshot } from '../Core/OpticalPuzzleTypes';
 import { Direction, TerrainKind } from '../Core/OpticalPuzzleTypes';
 import { drawConnectivityGlyph } from './OpticalPuzzlePieceGlyph';
+import {
+    animatedSquashedCellRect,
+    buildMoveAnimEntities,
+    MOVE_ANIM_DURATION,
+    moveAnimProgress,
+    type MoveAnimEntity,
+    type MoveAnimState,
+    type SquashedCellRect,
+} from './OpticalPuzzleMoveAnim';
 import { drawPlayerEyes } from './OpticalPuzzlePlayerGlyph';
 import { drawSourceEmitter } from './OpticalPuzzleSourceGlyph';
 import { drawTargetLamp } from './OpticalPuzzleTargetGlyph';
@@ -18,11 +28,13 @@ import { cellScreenRect, fillWallCell } from './OpticalPuzzleWallDraw';
 const { ccclass } = _decorator;
 
 /** 无操作多久后触发一次眨眼（秒） */
-const PLAYER_IDLE_BLINK_AT = 3;
+const PLAYER_IDLE_BLINK_AT = 4;
 /** 无操作多久后闭眼（秒） */
 const PLAYER_IDLE_CLOSE_AT = 10;
 /** 眨眼 / 闭眼动画时长（秒） */
 const PLAYER_BLINK_DURATION = 0.25;
+/** 移动被阻拦时 >< 眼形保持时长（秒） */
+const PLAYER_BLOCKED_EYES_DURATION = 0.5;
 
 /** 主角眼部闲置状态 */
 enum PlayerEyeIdleState {
@@ -54,6 +66,13 @@ export class OpticalPuzzleBoardView extends Component {
     /** 本段闲置是否已在 3s 触发过眨眼 */
     private _idleBlinkDone = false;
     private _animElapsed = 0;
+    /** 移动被阻拦：>< 眼形 */
+    private _blockedEyes = false;
+    private _blockedElapsed = 0;
+    /** 动画结束后的棋盘快照（用于下一帧 move/push 的起点） */
+    private _settledSnapshot: OpticalBoardSnapshot | null = null;
+    /** 主角 / 元件滑格 + 挤压 */
+    private _moveAnim: MoveAnimState | null = null;
 
     protected onLoad(): void {
         this._ensureGraphics();
@@ -174,36 +193,148 @@ export class OpticalPuzzleBoardView extends Component {
         }
     }
 
-    /** 方向键 / 四向按钮：重置闲置；若已闭眼则半时长睁眼 */
+    /** 任意方向操作：打破睡眠 / 打断闲置眨眼，回到 Active */
+    private _wakeFromDirectionInput(): void {
+        if (
+            this._eyeState === PlayerEyeIdleState.Closed ||
+            this._eyeState === PlayerEyeIdleState.Closing ||
+            this._eyeState === PlayerEyeIdleState.Opening ||
+            this._eyeState === PlayerEyeIdleState.IdleBlinking
+        ) {
+            this._eyeState = PlayerEyeIdleState.Active;
+            this._animElapsed = 0;
+        }
+    }
+
+    /** 方向键 / 四向按钮（移动成功）：重置闲置；若已闭眼则半时长睁眼；取消 >< 阻拦眼 */
     notifyPlayerDirectionInput(): void {
+        if (this._blockedEyes) {
+            this._clearBlockedEyes();
+        }
         const wasSleeping =
             this._eyeState === PlayerEyeIdleState.Closed ||
             this._eyeState === PlayerEyeIdleState.Closing;
         if (wasSleeping) {
             this._eyeState = PlayerEyeIdleState.Opening;
             this._animElapsed = 0;
+            this._idleTime = 0;
+            this._idleBlinkDone = false;
             if (this._lastPiecesSnapshot) {
                 this.renderPiecesOverlay(this._lastPiecesSnapshot);
             }
             return;
         }
-        if (this._eyeState === PlayerEyeIdleState.IdleBlinking) {
-            this._eyeState = PlayerEyeIdleState.Active;
-            this._animElapsed = 0;
-            if (this._lastPiecesSnapshot) {
-                this.renderPiecesOverlay(this._lastPiecesSnapshot);
-            }
-        }
+        this._wakeFromDirectionInput();
         this._idleTime = 0;
         this._idleBlinkDone = false;
     }
 
+    /** 移动被阻拦：>< 眼形 0.5s；期间再次阻拦则重新计时 0.5s，并打破睡眠 */
+    notifyPlayerMoveBlocked(): void {
+        this._wakeFromDirectionInput();
+        this._idleTime = 0;
+        this._idleBlinkDone = false;
+
+        if (this._blockedEyes) {
+            this._blockedElapsed = 0;
+        } else {
+            this._blockedEyes = true;
+            this._blockedElapsed = 0;
+        }
+
+        if (this._lastPiecesSnapshot) {
+            this.renderPiecesOverlay(this._lastPiecesSnapshot);
+        }
+    }
+
+    private _clearBlockedEyes(): void {
+        this._blockedEyes = false;
+        this._blockedElapsed = 0;
+    }
+
+    private _endBlockedEyes(): void {
+        this._clearBlockedEyes();
+    }
+
     /** 关卡加载 / 重置时恢复眼部闲置逻辑 */
     resetPlayerEyeIdle(): void {
+        this._clearBlockedEyes();
         this._eyeState = PlayerEyeIdleState.Active;
         this._idleTime = 0;
         this._idleBlinkDone = false;
         this._animElapsed = 0;
+    }
+
+    /** 滑格动画进行中（Presentation 输入锁） */
+    isMoveAnimating(): boolean {
+        return this._moveAnim !== null;
+    }
+
+    /** 根据 Session 通知更新元件层：move/push 播滑格，load/undo/reset 瞬变 */
+    syncPlaySnapshot(snapshot: OpticalBoardSnapshot, reason: OpticalSessionNotifyReason): void {
+        if (reason === 'load' || reason === 'reset' || reason === 'undo') {
+            this._cancelMoveAnim();
+            this._settledSnapshot = snapshot;
+        } else if (reason === 'move' || reason === 'push' || reason === 'complete') {
+            this._beginMoveAnim(snapshot);
+        }
+        this.renderPiecesOverlay(snapshot);
+    }
+
+    private _cancelMoveAnim(): void {
+        this._moveAnim = null;
+    }
+
+    private _beginMoveAnim(snapshot: OpticalBoardSnapshot): void {
+        if (!this._settledSnapshot) {
+            this._settledSnapshot = snapshot;
+            return;
+        }
+        const entities = buildMoveAnimEntities(this._settledSnapshot, snapshot);
+        if (entities.length === 0) {
+            this._settledSnapshot = snapshot;
+            return;
+        }
+        this._moveAnim = { elapsed: 0, snapshot, entities };
+    }
+
+    private _finishMoveAnim(): void {
+        if (this._moveAnim) {
+            this._settledSnapshot = this._moveAnim.snapshot;
+            this._moveAnim = null;
+        }
+    }
+
+    private _animRectForEntity(
+        entity: MoveAnimEntity,
+        ox: number,
+        oy: number,
+        cell: number,
+    ): SquashedCellRect {
+        const progress = moveAnimProgress(this._moveAnim!.elapsed);
+        return animatedSquashedCellRect(
+            ox,
+            oy,
+            cell,
+            entity.fromX,
+            entity.fromY,
+            entity.toX,
+            entity.toY,
+            progress,
+            entity.direction,
+        );
+    }
+
+    private _playerAnimEntity(): MoveAnimEntity | null {
+        return this._moveAnim?.entities.find((e) => e.kind === 'player') ?? null;
+    }
+
+    private _pieceAnimEntity(index: number): MoveAnimEntity | null {
+        return (
+            this._moveAnim?.entities.find(
+                (e) => e.kind === 'piece' && e.pieceIndex === index,
+            ) ?? null
+        );
     }
 
     private _tickIdleTime(dt: number): void {
@@ -222,6 +353,14 @@ export class OpticalPuzzleBoardView extends Component {
             return;
         }
         let needRender = false;
+
+        if (this._blockedEyes) {
+            this._blockedElapsed += dt;
+            needRender = true;
+            if (this._blockedElapsed >= PLAYER_BLOCKED_EYES_DURATION) {
+                this._endBlockedEyes();
+            }
+        }
 
         this._tickIdleTime(dt);
 
@@ -277,7 +416,15 @@ export class OpticalPuzzleBoardView extends Component {
                 break;
         }
 
-        if (needRender) {
+        if (this._moveAnim) {
+            this._moveAnim.elapsed += dt;
+            needRender = true;
+            if (this._moveAnim.elapsed >= MOVE_ANIM_DURATION) {
+                this._finishMoveAnim();
+            }
+        }
+
+        if (needRender && this._lastPiecesSnapshot) {
             this.renderPiecesOverlay(this._lastPiecesSnapshot);
         }
     }
@@ -291,29 +438,60 @@ export class OpticalPuzzleBoardView extends Component {
         }
         g.clear();
         const { cell, ox, oy } = this._cellLayout(snapshot);
-        for (const piece of snapshot.pieces) {
+        snapshot.pieces.forEach((piece, index) => {
+            const anim = this._pieceAnimEntity(index);
+            if (anim) {
+                const rect = this._animRectForEntity(anim, ox, oy, cell);
+                drawConnectivityGlyph(
+                    g,
+                    rect.left,
+                    rect.bottom + rect.height,
+                    rect.width,
+                    piece.connectivity,
+                    piece.direction,
+                    piece.colorKey,
+                    rect.height,
+                );
+                return;
+            }
             const { left, bottom, size } = cellScreenRect(ox, oy, piece.x, piece.y, cell);
-            const top = bottom + size;
             drawConnectivityGlyph(
                 g,
                 left,
-                top,
+                bottom + size,
                 size,
                 piece.connectivity,
                 piece.direction,
                 piece.colorKey,
             );
+        });
+
+        const playerAnim = this._playerAnimEntity();
+        if (playerAnim) {
+            const rect = this._animRectForEntity(playerAnim, ox, oy, cell);
+            drawPlayerEyes(
+                g,
+                rect.left,
+                rect.bottom,
+                rect.width,
+                snapshot.playerFacing ?? Direction.Left,
+                this._blockedEyes ? 0 : this._currentBlinkAmount(),
+                this._blockedEyes,
+                rect.height,
+            );
+        } else {
+            const { x: px, y: py } = snapshot.player;
+            const playerRect = cellScreenRect(ox, oy, px, py, cell);
+            drawPlayerEyes(
+                g,
+                playerRect.left,
+                playerRect.bottom,
+                playerRect.size,
+                snapshot.playerFacing ?? Direction.Left,
+                this._blockedEyes ? 0 : this._currentBlinkAmount(),
+                this._blockedEyes,
+            );
         }
-        const { x: px, y: py } = snapshot.player;
-        const playerRect = cellScreenRect(ox, oy, px, py, cell);
-        drawPlayerEyes(
-            g,
-            playerRect.left,
-            playerRect.bottom,
-            playerRect.size,
-            snapshot.playerFacing ?? Direction.Left,
-            this._currentBlinkAmount(),
-        );
     }
 
     render(snapshot: OpticalBoardSnapshot): void {

@@ -23,7 +23,7 @@ export interface IPlayerPersistData {
 }
 
 const DEFAULT_DATA: IPlayerPersistData = {
-    opticalCurrentLevelId: 3,//设定关卡
+    opticalCurrentLevelId: 1,//关卡mock
     bgmOn: true,
     sfxOn: true,
 };

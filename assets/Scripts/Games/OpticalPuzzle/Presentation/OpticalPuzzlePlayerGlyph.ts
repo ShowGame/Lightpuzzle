@@ -11,12 +11,14 @@ import { OPTICAL_CELL_SIZE } from './OpticalPuzzleLayout';
 const EYE_WIDTH = 6;
 const EYE_HEIGHT = 18;
 /** 眨眼压扁后单眼宽 / 高（设计像素） */
-const BLINK_EYE_WIDTH = 14;
-const BLINK_EYE_HEIGHT = 6;
+const BLINK_EYE_WIDTH = 12;
+const BLINK_EYE_HEIGHT = 4;
 /** 眨眼时双眼整体下移（设计像素） */
 const BLINK_DOWN_OFFSET = 2;
 /** 两眼中心间距（设计像素，眨眼时不变） */
 const EYE_CENTER_GAP = 20;
+/** 阻拦 >< 眼两眼中心间距（设计像素） */
+const BLOCKED_EYE_CENTER_GAP = 22;
 /** 格底外框宽度（设计像素） */
 const BASE_BORDER_WIDTH = 2;
 
@@ -59,49 +61,198 @@ function eyeColorForBlink(base: Color, blinkAmount: number): Color {
     );
 }
 
+/** 阻拦 >< 眼：单条矩形长 / 厚 / 夹角 / 圆角（设计像素） */
+const BLOCKED_BAR_LENGTH = 12;
+const BLOCKED_BAR_THICKNESS = 4;
+const BLOCKED_BAR_ANGLE_DEG = 60;
+const BLOCKED_BAR_CORNER = 2;
+
+const BLOCKED_HALF_ANGLE_RAD = (BLOCKED_BAR_ANGLE_DEG * 0.5 * Math.PI) / 180;
+
+/** 长边沿 local +x；四角均为 2px 圆角（含交叠内端） */
+function fillRotatedRoundRect(
+    g: Graphics,
+    cx: number,
+    cy: number,
+    length: number,
+    thickness: number,
+    angleRad: number,
+    corner: number,
+): void {
+    const hl = length * 0.5;
+    const ht = thickness * 0.5;
+    const r = Math.min(corner, hl, ht);
+    const cos = Math.cos(angleRad);
+    const sin = Math.sin(angleRad);
+    const toWorld = (lx: number, ly: number): { x: number; y: number } => ({
+        x: cx + lx * cos - ly * sin,
+        y: cy + lx * sin + ly * cos,
+    });
+    const move = (lx: number, ly: number): void => {
+        const w = toWorld(lx, ly);
+        g.moveTo(w.x, w.y);
+    };
+    const line = (lx: number, ly: number): void => {
+        const w = toWorld(lx, ly);
+        g.lineTo(w.x, w.y);
+    };
+    const arcCorner = (
+        cornerCx: number,
+        cornerCy: number,
+        startA: number,
+        endA: number,
+    ): void => {
+        const segs = 4;
+        for (let i = 0; i <= segs; i++) {
+            const a = startA + ((endA - startA) * i) / segs;
+            line(cornerCx + r * Math.cos(a), cornerCy + r * Math.sin(a));
+        }
+    };
+
+    if (r <= 0.001) {
+        move(-hl, -ht);
+        line(-hl, ht);
+        line(hl, ht);
+        line(hl, -ht);
+        g.close();
+        g.fill();
+        return;
+    }
+
+    // 四角 2px 圆角
+    move(-hl + r, -ht);
+    line(hl - r, -ht);
+    arcCorner(hl - r, -ht + r, -Math.PI * 0.5, 0);
+    line(hl, ht - r);
+    arcCorner(hl - r, ht - r, 0, Math.PI * 0.5);
+    line(-hl + r, ht);
+    arcCorner(-hl + r, ht - r, Math.PI * 0.5, Math.PI);
+    line(-hl, -ht + r);
+    arcCorner(-hl + r, -ht + r, Math.PI, Math.PI * 1.5);
+    g.close();
+    g.fill();
+}
+
+/** 内端向内微量延伸（设计像素），外端长度不变 */
+const BLOCKED_BAR_INNER_EXTEND = 2;
+
+/** 单眼 ><：两枚圆角矩形拼接（pointingRight：左眼泪 >，右眼泪 <） */
+function drawBlockedBarEye(
+    g: Graphics,
+    eyeCx: number,
+    eyeCy: number,
+    size: number,
+    pointingRight: boolean,
+): void {
+    const barLen = scaleDesign(size, BLOCKED_BAR_LENGTH);
+    const barThick = scaleDesign(size, BLOCKED_BAR_THICKNESS);
+    const corner = scaleDesign(size, BLOCKED_BAR_CORNER);
+    const cosH = Math.cos(BLOCKED_HALF_ANGLE_RAD);
+    const sinH = Math.sin(BLOCKED_HALF_ANGLE_RAD);
+    /** 内端微量延伸，外端长度不变，交叠侧同样 2px 圆角 */
+    const innerExtend = scaleDesign(size, BLOCKED_BAR_INNER_EXTEND);
+    const drawLen = barLen + innerExtend;
+    const centerAlong = (barLen - innerExtend) * 0.5;
+    const apexOffset = scaleDesign(
+        size,
+        (BLOCKED_BAR_LENGTH * 0.5) * cosH,
+    );
+
+    const apexX = eyeCx + (pointingRight ? apexOffset : -apexOffset);
+    const apexY = eyeCy;
+
+    const outwardSign = pointingRight ? -1 : 1;
+    const topDirX = outwardSign * cosH;
+    const topDirY = sinH;
+    const botDirX = outwardSign * cosH;
+    const botDirY = -sinH;
+
+    fillRotatedRoundRect(
+        g,
+        apexX + topDirX * centerAlong,
+        apexY + topDirY * centerAlong,
+        drawLen,
+        barThick,
+        Math.atan2(topDirY, topDirX),
+        corner,
+    );
+    fillRotatedRoundRect(
+        g,
+        apexX + botDirX * centerAlong,
+        apexY + botDirY * centerAlong,
+        drawLen,
+        barThick,
+        Math.atan2(botDirY, botDirX),
+        corner,
+    );
+}
+
+function drawBlockedChevronEyes(
+    g: Graphics,
+    pairCx: number,
+    pairCy: number,
+    size: number,
+): void {
+    const halfGap = scaleDesign(size, BLOCKED_EYE_CENTER_GAP) * 0.5;
+    g.fillColor = eyeColorForBlink(playerEyeFillColor(), 1);
+
+    drawBlockedBarEye(g, pairCx - halfGap, pairCy, size, true);
+    drawBlockedBarEye(g, pairCx + halfGap, pairCy, size, false);
+}
+
 /**
  * 主角：橘红格底 + 2px 黑边 + 两枚深橘眼镜片。
- * @param blinkAmount 0=睁开，1=眨眼峰值（压扁/下移/眼色 80%）
+ * @param width 格宽（挤压动画时可非正方形）
+ * @param height 格高，默认与 width 相同
  */
 export function drawPlayerEyes(
     g: Graphics,
     left: number,
     bottom: number,
-    size: number,
+    width: number,
     facing: Direction,
     blinkAmount = 0,
+    blockedEyes = false,
+    height?: number,
 ): void {
-    const cellCorner = scaledCellCornerRadius(size);
+    const h = height ?? width;
+    const refSize = Math.min(width, h);
+    const cellCorner = scaledCellCornerRadius(refSize);
     g.fillColor = playerBaseFillColor();
-    g.roundRect(left, bottom, size, size, cellCorner);
+    g.roundRect(left, bottom, width, h, cellCorner);
     g.fill();
     g.strokeColor = playerBaseBorderColor();
-    g.lineWidth = Math.max(1, scaleDesign(size, BASE_BORDER_WIDTH));
-    g.roundRect(left, bottom, size, size, cellCorner);
+    g.lineWidth = Math.max(1, scaleDesign(refSize, BASE_BORDER_WIDTH));
+    g.roundRect(left, bottom, width, h, cellCorner);
     g.stroke();
 
-    const cx = left + size * 0.5;
-    const cy = bottom + size * 0.5;
+    const cx = left + width * 0.5;
+    const cy = bottom + h * 0.5;
     const offset = PAIR_CENTER_BY_DIR[facing] ?? PAIR_CENTER_BY_DIR[Direction.Left];
-    const pairCx = cx + scaleDesign(size, offset.x);
-    const pairCy =
-        cy +
-        scaleDesign(size, offset.y) -
-        scaleDesign(size, BLINK_DOWN_OFFSET * blinkAmount);
+    const pairCx = cx + scaleDesign(refSize, offset.x);
+    const pairCy = cy + scaleDesign(refSize, offset.y);
+
+    if (blockedEyes) {
+        drawBlockedChevronEyes(g, pairCx, pairCy, refSize);
+        return;
+    }
+
+    const pairCyBlink =
+        pairCy - scaleDesign(refSize, BLINK_DOWN_OFFSET * blinkAmount);
 
     const t = Math.max(0, Math.min(1, blinkAmount));
-    const eyeW = scaleDesign(size, lerp(EYE_WIDTH, BLINK_EYE_WIDTH, t));
-    const eyeH = scaleDesign(size, lerp(EYE_HEIGHT, BLINK_EYE_HEIGHT, t));
-    const halfGap = scaleDesign(size, EYE_CENTER_GAP) * 0.5;
+    const eyeW = scaleDesign(refSize, lerp(EYE_WIDTH, BLINK_EYE_WIDTH, t));
+    const eyeH = scaleDesign(refSize, lerp(EYE_HEIGHT, BLINK_EYE_HEIGHT, t));
+    const halfGap = scaleDesign(refSize, EYE_CENTER_GAP) * 0.5;
     const eyeCorner = scaleDesign(
-        size,
+        refSize,
         lerp(EYE_CORNER_RADIUS, Math.min(3, BLINK_EYE_HEIGHT * 0.5), t),
     );
     const eyeColor = eyeColorForBlink(playerEyeFillColor(), t);
 
     g.fillColor = eyeColor;
     for (const ex of [pairCx - halfGap, pairCx + halfGap]) {
-        g.roundRect(ex - eyeW * 0.5, pairCy - eyeH * 0.5, eyeW, eyeH, eyeCorner);
+        g.roundRect(ex - eyeW * 0.5, pairCyBlink - eyeH * 0.5, eyeW, eyeH, eyeCorner);
         g.fill();
     }
 }

@@ -8,7 +8,7 @@ import { DEV_LEVEL_MINIMAL } from '../Config/OpticalPuzzleLevelSchema';
 import { OpticalPuzzleBeamView } from './OpticalPuzzleBeamView';
 import { OpticalPuzzleBoardView } from './OpticalPuzzleBoardView';
 import { OpticalPuzzleInputHud } from './OpticalPuzzleInputHud';
-import { computePlayLayerScale } from './OpticalPuzzleLayout';
+import { computePlayLayerPosition, computePlayLayerScale } from './OpticalPuzzleLayout';
 
 const { ccclass, property } = _decorator;
 
@@ -34,6 +34,10 @@ export class OpticalPuzzleRoot extends Component {
     /** 棋盘左右留白（设计像素，从 Canvas 可用宽中扣除） */
     @property
     playAreaWidthPadding = 0;
+
+    /** 缩放后棋盘顶边距 Canvas 顶边（设计像素） */
+    @property
+    playAreaTopMargin = 150;
 
     private readonly _session = new OpticalPuzzleSession();
 
@@ -67,7 +71,7 @@ export class OpticalPuzzleRoot extends Component {
         this._session.onStateChanged = (reason) => this._onSessionChanged(reason);
 
         if (this.inputHud) {
-            this.inputHud.setup(this._session);
+            this.inputHud.setup(this._session, this.boardView ?? undefined);
         } else {
             console.warn('[OpticalPuzzleRoot] 未绑定 OpticalPuzzleInputHud');
         }
@@ -84,7 +88,7 @@ export class OpticalPuzzleRoot extends Component {
             console.warn(`[OpticalPuzzleRoot] 未知关卡 id=${id}，使用 DEV_LEVEL_MINIMAL`);
         }
         this._session.loadLevel(level);
-        this._applyPlayLayerScale(level.width);
+        this._applyPlayLayerLayout(level.width, level.height);
     }
 
     protected onDestroy(): void {
@@ -102,7 +106,9 @@ export class OpticalPuzzleRoot extends Component {
         if (reason === 'complete') {
             PLAY_AUDIO.emit(EVENT_ENUM.PLAY_AUDIO, AUDIO_EFFECT_ENUM.OPTICAL_LEVEL_COMPLETE);
         }
-        if (reason === 'move' || reason === 'face' || reason === 'push') {
+        if (reason === 'face') {
+            this.boardView?.notifyPlayerMoveBlocked();
+        } else if (reason === 'move' || reason === 'push' || reason === 'complete') {
             this.boardView?.notifyPlayerDirectionInput();
         }
         if (reason === 'load' || reason === 'reset') {
@@ -112,12 +118,12 @@ export class OpticalPuzzleRoot extends Component {
         this.boardView?.render(snap);
         this.beamView?.render(beam);
         this.boardView?.renderTargetsOverlay(snap);
-        this.boardView?.renderPiecesOverlay(snap);
+        this.boardView?.syncPlaySnapshot(snap, reason);
         OPTICAL_PUZZLE.emit(EVENT_ENUM.OPTICAL_SNAPSHOT_CHANGED, snap);
     }
 
-    /** 按关卡 width 缩放 layerPlay，使棋盘宽撑满 Canvas 可用宽度 */
-    private _applyPlayLayerScale(levelWidth: number): void {
+    /** 按关卡尺寸缩放并定位 layerPlay：宽撑满、顶边距 Canvas 顶 playAreaTopMargin */
+    private _applyPlayLayerLayout(levelWidth: number, levelHeight: number): void {
         const playLayer = this._resolveLayerPlay();
         if (!playLayer?.isValid) {
             return;
@@ -125,6 +131,16 @@ export class OpticalPuzzleRoot extends Component {
         const targetWidth = this._resolvePlayAreaWidth();
         const scale = computePlayLayerScale(levelWidth, targetWidth);
         playLayer.setScale(new Vec3(scale, scale, 1));
+
+        const canvasHeight = this._resolveCanvasHeight();
+        const pos = computePlayLayerPosition(
+            levelHeight,
+            scale,
+            canvasHeight,
+            this.playAreaTopMargin,
+        );
+        const current = playLayer.position;
+        playLayer.setPosition(new Vec3(pos.x, pos.y, current.z));
     }
 
     private _resolveLayerPlay(): Node | null {
@@ -143,12 +159,26 @@ export class OpticalPuzzleRoot extends Component {
 
     /** Canvas 设计宽（Widget 拉伸后即为当前屏宽坐标） */
     private _resolvePlayAreaWidth(): number {
-        const canvas = find('Canvas');
-        const canvasWidth = canvas?.getComponent(UITransform)?.contentSize.width ?? 0;
+        const canvasWidth = this._resolveCanvasSize().width;
         const padding = Math.max(0, this.playAreaWidthPadding);
         if (canvasWidth > padding) {
             return canvasWidth - padding;
         }
         return canvasWidth > 0 ? canvasWidth : 750;
+    }
+
+    /** Canvas 设计高（与宽度同为 UI 坐标系） */
+    private _resolveCanvasHeight(): number {
+        const h = this._resolveCanvasSize().height;
+        return h > 0 ? h : 1334;
+    }
+
+    private _resolveCanvasSize(): { width: number; height: number } {
+        const canvas = find('Canvas');
+        const size = canvas?.getComponent(UITransform)?.contentSize;
+        return {
+            width: size?.width ?? 0,
+            height: size?.height ?? 0,
+        };
     }
 }

@@ -62,6 +62,14 @@ export function beamCoreRadius(cellSize: number = OPTICAL_CELL_SIZE): number {
     return BEAM_LINE_WIDTH * BEAM_CORE_WIDTH_RATIO * 0.5 * scale;
 }
 
+/** 缩放后棋盘距 Canvas 顶部的设计边距（px） */
+export const PLAY_LAYER_TOP_MARGIN = 150;
+
+/** 关卡棋盘逻辑高度（像素，未缩放） */
+export function boardPixelHeight(levelHeight: number, cellSize: number = OPTICAL_CELL_SIZE): number {
+    return levelHeight * cellSize;
+}
+
 /** 关卡棋盘逻辑宽度（像素，未缩放） */
 export function boardPixelWidth(levelWidth: number, cellSize: number = OPTICAL_CELL_SIZE): number {
     return levelWidth * cellSize;
@@ -80,4 +88,27 @@ export function computePlayLayerScale(
         return 1;
     }
     return targetWidth / boardWidth;
+}
+
+/**
+ * 缩放后使棋盘顶边距 Canvas 顶边 topMargin（设计 px）。
+ * Canvas 锚点居中时，顶边 y = canvasHeight / 2。
+ */
+export function computePlayLayerPosition(
+    levelHeight: number,
+    scale: number,
+    canvasHeight: number,
+    topMargin: number = PLAY_LAYER_TOP_MARGIN,
+    cellSize: number = OPTICAL_CELL_SIZE,
+): { x: number; y: number } {
+    if (canvasHeight <= 0 || levelHeight <= 0) {
+        return { x: 0, y: 0 };
+    }
+    const boardTopLocal = boardPixelHeight(levelHeight, cellSize) * 0.5;
+    const canvasTop = canvasHeight * 0.5;
+    const targetBoardTopY = canvasTop - Math.max(0, topMargin);
+    return {
+        x: 0,
+        y: targetBoardTopY - boardTopLocal * scale,
+    };
 }

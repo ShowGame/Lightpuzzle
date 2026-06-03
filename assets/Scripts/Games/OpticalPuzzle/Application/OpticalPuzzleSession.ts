@@ -6,12 +6,12 @@ import { AUDIO_EFFECT_ENUM, EVENT_ENUM } from '../../../Utils/Enum';
 import { PLAY_AUDIO } from '../../../Utils/Event';
 import { OpticalGameFlowState } from './OpticalPuzzleStateMachine';
 
-const UNDO_BATCH = 5;
+const UNDO_STEPS = 1;
 
 export type OpticalSessionNotifyReason = 'load' | 'move' | 'face' | 'push' | 'undo' | 'reset' | 'complete';
 
 /**
- * 关卡会话：加载配置、维护历史栈、撤回 5 步、重置。
+ * 关卡会话：加载配置、维护历史栈、撤回、重置。
  * 不依赖场景节点。
  */
 export class OpticalPuzzleSession {
@@ -78,12 +78,12 @@ export class OpticalPuzzleSession {
         }
     }
 
-    /** 撤回按钮：最多连续撤销 UNDO_BATCH 步有效操作 */
+    /** 撤回：撤销 UNDO_STEPS 步有效操作（当前为 1 步） */
     undoBatch(): void {
         if (this._flow !== OpticalGameFlowState.RUNNING || this._history.length <= 1) {
             return;
         }
-        const pops = Math.min(UNDO_BATCH, this._history.length - 1);
+        const pops = Math.min(UNDO_STEPS, this._history.length - 1);
         for (let i = 0; i < pops; i++) {
             this._history.pop();
         }
