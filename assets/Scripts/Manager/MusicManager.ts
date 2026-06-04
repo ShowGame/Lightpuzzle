@@ -10,6 +10,10 @@ import {
 import { DataManager } from './DataManager';
 import { AUDIO_EFFECT_ENUM, BGM_KIND_ENUM, EVENT_ENUM, SCENE_ENUM } from '../Utils/Enum';
 import { PLAY_AUDIO, PLAY_BGM } from '../Utils/Event';
+import {
+    cancelWeChatRewardedVideoPreloadSchedule,
+    scheduleWeChatRewardedVideoPreloadForGame,
+} from '../Utils/WeChatRewardedVideoAd';
 
 const { ccclass, property } = _decorator;
 
@@ -65,6 +69,7 @@ export class MusicManager extends Component {
     }
 
     protected onDestroy(): void {
+        cancelWeChatRewardedVideoPreloadSchedule();
         director.off(Director.EVENT_AFTER_SCENE_LAUNCH, this.onAfterSceneLaunch, this);
         PLAY_AUDIO.off(EVENT_ENUM.PLAY_AUDIO, this.onAudioPlay, this);
         PLAY_BGM.off(EVENT_ENUM.PLAY_BGM, this.onPlayBgmEvent, this);
@@ -75,6 +80,10 @@ export class MusicManager extends Component {
     onAfterSceneLaunch(): void {
         const sceneName = director.getScene()?.name ?? '';
         this.switchBgmBySceneName(sceneName);
+        cancelWeChatRewardedVideoPreloadSchedule();
+        if (sceneName === SCENE_ENUM.GAME) {
+            scheduleWeChatRewardedVideoPreloadForGame();
+        }
     }
 
     /** 设置页切换 BGM 开关后可 emit PLAY_BGM 刷新当前场景 BGM */

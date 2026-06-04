@@ -18,6 +18,8 @@ $tsFiles = @(
   (Join-Path $root 'Utils\Enum.ts'),
   (Join-Path $root 'Utils\Event.ts'),
   (Join-Path $root 'Utils\Utils.ts'),
+  (Join-Path $root 'Utils\WeChatMiniGameAds.ts'),
+  (Join-Path $root 'Utils\WeChatRewardedVideoAd.ts'),
   (Join-Path $root 'Manager\DataManager.ts'),
   (Join-Path $root 'Manager\MusicManager.ts'),
   (Join-Path $root 'Manager\GameManager.ts'),

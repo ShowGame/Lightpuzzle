@@ -119,6 +119,7 @@ export class OpticalPuzzleRoot extends Component {
         this.beamView?.render(beam);
         this.boardView?.renderTargetsOverlay(snap);
         this.boardView?.syncPlaySnapshot(snap, reason);
+        this.inputHud?.refreshActionButtons();
         OPTICAL_PUZZLE.emit(EVENT_ENUM.OPTICAL_SNAPSHOT_CHANGED, snap);
     }
 

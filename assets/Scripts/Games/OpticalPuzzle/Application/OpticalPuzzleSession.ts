@@ -7,6 +7,8 @@ import { PLAY_AUDIO } from '../../../Utils/Event';
 import { OpticalGameFlowState } from './OpticalPuzzleStateMachine';
 
 const UNDO_STEPS = 1;
+/** 撤回键图标横向耗尽阶段：0 满 → 3 空（每按一次 +1，各减 33% 右缘填充） */
+export const UNDO_ICON_FILL_STAGES = 3;
 
 export type OpticalSessionNotifyReason = 'load' | 'move' | 'face' | 'push' | 'undo' | 'reset' | 'complete';
 
@@ -20,12 +22,40 @@ export class OpticalPuzzleSession {
     private _level: IOpticalLevelConfig | null = null;
     private _history: OpticalPlayStateSnapshot[] = [];
     private _flow: OpticalGameFlowState = OpticalGameFlowState.BOOT;
+    /** 撤回键图标填充阶段 0～UNDO_ICON_FILL_STAGES */
+    private _undoFillStage = 0;
 
     /** Presentation 订阅；参数用于区分移动 / 撤回 / 重置等（音效与埋点） */
     onStateChanged: ((reason: OpticalSessionNotifyReason) => void) | null = null;
 
     get flowState(): OpticalGameFlowState {
         return this._flow;
+    }
+
+    /** 撤回键图标填充阶段（0 全填，3 不填） */
+    get undoFillStage(): number {
+        return this._undoFillStage;
+    }
+
+    /** 撤回键按下：图标右缘按 33% 递进清空（与是否撤回成功无关） */
+    registerUndoButtonPress(): void {
+        if (this._undoFillStage < UNDO_ICON_FILL_STAGES) {
+            this._undoFillStage += 1;
+        }
+    }
+
+    /** 图标填充已耗尽（stage=3），再按撤回应走激励广告 */
+    isUndoIconFillExhausted(): boolean {
+        return this._undoFillStage >= UNDO_ICON_FILL_STAGES;
+    }
+
+    /** 激励广告完整观看后：恢复撤回图标满填，可再按三次 */
+    restoreUndoFillFromRewardedAd(): void {
+        this._resetUndoFillStage();
+    }
+
+    private _resetUndoFillStage(): void {
+        this._undoFillStage = 0;
     }
 
     /** 使用内置开发关启动（可改为 loadLevel(cfg)） */
@@ -37,6 +67,7 @@ export class OpticalPuzzleSession {
         this._level = level;
         this.core.reset(level);
         this._history.length = 0;
+        this._resetUndoFillStage();
         this._pushHistory();
         this._flow = OpticalGameFlowState.RUNNING;
         this._emit('load');
@@ -98,6 +129,7 @@ export class OpticalPuzzleSession {
         }
         this.core.reset(this._level);
         this._history.length = 0;
+        this._resetUndoFillStage();
         this._pushHistory();
         this._flow = OpticalGameFlowState.RUNNING;
         this._emit('reset');

@@ -23,6 +23,7 @@ export class OpticalPuzzleActionButtonView extends Component {
 
     private _graphics: Graphics | null = null;
     private _pressed = false;
+    private _undoFillStage = 0;
     private _pressCtrl: HudButtonPressController | null = null;
 
     protected onLoad(): void {
@@ -53,6 +54,12 @@ export class OpticalPuzzleActionButtonView extends Component {
         this._redraw();
     }
 
+    /** 撤回键横向填充阶段（0 满填，3 空） */
+    setUndoFillStage(stage: number): void {
+        this._undoFillStage = stage;
+        this._redraw();
+    }
+
     private _ensureTransform(): void {
         let ut = this.getComponent(UITransform);
         if (!ut) {
@@ -79,7 +86,16 @@ export class OpticalPuzzleActionButtonView extends Component {
         const h = ut.height;
         const left = -ut.anchorX * w;
         const bottom = -ut.anchorY * h;
-        drawActionButtonGlyph(g, left, bottom, w, h, this.kind, this._pressed);
+        drawActionButtonGlyph(
+            g,
+            left,
+            bottom,
+            w,
+            h,
+            this.kind,
+            this._pressed,
+            this.kind === ActionButtonKind.Undo ? this._undoFillStage : 0,
+        );
     }
 
     private _resolveKind(fallback: ActionButtonKind, nodeName: string): ActionButtonKind {

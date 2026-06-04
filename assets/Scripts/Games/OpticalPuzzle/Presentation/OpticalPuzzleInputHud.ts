@@ -13,7 +13,8 @@ import { OpticalPuzzleSession } from '../Application/OpticalPuzzleSession';
 import { Direction } from '../Core/OpticalPuzzleTypes';
 import { AUDIO_EFFECT_ENUM, EVENT_ENUM } from '../../../Utils/Enum';
 import { PLAY_AUDIO } from '../../../Utils/Event';
-import { ensureActionButtonViews } from './OpticalPuzzleActionButtonView';
+import { showWeChatRewardedVideo } from '../../../Utils/WeChatRewardedVideoAd';
+import { ensureActionButtonViews, OpticalPuzzleActionButtonView } from './OpticalPuzzleActionButtonView';
 import type { OpticalPuzzleBoardView } from './OpticalPuzzleBoardView';
 import { ensureDirButtonViews } from './OpticalPuzzleDirButtonView';
 
@@ -44,6 +45,8 @@ export class OpticalPuzzleInputHud extends Component {
 
     private _session: OpticalPuzzleSession | null = null;
     private _boardView: OpticalPuzzleBoardView | null = null;
+    /** 激励广告拉起中，避免重复点击 */
+    private _undoRewardAdPending = false;
 
     protected onLoad(): void {
         this._autoBindButtons();
@@ -108,6 +111,7 @@ export class OpticalPuzzleInputHud extends Component {
         this.btnReset?.node.off(Button.EventType.CLICK, this._onReset, this);
         this._session = null;
         this._boardView = null;
+        this._undoRewardAdPending = false;
     }
 
     private _isMoveInputLocked(): boolean {
@@ -147,12 +151,74 @@ export class OpticalPuzzleInputHud extends Component {
 
     private _onUndo(): void {
         this._playUiClick();
-        this._session?.undoBatch();
+        this._handleUndoRequest();
+    }
+
+    /**
+     * 撤回：填充未耗尽时正常撤回；耗尽后拉起激励广告，完整观看则恢复满填（不执行撤回）。
+     */
+    private _handleUndoRequest(): void {
+        const session = this._session;
+        if (!session) {
+            return;
+        }
+        if (session.isUndoIconFillExhausted()) {
+            this._requestUndoRewardAd(session);
+            return;
+        }
+        session.registerUndoButtonPress();
+        session.undoBatch();
+        this.refreshActionButtons();
+    }
+
+    private _requestUndoRewardAd(session: OpticalPuzzleSession): void {
+        if (this._undoRewardAdPending) {
+            return;
+        }
+        this._undoRewardAdPending = true;
+        showWeChatRewardedVideo()
+            .then((watched) => {
+                if (!this.isValid) {
+                    return;
+                }
+                if (watched) {
+                    session.restoreUndoFillFromRewardedAd();
+                    this.refreshActionButtons();
+                }
+            })
+            .then(
+                () => {
+                    if (this.isValid) {
+                        this._undoRewardAdPending = false;
+                    }
+                },
+                () => {
+                    if (this.isValid) {
+                        this._undoRewardAdPending = false;
+                    }
+                },
+            );
     }
 
     private _onReset(): void {
         this._playUiClick();
         this._session?.resetLevel();
+    }
+
+    /** 同步操作键图标（如撤回键横向填充阶段） */
+    refreshActionButtons(): void {
+        const stage = this._session?.undoFillStage ?? 0;
+        const actionPad = this.node.getChildByName('ActionPad');
+        if (!actionPad?.isValid) {
+            return;
+        }
+        for (const child of actionPad.children) {
+            const view = child.getComponent(OpticalPuzzleActionButtonView);
+            if (!view) {
+                continue;
+            }
+            view.setUndoFillStage(stage);
+        }
     }
 
     private _directionFromKey(keyCode: number): Direction | null {
@@ -212,7 +278,8 @@ export class OpticalPuzzleInputHud extends Component {
         }
         switch (keyCode) {
             case KeyCode.KEY_Z:
-                this._session.undoBatch();
+                this._playUiClick();
+                this._handleUndoRequest();
                 break;
             case KeyCode.KEY_R:
                 this._session.resetLevel();

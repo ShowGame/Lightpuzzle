@@ -252,7 +252,7 @@ export function playerBaseFillColor(): Color {
     return new Color(255, 92, 58, 255);
 }
 
-/** 主角格底外框：2px 黑边 */
+/** 主角 bezel 外环（与 Target 外缘结构同色，纯黑） */
 export function playerBaseBorderColor(): Color {
     return new Color(0, 0, 0, 255);
 }

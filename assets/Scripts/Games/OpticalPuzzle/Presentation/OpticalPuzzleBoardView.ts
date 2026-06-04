@@ -13,6 +13,7 @@ import { drawConnectivityGlyph } from './OpticalPuzzlePieceGlyph';
 import {
     animatedSquashedCellRect,
     buildMoveAnimEntities,
+    buildFailedMovePlayerEntity,
     MOVE_ANIM_DURATION,
     moveAnimProgress,
     type MoveAnimEntity,
@@ -193,13 +194,14 @@ export class OpticalPuzzleBoardView extends Component {
         }
     }
 
-    /** 任意方向操作：打破睡眠 / 打断闲置眨眼，回到 Active */
+    /** 任意方向操作：打破睡眠 / 打断闲置眨眼，回到 Active 以重新开始 4s→10s 周期 */
     private _wakeFromDirectionInput(): void {
         if (
             this._eyeState === PlayerEyeIdleState.Closed ||
             this._eyeState === PlayerEyeIdleState.Closing ||
             this._eyeState === PlayerEyeIdleState.Opening ||
-            this._eyeState === PlayerEyeIdleState.IdleBlinking
+            this._eyeState === PlayerEyeIdleState.IdleBlinking ||
+            this._eyeState === PlayerEyeIdleState.IdleAfterBlink
         ) {
             this._eyeState = PlayerEyeIdleState.Active;
             this._animElapsed = 0;
@@ -277,6 +279,8 @@ export class OpticalPuzzleBoardView extends Component {
             this._settledSnapshot = snapshot;
         } else if (reason === 'move' || reason === 'push' || reason === 'complete') {
             this._beginMoveAnim(snapshot);
+        } else if (reason === 'face') {
+            this._beginFailedMoveAnim(snapshot);
         }
         this.renderPiecesOverlay(snapshot);
     }
@@ -296,6 +300,18 @@ export class OpticalPuzzleBoardView extends Component {
             return;
         }
         this._moveAnim = { elapsed: 0, snapshot, entities };
+    }
+
+    /** 推墙 / 推不动：仅主角原地挤压，元件不参与 */
+    private _beginFailedMoveAnim(snapshot: OpticalBoardSnapshot): void {
+        if (!this._settledSnapshot) {
+            this._settledSnapshot = snapshot;
+        }
+        this._moveAnim = {
+            elapsed: 0,
+            snapshot,
+            entities: [buildFailedMovePlayerEntity(snapshot)],
+        };
     }
 
     private _finishMoveAnim(): void {

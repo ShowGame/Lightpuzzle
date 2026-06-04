@@ -6,6 +6,52 @@ import { sourceEmitterColors } from './OpticalPuzzleColorUtil';
 
 /** 发射器外轮廓圆角（设计像素，随格宽等比缩放） */
 const EMITTER_CORNER_RADIUS = 4;
+/** 六边形框路径半宽（viewBox 1024，iconR=10） */
+const SOURCE_HEX_FRAME_HALF_W = 7.646;
+/** 四角螺丝尺寸（相对格宽，直径） */
+const SOURCE_CORNER_SCREW_SIZE_RATIO = 0.085;
+/** 螺丝双层圆环半径比例（外环 → 内环，相对螺丝半径 1.0） */
+const SOURCE_SCREW_OUTER_HOLE_RATIO = 0.68;
+const SOURCE_SCREW_INNER_RING_RATIO = 0.52;
+const SOURCE_SCREW_INNER_HOLE_RATIO = 0.22;
+
+type SvgSeg =
+    | { t: 'M'; x: number; y: number }
+    | { t: 'L'; x: number; y: number }
+    | { t: 'C'; x1: number; y1: number; x2: number; y2: number; x: number; y: number }
+    | { t: 'Z' };
+
+/** 发射器四角框：用户 SVG 外六边形 + 内孔（iconR=10） */
+const SOURCE_HEX_FRAME_FILL_SEGS: ReadonlyArray<SvgSeg> = [
+    { t: 'M', x: 0, y: -8.738 },
+    { t: 'C', x1: -0.102, y1: -8.738, x2: -0.203, y2: -8.713, x: -0.293, y: -8.66 },
+    { t: 'L', x: -7.354, y: -4.584 },
+    { t: 'C', x1: -7.535, y1: -4.479, x2: -7.646, y2: -4.285, x: -7.646, y: -4.076 },
+    { t: 'L', x: -7.646, y: 4.076 },
+    { t: 'C', x1: -7.646, y1: 4.285, x2: -7.535, y2: 4.479, x: -7.354, y: 4.584 },
+    { t: 'L', x: -0.293, y: 8.66 },
+    { t: 'C', x1: -0.111, y1: 8.766, x2: 0.111, y2: 8.766, x: 0.293, y: 8.66 },
+    { t: 'L', x: 7.354, y: 4.584 },
+    { t: 'C', x1: 7.535, y1: 4.479, x2: 7.646, y2: 4.285, x: 7.646, y: 4.076 },
+    { t: 'L', x: 7.646, y: -4.076 },
+    { t: 'C', x1: 7.646, y1: -4.285, x2: 7.535, y2: -4.479, x: 7.354, y: -4.584 },
+    { t: 'L', x: 0.293, y: -8.66 },
+    { t: 'C', x1: 0.203, y1: -8.713, x2: 0.102, y2: -8.738, x: 0, y: -8.738 },
+    { t: 'Z' },
+    { t: 'M', x: -6.475, y: -3.738 },
+    { t: 'L', x: 0, y: -7.477 },
+    { t: 'L', x: 6.475, y: -3.738 },
+    { t: 'L', x: 6.475, y: 3.738 },
+    { t: 'L', x: 0, y: 7.477 },
+    { t: 'L', x: -6.475, y: 3.738 },
+    { t: 'L', x: -6.475, y: -3.738 },
+    { t: 'Z' },
+];
+
+/** 仅外轮廓描边，内孔只参与填充 */
+const SOURCE_HEX_FRAME_STROKE_SEGS: ReadonlyArray<SvgSeg> = SOURCE_HEX_FRAME_FILL_SEGS.slice(0, 16);
+/** 内六边形（挖孔） */
+const SOURCE_HEX_FRAME_INNER_SEGS: ReadonlyArray<SvgSeg> = SOURCE_HEX_FRAME_FILL_SEGS.slice(16);
 
 const SCREEN_DIR_DX: ReadonlyArray<number> = [1, 0, -1, 0];
 const SCREEN_DIR_DY: ReadonlyArray<number> = [0, 1, 0, -1];
@@ -80,33 +126,152 @@ function strokeLocalPoly(
     g.stroke();
 }
 
-/** 格心对称四角 L（连续折线 + 圆角连接，避免转折处漏像素） */
-function drawScreenSymmetricBrackets(
+function traceScreenSegs(
+    g: Graphics,
+    segs: ReadonlyArray<SvgSeg>,
+    cx: number,
+    cy: number,
+    scale: number,
+): void {
+    for (const seg of segs) {
+        switch (seg.t) {
+            case 'M':
+                g.moveTo(cx + seg.x * scale, cy + seg.y * scale);
+                break;
+            case 'L':
+                g.lineTo(cx + seg.x * scale, cy + seg.y * scale);
+                break;
+            case 'C':
+                g.bezierCurveTo(
+                    cx + seg.x1 * scale,
+                    cy + seg.y1 * scale,
+                    cx + seg.x2 * scale,
+                    cy + seg.y2 * scale,
+                    cx + seg.x * scale,
+                    cy + seg.y * scale,
+                );
+                break;
+            case 'Z':
+                g.close();
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+/** 格心对称六边形框：外环填充 + 内孔 */
+function fillSourceHexFrame(
     g: Graphics,
     cx: number,
     cy: number,
-    half: number,
-    arm: number,
-    color: Color,
+    size: number,
+    halfW: number,
+    fillColor: Color,
+    holeColor: Color,
+): void {
+    const frameHalf = halfW + size * 0.12;
+    const scale = frameHalf / SOURCE_HEX_FRAME_HALF_W;
+    g.fillColor = fillColor;
+    traceScreenSegs(g, SOURCE_HEX_FRAME_STROKE_SEGS, cx, cy, scale);
+    g.fill();
+    g.fillColor = holeColor;
+    traceScreenSegs(g, SOURCE_HEX_FRAME_INNER_SEGS, cx, cy, scale);
+    g.fill();
+}
+
+/** 六边形外轮廓描边 */
+function strokeSourceHexFrame(
+    g: Graphics,
+    cx: number,
+    cy: number,
+    size: number,
+    halfW: number,
+    strokeColor: Color,
     lineWidth: number,
 ): void {
-    g.strokeColor = color;
+    const frameHalf = halfW + size * 0.12;
+    const scale = frameHalf / SOURCE_HEX_FRAME_HALF_W;
+    g.strokeColor = strokeColor;
     g.lineWidth = lineWidth;
-    g.lineCap = Graphics.LineCap.SQUARE;
     g.lineJoin = Graphics.LineJoin.ROUND;
-    const corners: Array<{ x: number; y: number; ax: number; ay: number }> = [
-        { x: -half, y: -half, ax: 1, ay: 1 },
-        { x: half, y: -half, ax: -1, ay: 1 },
-        { x: half, y: half, ax: -1, ay: -1 },
-        { x: -half, y: half, ax: 1, ay: -1 },
+    g.lineCap = Graphics.LineCap.ROUND;
+    traceScreenSegs(g, SOURCE_HEX_FRAME_STROKE_SEGS, cx, cy, scale);
+    g.stroke();
+}
+
+/** 单颗螺丝头：外环 + 内环（各挖孔），对应 SVG 双层圆环 */
+function drawSourceScrewAt(
+    g: Graphics,
+    atX: number,
+    atY: number,
+    screwRadius: number,
+    outerColor: Color,
+    innerRingColor: Color,
+    holeColor: Color,
+    strokeColor: Color,
+    lineWidth: number,
+): void {
+    const rOuter = screwRadius;
+    const rOuterHole = screwRadius * SOURCE_SCREW_OUTER_HOLE_RATIO;
+    const rInner = screwRadius * SOURCE_SCREW_INNER_RING_RATIO;
+    const rInnerHole = screwRadius * SOURCE_SCREW_INNER_HOLE_RATIO;
+
+    g.fillColor = outerColor;
+    g.circle(atX, atY, rOuter);
+    g.fill();
+    g.fillColor = holeColor;
+    g.circle(atX, atY, rOuterHole);
+    g.fill();
+
+    g.fillColor = innerRingColor;
+    g.circle(atX, atY, rInner);
+    g.fill();
+    g.fillColor = holeColor;
+    g.circle(atX, atY, rInnerHole);
+    g.fill();
+
+    g.strokeColor = strokeColor;
+    g.lineWidth = lineWidth;
+    g.circle(atX, atY, rOuter);
+    g.stroke();
+    g.circle(atX, atY, rInner);
+    g.stroke();
+}
+
+/** 六边形框四角小螺丝（格心 screen 对称） */
+function drawSourceCornerScrews(
+    g: Graphics,
+    cx: number,
+    cy: number,
+    size: number,
+    halfW: number,
+    outerColor: Color,
+    innerRingColor: Color,
+    holeColor: Color,
+    strokeColor: Color,
+): void {
+    const corner = halfW + size * 0.12;
+    const screwRadius = size * SOURCE_CORNER_SCREW_SIZE_RATIO * 0.5;
+    const lineW = Math.max(0.75, size * 0.012);
+    const corners = [
+        { x: -corner, y: -corner },
+        { x: corner, y: -corner },
+        { x: corner, y: corner },
+        { x: -corner, y: corner },
     ];
     for (const c of corners) {
-        const p0x = cx + c.x;
-        const p0y = cy + c.y;
-        g.moveTo(p0x + c.ax * arm, p0y);
-        g.lineTo(p0x, p0y);
-        g.lineTo(p0x, p0y + c.ay * arm);
-        g.stroke();
+        drawSourceScrewAt(
+            g,
+            cx + c.x,
+            cy + c.y,
+            screwRadius,
+            outerColor,
+            innerRingColor,
+            holeColor,
+            strokeColor,
+            lineW,
+        );
     }
 }
 
@@ -180,11 +345,22 @@ export function drawSourceEmitter(
     g.roundRect(left, bottom, size, size, cornerR);
     g.fill();
 
+    /** 机身半宽（lx 横向，垂直于炮口方向）；整宽 = halfW × 2 */
+    const halfW = size * 0.24;
+    const hexFill = new Color(
+        Math.floor(colors.accent.r * 0.55),
+        Math.floor(colors.accent.g * 0.55),
+        Math.floor(colors.accent.b * 0.55),
+        200,
+    );
+    const hexLineW = Math.max(2.2, size * 0.05);
+
+    // 格心对称六边形框（用户 SVG，先铺底再画机身）
+    fillSourceHexFrame(g, cx, cy, size, halfW, hexFill, new Color(8, 12, 20, 255));
+
     // 光点锚点（不随机身/梯形调整而移动）
     const bodyCx = cx - dx * size * 0.05;
     const bodyCy = cy - dy * size * 0.05;
-    /** 机身半宽（lx 横向，垂直于炮口方向）；整宽 = halfW × 2 */
-    const halfW = size * 0.24;
     /** 机身后缘 / 前缘（ly 沿发射方向，backY 为负=炮口反侧） */
     const backY = -size * 0.26;
     const frontY = size * 0.04;
@@ -223,15 +399,18 @@ export function drawSourceEmitter(
         ),
     );
 
-    // 四角 L：格心 screen 对称，不随朝向 / 机身前移
-    drawScreenSymmetricBrackets(
+    strokeSourceHexFrame(g, cx, cy, size, halfW, colors.accent, hexLineW);
+
+    drawSourceCornerScrews(
         g,
         cx,
         cy,
-        halfW + size * 0.12,//L距离中心点距离
-        size * 0.11,
+        size,
+        halfW,
+        colors.chassisEdge,
         colors.accent,
-        Math.max(2.2, size * 0.05),
+        new Color(8, 12, 20, 255),
+        colors.accent,
     );
 
     const railLen = size * 0.14;
@@ -271,13 +450,4 @@ export function drawSourceEmitter(
 
     // 与光路相同的白芯→本色渐变截面（叠在光晕之上，与光束衔接）
     fillBeamCrossSection(g, muzzle.x, muzzle.y, colors.beam, size);
-
-    const ledLy = backY + size * 0.12;
-    const led = emitLocalToWorld(emitCx, emitCy, 0, ledLy, dx, dy, px, py);
-    g.fillColor = colors.accent;
-    g.circle(led.x, led.y, size * 0.084);
-    g.fill();
-    g.fillColor = colors.beam;
-    g.circle(led.x, led.y, size * 0.056);
-    g.fill();
 }

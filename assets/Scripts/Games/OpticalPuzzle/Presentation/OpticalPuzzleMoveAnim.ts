@@ -141,3 +141,17 @@ export function buildMoveAnimEntities(
 
     return entities;
 }
+
+/** 移动失败：主角原地挤压形变，元件不动 */
+export function buildFailedMovePlayerEntity(snapshot: OpticalBoardSnapshot): MoveAnimEntity {
+    const { x, y } = snapshot.player;
+    const direction = snapshot.playerFacing ?? Direction.Left;
+    return {
+        kind: 'player',
+        fromX: x,
+        fromY: y,
+        toX: x,
+        toY: y,
+        direction,
+    };
+}

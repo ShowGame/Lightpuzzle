@@ -15,7 +15,8 @@ export const HUD_LINE_ICON_BORDER_DESIGN = 2;
 export const HUD_ICON_BODY_DESIGN = 5;
 
 /** 与未点亮目标内面板一致 #161c26（浅黑底） */
-const KEY_FILL = new Color(22, 28, 38, 255);
+export const HUD_KEY_FILL = new Color(22, 28, 38, 255);
+const KEY_FILL = HUD_KEY_FILL;
 const KEY_BORDER = new Color(255, 255, 255, 255);
 
 /** 按下时白光层（设计 px 线宽 → alpha，外框与图标共用） */
@@ -70,6 +71,27 @@ export function strokeGlowLayers(
         g.lineWidth = Math.max(1, scaleHudDesign(size, layer.width));
         tracePath();
         g.stroke();
+    }
+}
+
+/**
+ * 实心面型图标按下光晕：与 strokeGlowLayers 共用 width/alpha（扩散与颜色一致），
+ * 外扩填充画在图标下方，避免尖角处描边叠线过曝。
+ */
+export function fillGlowLayersMatchingStroke(
+    g: Graphics,
+    size: number,
+    layers: ReadonlyArray<{ width: number; alpha: number }>,
+    iconHalfPx: number,
+    traceAtScale: (scaleMul: number) => void,
+): void {
+    const half = Math.max(iconHalfPx, 1);
+    for (const layer of layers) {
+        const halfGlow = scaleHudDesign(size, layer.width) * 0.5;
+        const expand = 1 + halfGlow / half;
+        g.fillColor = new Color(255, 255, 255, layer.alpha);
+        traceAtScale(expand);
+        g.fill();
     }
 }
 

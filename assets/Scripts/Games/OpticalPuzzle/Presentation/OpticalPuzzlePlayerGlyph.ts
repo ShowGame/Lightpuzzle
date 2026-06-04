@@ -19,8 +19,16 @@ const BLINK_DOWN_OFFSET = 2;
 const EYE_CENTER_GAP = 20;
 /** 阻拦 >< 眼两眼中心间距（设计像素） */
 const BLOCKED_EYE_CENTER_GAP = 22;
-/** 格底外框宽度（设计像素） */
-const BASE_BORDER_WIDTH = 2;
+
+/** 与 TargetGlyph 外缘一致：bezel 环宽比例、内面板圆角系数 */
+const BEZEL_RATIO = 0.034;
+const INNER_CORNER_FACTOR = 0.7;
+const INNER_FRAME_STROKE_RATIO = 0.008;
+
+/** 格底圆角（设计像素，与 Target / 发射器一致） */
+const CELL_CORNER_RADIUS = 4;
+/** 眼镜片圆角（略小于格底） */
+const EYE_CORNER_RADIUS = 2;
 
 /** 双眼整体中心相对格心的偏移（设计像素，y 向上为正） */
 const PAIR_CENTER_BY_DIR: Readonly<Record<Direction, { x: number; y: number }>> = {
@@ -29,11 +37,6 @@ const PAIR_CENTER_BY_DIR: Readonly<Record<Direction, { x: number; y: number }>> 
     [Direction.Right]: { x: 4, y: 3 },
     [Direction.Down]: { x: 0, y: 0 },
 };
-
-/** 格底圆角（设计像素） */
-const CELL_CORNER_RADIUS = 4;
-/** 眼镜片圆角（略小于格底） */
-const EYE_CORNER_RADIUS = 2;
 
 function scaleDesign(size: number, design: number): number {
     return design * (size / OPTICAL_CELL_SIZE);
@@ -201,7 +204,42 @@ function drawBlockedChevronEyes(
 }
 
 /**
- * 主角：橘红格底 + 2px 黑边 + 两枚深橘眼镜片。
+ * 外缘 bezel 填充环 + 内嵌圆角面板（与 Target 未点亮外框同结构，颜色为主角黑边/橘底）。
+ * 描边仅画内面板路径，不外溢格缘。
+ */
+function drawPlayerCellFrame(
+    g: Graphics,
+    left: number,
+    bottom: number,
+    width: number,
+    height: number,
+    refSize: number,
+): void {
+    const corner = scaledCellCornerRadius(refSize);
+    const bezel = refSize * BEZEL_RATIO;
+    const innerLeft = left + bezel;
+    const innerBottom = bottom + bezel;
+    const innerWidth = width - bezel * 2;
+    const innerHeight = height - bezel * 2;
+    const innerCorner = corner * INNER_CORNER_FACTOR;
+    const border = playerBaseBorderColor();
+
+    g.fillColor = border;
+    g.roundRect(left, bottom, width, height, corner);
+    g.fill();
+
+    g.fillColor = playerBaseFillColor();
+    g.roundRect(innerLeft, innerBottom, innerWidth, innerHeight, innerCorner);
+    g.fill();
+
+    g.strokeColor = border;
+    g.lineWidth = Math.max(1, refSize * INNER_FRAME_STROKE_RATIO);
+    g.roundRect(innerLeft, innerBottom, innerWidth, innerHeight, innerCorner);
+    g.stroke();
+}
+
+/**
+ * 主角：Target 式 bezel 外缘 + 橘色内面板 + 两枚深橘眼镜片。
  * @param width 格宽（挤压动画时可非正方形）
  * @param height 格高，默认与 width 相同
  */
@@ -217,14 +255,8 @@ export function drawPlayerEyes(
 ): void {
     const h = height ?? width;
     const refSize = Math.min(width, h);
-    const cellCorner = scaledCellCornerRadius(refSize);
-    g.fillColor = playerBaseFillColor();
-    g.roundRect(left, bottom, width, h, cellCorner);
-    g.fill();
-    g.strokeColor = playerBaseBorderColor();
-    g.lineWidth = Math.max(1, scaleDesign(refSize, BASE_BORDER_WIDTH));
-    g.roundRect(left, bottom, width, h, cellCorner);
-    g.stroke();
+
+    drawPlayerCellFrame(g, left, bottom, width, h, refSize);
 
     const cx = left + width * 0.5;
     const cy = bottom + h * 0.5;
