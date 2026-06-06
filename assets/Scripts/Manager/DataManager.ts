@@ -1,4 +1,5 @@
 import { sys } from 'cc';
+import { MOCK_PLAYER_DATA, USE_DEBUG_MOCK_SAVE } from '../Config/DebugMockSave';
 import { GAME_STATE_ENUM } from '../Utils/Enum';
 
 const PLAYER_DATA_STORAGE_KEY = 'LightPuzzle_player_v1';
@@ -22,11 +23,58 @@ export interface IPlayerPersistData {
     sfxOn: boolean;
 }
 
+/** 新玩家默认存档（无本地档时使用） */
 const DEFAULT_DATA: IPlayerPersistData = {
-    opticalCurrentLevelId: 3,//关卡mock
+    opticalCurrentLevelId: 1,
     bgmOn: true,
     sfxOn: true,
 };
+
+/** 浏览器预览里 sys 与 window.localStorage 可能不同步，统一读写 */
+function getStorageItem(key: string): string | null {
+    let fromSys: string | null = null;
+    let fromGlobal: string | null = null;
+    try {
+        const a = sys.localStorage.getItem(key);
+        if (a != null && a !== '') {
+            fromSys = a;
+        }
+    } catch {
+        /* ignore */
+    }
+    try {
+        const gl = (globalThis as { localStorage?: Storage }).localStorage;
+        if (gl && typeof gl.getItem === 'function') {
+            const b = gl.getItem(key);
+            if (b != null && b !== '') {
+                fromGlobal = b;
+            }
+        }
+    } catch {
+        /* ignore */
+    }
+    if (fromSys && fromGlobal && fromSys !== fromGlobal) {
+        console.warn('[DataManager] sys 与 window.localStorage 同一 key 不一致，使用 window 中的值');
+        return fromGlobal;
+    }
+    return fromGlobal ?? fromSys;
+}
+
+function setStorageItem(key: string, value: string): void {
+    try {
+        sys.localStorage.setItem(key, value);
+    } catch {
+        /* ignore */
+    }
+    try {
+        const gl = (globalThis as { localStorage?: Storage }).localStorage;
+        if (gl && typeof gl.setItem === 'function') {
+            gl.setItem(key, value);
+        }
+    } catch {
+        /* ignore */
+    }
+}
 
 function mergeOpticalCurrentLevelId(raw: unknown): number {
     if (typeof raw === 'number' && Number.isFinite(raw)) {
@@ -55,6 +103,9 @@ function mergePlayerData(raw: unknown): IPlayerPersistData {
  */
 export class DataManager {
     private static _instance: DataManager | null = null;
+
+    /** 本进程是否已执行过 init（避免切场景再次 restore / 重复套 mock） */
+    private static _initializedThisRun = false;
 
     static get instance(): DataManager {
         if (this._instance === null) {
@@ -106,15 +157,36 @@ export class DataManager {
 
     save(): void {
         try {
-            sys.localStorage.setItem(PLAYER_DATA_STORAGE_KEY, JSON.stringify(this._data));
+            setStorageItem(PLAYER_DATA_STORAGE_KEY, JSON.stringify(this._data));
         } catch (e) {
             console.warn('[DataManager] save failed', e);
         }
     }
 
+    /**
+     * 初始化：进程内仅执行一次。先读本地档合并默认值，再可选把 mock 覆盖进内存（不落盘）。
+     */
+    init(): void {
+        if (DataManager._initializedThisRun) {
+            return;
+        }
+        DataManager._initializedThisRun = true;
+
+        this.restore();
+
+        if (USE_DEBUG_MOCK_SAVE) {
+            this._applyDebugMockToMemory();
+        }
+    }
+
+    /** 将 MOCK_PLAYER_DATA 合并进内存，不触发 save */
+    private _applyDebugMockToMemory(): void {
+        this._data = mergePlayerData({ ...this._data, ...MOCK_PLAYER_DATA });
+    }
+
     restore(): void {
         try {
-            const raw = sys.localStorage.getItem(PLAYER_DATA_STORAGE_KEY);
+            const raw = getStorageItem(PLAYER_DATA_STORAGE_KEY);
             if (!raw) {
                 this._data = { ...DEFAULT_DATA };
                 return;

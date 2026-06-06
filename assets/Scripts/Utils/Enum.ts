@@ -11,6 +11,8 @@ export enum EVENT_ENUM {
     GAME_STATE_CHANGE = 'GAME_STATE_CHANGE',
     /** 光学解谜棋盘快照更新（载荷为 OpticalBoardSnapshot，由 Presentation 监听） */
     OPTICAL_SNAPSHOT_CHANGED = 'OPTICAL_SNAPSHOT_CHANGED',
+    /** Toast 提示（载荷 { message, bgWidth?, localY? }） */
+    SHOW_TOAST = 'SHOW_TOAST',
 }
 
 /** 音效类型（按需扩展；播放经 PLAY_AUDIO 事件，由 MusicManager 映射 AudioClip） */

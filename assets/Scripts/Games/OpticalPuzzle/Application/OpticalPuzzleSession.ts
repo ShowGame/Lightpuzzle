@@ -2,8 +2,15 @@ import { DEV_LEVEL_MINIMAL, type IOpticalLevelConfig } from '../Config/OpticalPu
 import { OpticalPuzzleCore, type OpticalPlayStateSnapshot } from '../Core/OpticalPuzzleCore';
 import type { OpticalBeamSnapshot } from '../Core/OpticalPuzzleCore';
 import { Direction, MoveAttemptResult, type OpticalBoardSnapshot } from '../Core/OpticalPuzzleTypes';
+
+/** OPTICAL_SNAPSHOT_CHANGED 载荷：棋盘快照 + 本局移动步数 + 触发原因 */
+export interface OpticalSnapshotNotify {
+    snapshot: OpticalBoardSnapshot;
+    moveCount: number;
+    notifyReason?: OpticalSessionNotifyReason;
+}
 import { AUDIO_EFFECT_ENUM, EVENT_ENUM } from '../../../Utils/Enum';
-import { PLAY_AUDIO } from '../../../Utils/Event';
+import { PLAY_AUDIO, SHOW_TOAST } from '../../../Utils/Event';
 import { OpticalGameFlowState } from './OpticalPuzzleStateMachine';
 
 const UNDO_STEPS = 1;
@@ -11,6 +18,13 @@ const UNDO_STEPS = 1;
 export const UNDO_ICON_FILL_STAGES = 3;
 
 export type OpticalSessionNotifyReason = 'load' | 'move' | 'face' | 'push' | 'undo' | 'reset' | 'complete';
+
+/** 已在初始状态时撤回/重开的 Toast 参数 */
+const INITIAL_STATE_TOAST = {
+    message: '已在初始状态',
+    bgWidth: 360,
+    localY: -250,
+} as const;
 
 /**
  * 关卡会话：加载配置、维护历史栈、撤回、重置。
@@ -24,6 +38,8 @@ export class OpticalPuzzleSession {
     private _flow: OpticalGameFlowState = OpticalGameFlowState.BOOT;
     /** 撤回键图标填充阶段 0～UNDO_ICON_FILL_STAGES */
     private _undoFillStage = 0;
+    /** 本局有效移动步数（成功移动/推箱 +1，撤回 -1，重开/开局 0） */
+    private _moveCount = 0;
 
     /** Presentation 订阅；参数用于区分移动 / 撤回 / 重置等（音效与埋点） */
     onStateChanged: ((reason: OpticalSessionNotifyReason) => void) | null = null;
@@ -37,7 +53,26 @@ export class OpticalPuzzleSession {
         return this._undoFillStage;
     }
 
-    /** 撤回键按下：图标右缘按 33% 递进清空（与是否撤回成功无关） */
+    /** 本局已消耗移动步数 */
+    get moveCount(): number {
+        return this._moveCount;
+    }
+
+    /** 是否存在可撤回的有效操作（玩家或元件相对上一检查点有变化） */
+    canUndo(): boolean {
+        return this._flow === OpticalGameFlowState.RUNNING && this._history.length > 1;
+    }
+
+    /** 局内进行中且相对开局无任何操作记录 */
+    isAtInitialPlayState(): boolean {
+        return this._flow === OpticalGameFlowState.RUNNING && this._history.length <= 1;
+    }
+
+    private _emitInitialStateToast(): void {
+        SHOW_TOAST.emit(EVENT_ENUM.SHOW_TOAST, { ...INITIAL_STATE_TOAST });
+    }
+
+    /** 撤回键按下：图标右缘按 33% 递进清空（仅在实际撤回成功时调用） */
     registerUndoButtonPress(): void {
         if (this._undoFillStage < UNDO_ICON_FILL_STAGES) {
             this._undoFillStage += 1;
@@ -68,6 +103,7 @@ export class OpticalPuzzleSession {
         this.core.reset(level);
         this._history.length = 0;
         this._resetUndoFillStage();
+        this._moveCount = 0;
         this._pushHistory();
         this._flow = OpticalGameFlowState.RUNNING;
         this._emit('load');
@@ -81,21 +117,21 @@ export class OpticalPuzzleSession {
         return this.core.getBeamSnapshot();
     }
 
-    /** 四向按钮入口 */
-    applyDirection(dir: Direction): void {
+    /** 四向按钮 / 键盘入口；非 RUNNING 时返回 null */
+    applyDirection(dir: Direction): MoveAttemptResult | null {
         if (this._flow !== OpticalGameFlowState.RUNNING) {
-            return;
+            return null;
         }
         this.core.setPlayerFacing(dir);
         const r = this.core.tryMove(dir);
         if (r === MoveAttemptResult.Blocked) {
-            if (this.core.hasPieceAhead(dir)) {
-                PLAY_AUDIO.emit(EVENT_ENUM.PLAY_AUDIO, AUDIO_EFFECT_ENUM.OPTICAL_PIECE_PUSH_FAIL);
-            }
+            // 与 BoardView「><」阻拦表情（reason=face）同一条件：凡 Blocked 即失败反馈
+            PLAY_AUDIO.emit(EVENT_ENUM.PLAY_AUDIO, AUDIO_EFFECT_ENUM.OPTICAL_PIECE_PUSH_FAIL);
             this._emit('face');
-            return;
+            return r;
         }
         if (r === MoveAttemptResult.PlayerMoved || r === MoveAttemptResult.PiecePushed) {
+            this._moveCount += 1;
             this._pushHistory();
             if (this.core.isAllTargetsLit()) {
                 this._flow = OpticalGameFlowState.SETTLEMENT;
@@ -107,12 +143,16 @@ export class OpticalPuzzleSession {
                 this._emit('move');
             }
         }
+        return r;
     }
 
-    /** 撤回：撤销 UNDO_STEPS 步有效操作（当前为 1 步） */
-    undoBatch(): void {
-        if (this._flow !== OpticalGameFlowState.RUNNING || this._history.length <= 1) {
-            return;
+    /** 撤回：撤销 UNDO_STEPS 步有效操作（当前为 1 步）；无可撤回步时弹 Toast 并返回 false */
+    undoBatch(): boolean {
+        if (!this.canUndo()) {
+            if (this.isAtInitialPlayState()) {
+                this._emitInitialStateToast();
+            }
+            return false;
         }
         const pops = Math.min(UNDO_STEPS, this._history.length - 1);
         for (let i = 0; i < pops; i++) {
@@ -120,16 +160,23 @@ export class OpticalPuzzleSession {
         }
         const snap = this._history[this._history.length - 1];
         this.core.restorePlayState(snap);
+        this._moveCount = Math.max(0, this._moveCount - pops);
         this._emit('undo');
+        return true;
     }
 
     resetLevel(): void {
         if (!this._level) {
             return;
         }
+        if (this.isAtInitialPlayState()) {
+            this._emitInitialStateToast();
+            return;
+        }
         this.core.reset(this._level);
         this._history.length = 0;
         this._resetUndoFillStage();
+        this._moveCount = 0;
         this._pushHistory();
         this._flow = OpticalGameFlowState.RUNNING;
         this._emit('reset');

@@ -1,10 +1,15 @@
-import { Graphics } from 'cc';
+import { Color, Graphics } from 'cc';
 import {
     openDirectionsForPiece,
     type PieceConnectivity,
 } from '../Core/OpticalPieceConnectivity';
 import { Direction } from '../Core/OpticalPuzzleTypes';
-import { pieceBaseFillColor, pieceChannelColors } from './OpticalPuzzleColorUtil';
+import {
+    pieceBaseFillColor,
+    pieceChannelColors,
+    playerBaseBorderColor,
+    targetUnlitBulbFillColor,
+} from './OpticalPuzzleColorUtil';
 import { OPTICAL_CELL_SIZE } from './OpticalPuzzleLayout';
 
 const ARM_WIDTH_RATIO = 0.14;
@@ -13,6 +18,11 @@ const HOLE_RATIO = 0.3;
 const ARM_EDGE_INSET = 1;
 /** 元件格底圆角（设计像素，随格宽等比缩放） */
 const PIECE_CORNER_RADIUS = 4;
+/** 与 Target / Player 外缘一致：bezel 环宽、内面板圆角系数 */
+const BEZEL_RATIO = 0.034;
+const INNER_CORNER_FACTOR = 0.7;
+/** 内面板描边线宽比例（与 TargetGlyph 点亮内框一致） */
+const INNER_FRAME_STROKE_RATIO = 0.008;
 
 function scaledPieceCornerRadius(size: number): number {
     return PIECE_CORNER_RADIUS * (size / OPTICAL_CELL_SIZE);
@@ -48,6 +58,43 @@ function drawThickArm(
     g.stroke();
 }
 
+/** 挡光元件（connectivity 0）：Target 式黑边 bezel + 纯色内面板 */
+function drawBlockingPieceFrame(
+    g: Graphics,
+    left: number,
+    bottom: number,
+    width: number,
+    height: number,
+    refSize: number,
+    innerFill: Color,
+): void {
+    const corner = scaledPieceCornerRadius(refSize);
+    const bezel = refSize * BEZEL_RATIO;
+    const innerLeft = left + bezel;
+    const innerBottom = bottom + bezel;
+    const innerWidth = width - bezel * 2;
+    const innerHeight = height - bezel * 2;
+    const innerCorner = corner * INNER_CORNER_FACTOR;
+    const border = playerBaseBorderColor();
+
+    g.fillColor = border;
+    g.roundRect(left, bottom, width, height, corner);
+    g.fill();
+
+    g.fillColor = innerFill;
+    g.roundRect(innerLeft, innerBottom, innerWidth, innerHeight, innerCorner);
+    g.fill();
+
+    g.strokeColor = border;
+    g.lineWidth = Math.max(1, refSize * INNER_FRAME_STROKE_RATIO);
+    g.roundRect(innerLeft, innerBottom, innerWidth, innerHeight, innerCorner);
+    g.stroke();
+}
+
+function blockingPieceInnerFill(colorKey?: string): Color {
+    return targetUnlitBulbFillColor(colorKey);
+}
+
 /**
  * 绘制统一通道元件占位：格心留空（后期换图），开口方向画直角通道臂。
  * @param width 格宽（挤压动画时可非正方形）
@@ -70,6 +117,19 @@ export function drawConnectivityGlyph(
     const bottom = top - h;
     const cornerR = scaledPieceCornerRadius(refSize);
 
+    if (connectivity === 0) {
+        drawBlockingPieceFrame(
+            g,
+            left,
+            bottom,
+            width,
+            h,
+            refSize,
+            blockingPieceInnerFill(colorKey),
+        );
+        return;
+    }
+
     g.fillColor = pieceBaseFillColor(colorKey);
     g.roundRect(left, bottom, width, h, cornerR);
     g.fill();
@@ -77,10 +137,6 @@ export function drawConnectivityGlyph(
     const holeR = refSize * HOLE_RATIO * 0.5;
     const armLen = refSize * 0.5 - holeR - ARM_EDGE_INSET;
     const halfW = refSize * ARM_WIDTH_RATIO * 0.5;
-
-    if (connectivity === 0) {
-        return;
-    }
 
     const channelColors = pieceChannelColors(colorKey);
     g.fillColor = channelColors.fill;

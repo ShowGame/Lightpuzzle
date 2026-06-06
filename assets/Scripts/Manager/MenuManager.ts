@@ -24,7 +24,7 @@ export class MenuManager extends Component {
     levelSelectPanel: Node = null;
 
     protected onLoad(): void {
-        DataManager.instance.restore();
+        DataManager.instance.init();
         director.preloadScene(SCENE_ENUM.GAME);
         this.closeLevelSelect();
         this.bindStartButton();

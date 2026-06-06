@@ -63,7 +63,7 @@ export function beamCoreRadius(cellSize: number = OPTICAL_CELL_SIZE): number {
 }
 
 /** 缩放后棋盘距 Canvas 顶部的设计边距（px） */
-export const PLAY_LAYER_TOP_MARGIN = 150;
+export const PLAY_LAYER_TOP_MARGIN = 125;
 
 /** 关卡棋盘逻辑高度（像素，未缩放） */
 export function boardPixelHeight(levelHeight: number, cellSize: number = OPTICAL_CELL_SIZE): number {

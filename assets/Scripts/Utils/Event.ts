@@ -11,3 +11,6 @@ export const GAME_STATE_CHANGE = new EventTarget();
 
 /** 光学解谜：棋盘 / HUD 刷新等 */
 export const OPTICAL_PUZZLE = new EventTarget();
+
+/** 全局 Toast 提示（载荷 { message, bgWidth?, localY? }，由局内 Presentation 转发到 ToastManager） */
+export const SHOW_TOAST = new EventTarget();

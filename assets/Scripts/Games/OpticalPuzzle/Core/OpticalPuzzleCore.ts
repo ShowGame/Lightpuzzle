@@ -166,13 +166,6 @@ export class OpticalPuzzleCore {
         this._recomputeLighting();
     }
 
-    /** 正前方格是否有一块光学元件（用于推动失败音效） */
-    hasPieceAhead(dir: Direction): boolean {
-        const nx = this._px + DIR_DX[dir];
-        const ny = this._py + DIR_DY[dir];
-        return this._pieceAt(nx, ny) !== undefined;
-    }
-
     private _inBounds(x: number, y: number): boolean {
         return x >= 0 && y >= 0 && x < this._w && y < this._h;
     }

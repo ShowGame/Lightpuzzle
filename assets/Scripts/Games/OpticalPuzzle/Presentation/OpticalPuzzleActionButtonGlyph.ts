@@ -466,7 +466,8 @@ function drawUndoDisabledBadge(
         traceIconSegs(g, UNDO_DISABLED_BADGE_STROKE_SEGS, cx, cy, scale);
     };
 
-    g.fillColor = HUD_KEY_FILL;
+    //g.fillColor = HUD_KEY_FILL;
+    g.fillColor = unlitHudIconColor();
     traceFill();
     g.fill();
 

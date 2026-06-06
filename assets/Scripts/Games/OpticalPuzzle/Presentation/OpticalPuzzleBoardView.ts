@@ -35,7 +35,7 @@ const PLAYER_IDLE_CLOSE_AT = 10;
 /** 眨眼 / 闭眼动画时长（秒） */
 const PLAYER_BLINK_DURATION = 0.25;
 /** 移动被阻拦时 >< 眼形保持时长（秒） */
-const PLAYER_BLOCKED_EYES_DURATION = 0.5;
+const PLAYER_BLOCKED_EYES_DURATION = 0.35;
 
 /** 主角眼部闲置状态 */
 enum PlayerEyeIdleState {

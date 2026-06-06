@@ -3,6 +3,8 @@ import { targetDimFillColor } from './OpticalPuzzleColorUtil';
 
 /** HUD 虚拟键设计尺寸（与场景 UITransform 一致） */
 export const HUD_BUTTON_DESIGN_SIZE = 80;
+/** 局内四向键场景边长（100×100）；非正方区域外框线宽/圆角与之对齐时用 */
+export const HUD_DIR_BUTTON_SCENE_SIZE = 100;
 /** 外框圆角（设计 px） */
 export const HUD_KEY_CORNER_DESIGN = 15;
 /** 外框线宽（设计 px） */
@@ -61,13 +63,14 @@ export function strokeGlowLayers(
     layers: ReadonlyArray<{ width: number; alpha: number }>,
     tracePath: () => void,
     roundCaps = false,
+    glowRgb: Readonly<{ r: number; g: number; b: number }> = { r: 255, g: 255, b: 255 },
 ): void {
     if (roundCaps) {
         g.lineJoin = Graphics.LineJoin.ROUND;
         g.lineCap = Graphics.LineCap.ROUND;
     }
     for (const layer of layers) {
-        g.strokeColor = new Color(255, 255, 255, layer.alpha);
+        g.strokeColor = new Color(glowRgb.r, glowRgb.g, glowRgb.b, layer.alpha);
         g.lineWidth = Math.max(1, scaleHudDesign(size, layer.width));
         tracePath();
         g.stroke();
@@ -84,18 +87,22 @@ export function fillGlowLayersMatchingStroke(
     layers: ReadonlyArray<{ width: number; alpha: number }>,
     iconHalfPx: number,
     traceAtScale: (scaleMul: number) => void,
+    glowRgb: Readonly<{ r: number; g: number; b: number }> = { r: 255, g: 255, b: 255 },
 ): void {
     const half = Math.max(iconHalfPx, 1);
     for (const layer of layers) {
         const halfGlow = scaleHudDesign(size, layer.width) * 0.5;
         const expand = 1 + halfGlow / half;
-        g.fillColor = new Color(255, 255, 255, layer.alpha);
+        g.fillColor = new Color(glowRgb.r, glowRgb.g, glowRgb.b, layer.alpha);
         traceAtScale(expand);
         g.fill();
     }
 }
 
-/** 绘制键帽底 + 外框（与四向键一致） */
+/**
+ * 绘制键帽底 + 外框（与四向键一致）
+ * @param chromeScaleSize 线宽/圆角缩放基准边长；省略时用 min(width,height)。Step 等传 HUD_DIR_BUTTON_SCENE_SIZE 与 100×100 四向键对齐。
+ */
 export function drawHudButtonChrome(
     g: Graphics,
     left: number,
@@ -103,8 +110,9 @@ export function drawHudButtonChrome(
     width: number,
     height: number,
     pressed: boolean,
+    chromeScaleSize?: number,
 ): void {
-    const size = Math.min(width, height);
+    const size = chromeScaleSize ?? Math.min(width, height);
     const corner = scaleHudDesign(size, HUD_KEY_CORNER_DESIGN);
     const borderW = Math.max(1, scaleHudDesign(size, HUD_KEY_BORDER_DESIGN));
 
@@ -199,6 +207,9 @@ export class HudButtonPressController {
     ) {}
 
     bind(): void {
+        if (!this._node?.isValid) {
+            return;
+        }
         this._unbindListeners();
         this._node.on(NodeEventType.TOUCH_START, this._onPressStart, this);
         this._node.on(NodeEventType.TOUCH_MOVE, this._onTouchMove, this);
@@ -206,13 +217,23 @@ export class HudButtonPressController {
         this._node.on(NodeEventType.TOUCH_CANCEL, this._onPressEnd, this);
     }
 
+    /** 是否处于触摸按压中（键盘脉冲发光时勿覆盖） */
+    get touchActive(): boolean {
+        return this._touchActive;
+    }
+
     unbind(): void {
         this._unbindListeners();
         this._touchActive = false;
-        this._setPressed(false);
+        if (this._pressed) {
+            this._pressed = false;
+        }
     }
 
     private _unbindListeners(): void {
+        if (!this._node?.isValid) {
+            return;
+        }
         this._node.off(NodeEventType.TOUCH_START, this._onPressStart, this);
         this._node.off(NodeEventType.TOUCH_MOVE, this._onTouchMove, this);
         this._node.off(NodeEventType.TOUCH_END, this._onPressEnd, this);
@@ -220,12 +241,15 @@ export class HudButtonPressController {
     }
 
     private _onPressStart(): void {
+        if (!this._node?.isValid) {
+            return;
+        }
         this._touchActive = true;
         this._setPressed(true);
     }
 
     private _onTouchMove(event: EventTouch): void {
-        if (!this._touchActive) {
+        if (!this._touchActive || !this._node?.isValid) {
             return;
         }
         this._setPressed(this._isTouchInside(event));
@@ -233,6 +257,10 @@ export class HudButtonPressController {
 
     private _onPressEnd(): void {
         this._touchActive = false;
+        if (!this._node?.isValid) {
+            this._pressed = false;
+            return;
+        }
         this._setPressed(false);
     }
 

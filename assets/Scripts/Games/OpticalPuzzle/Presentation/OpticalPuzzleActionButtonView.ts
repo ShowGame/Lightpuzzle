@@ -54,6 +54,25 @@ export class OpticalPuzzleActionButtonView extends Component {
         this._redraw();
     }
 
+    /** 键盘等非触摸输入：短暂显示按压发光 */
+    flashPressed(durationSec = 0.1): void {
+        if (this._pressCtrl?.touchActive) {
+            return;
+        }
+        this._pressed = true;
+        this._redraw();
+        this.unschedule(this._releaseKeyboardFlash);
+        this.scheduleOnce(this._releaseKeyboardFlash, durationSec);
+    }
+
+    private _releaseKeyboardFlash = (): void => {
+        if (this._pressCtrl?.touchActive) {
+            return;
+        }
+        this._pressed = false;
+        this._redraw();
+    };
+
     /** 撤回键横向填充阶段（0 满填，3 空） */
     setUndoFillStage(stage: number): void {
         this._undoFillStage = stage;

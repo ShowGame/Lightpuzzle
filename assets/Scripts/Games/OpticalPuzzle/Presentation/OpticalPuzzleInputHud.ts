@@ -16,7 +16,7 @@ import { PLAY_AUDIO } from '../../../Utils/Event';
 import { showWeChatRewardedVideo } from '../../../Utils/WeChatRewardedVideoAd';
 import { ensureActionButtonViews, OpticalPuzzleActionButtonView } from './OpticalPuzzleActionButtonView';
 import type { OpticalPuzzleBoardView } from './OpticalPuzzleBoardView';
-import { ensureDirButtonViews } from './OpticalPuzzleDirButtonView';
+import { ensureDirButtonViews, OpticalPuzzleDirButtonView } from './OpticalPuzzleDirButtonView';
 
 const { ccclass, property } = _decorator;
 
@@ -103,26 +103,39 @@ export class OpticalPuzzleInputHud extends Component {
 
     teardown(): void {
         input.off(Input.EventType.KEY_DOWN, this._onKeyDown, this);
-        this.btnUp?.node.off(Button.EventType.CLICK, this._onUp, this);
-        this.btnDown?.node.off(Button.EventType.CLICK, this._onDown, this);
-        this.btnLeft?.node.off(Button.EventType.CLICK, this._onLeft, this);
-        this.btnRight?.node.off(Button.EventType.CLICK, this._onRight, this);
-        this.btnUndo?.node.off(Button.EventType.CLICK, this._onUndo, this);
-        this.btnReset?.node.off(Button.EventType.CLICK, this._onReset, this);
+        this._unbindBtnClick(this.btnUp, this._onUp);
+        this._unbindBtnClick(this.btnDown, this._onDown);
+        this._unbindBtnClick(this.btnLeft, this._onLeft);
+        this._unbindBtnClick(this.btnRight, this._onRight);
+        this._unbindBtnClick(this.btnUndo, this._onUndo);
+        this._unbindBtnClick(this.btnReset, this._onReset);
         this._session = null;
         this._boardView = null;
         this._undoRewardAdPending = false;
+    }
+
+    private _unbindBtnClick(btn: Button | null, handler: () => void): void {
+        const node = btn?.node;
+        if (!node?.isValid) {
+            return;
+        }
+        node.off(Button.EventType.CLICK, handler, this);
     }
 
     private _isMoveInputLocked(): boolean {
         return this._boardView?.isMoveAnimating() ?? false;
     }
 
-    private _applyDirection(dir: Direction): void {
+    private _applyDirection(dir: Direction, playClickOnButton = false): void {
         if (!this._session || this._isMoveInputLocked()) {
             return;
         }
-        this._session.applyDirection(dir);
+        const result = this._session.applyDirection(dir);
+        if (!playClickOnButton || result === null) {
+            return;
+        }
+        // 与推成功一致：先玩法反馈音（Session），再 CLICK_BUTTON
+        this._playUiClick();
     }
 
     protected onDestroy(): void {
@@ -133,20 +146,67 @@ export class OpticalPuzzleInputHud extends Component {
         PLAY_AUDIO.emit(EVENT_ENUM.PLAY_AUDIO, AUDIO_EFFECT_ENUM.CLICK_BUTTON);
     }
 
+    private _buttonForDirection(dir: Direction): Button | null {
+        switch (dir) {
+            case Direction.Up:
+                return this.btnUp;
+            case Direction.Down:
+                return this.btnDown;
+            case Direction.Left:
+                return this.btnLeft;
+            case Direction.Right:
+                return this.btnRight;
+            default:
+                return null;
+        }
+    }
+
+    /** 键盘输入时同步按钮缩放 + 发光（与触摸按压一致） */
+    private _pulseButtonFeedback(btn: Button | null, flashView?: { flashPressed(): void } | null): void {
+        flashView?.flashPressed();
+        const node = btn?.node;
+        if (!node?.isValid) {
+            return;
+        }
+        const ox = node.scale.x;
+        const oy = node.scale.y;
+        const oz = node.scale.z;
+        const zoom = btn.zoomScale > 0 ? btn.zoomScale : 0.95;
+        node.setScale(ox * zoom, oy * zoom, oz);
+        this.scheduleOnce(() => {
+            if (node.isValid) {
+                node.setScale(ox, oy, oz);
+            }
+        }, 0.1);
+    }
+
+    private _pulseDirButton(dir: Direction): void {
+        const btn = this._buttonForDirection(dir);
+        this._pulseButtonFeedback(btn, btn?.node.getComponent(OpticalPuzzleDirButtonView) ?? null);
+    }
+
+    private _pulseActionButton(btn: Button | null): void {
+        this._pulseButtonFeedback(btn, btn?.node.getComponent(OpticalPuzzleActionButtonView) ?? null);
+    }
+
+    private _onDirectionClick(dir: Direction): void {
+        this._applyDirection(dir, true);
+    }
+
     private _onUp(): void {
-        this._applyDirection(Direction.Up);
+        this._onDirectionClick(Direction.Up);
     }
 
     private _onDown(): void {
-        this._applyDirection(Direction.Down);
+        this._onDirectionClick(Direction.Down);
     }
 
     private _onLeft(): void {
-        this._applyDirection(Direction.Left);
+        this._onDirectionClick(Direction.Left);
     }
 
     private _onRight(): void {
-        this._applyDirection(Direction.Right);
+        this._onDirectionClick(Direction.Right);
     }
 
     private _onUndo(): void {
@@ -155,15 +215,20 @@ export class OpticalPuzzleInputHud extends Component {
     }
 
     /**
-     * 撤回：填充未耗尽时正常撤回；耗尽后拉起激励广告，完整观看则恢复满填（不执行撤回）。
+     * 撤回：无可撤回步时不变化、不扣次数；填充未耗尽时正常撤回；
+     * 耗尽后拉起激励广告，完整观看则恢复满填（不执行撤回）。
      */
     private _handleUndoRequest(): void {
         const session = this._session;
         if (!session) {
             return;
         }
-        if (session.isUndoIconFillExhausted()) {
+        if (session.isUndoIconFillExhausted() && session.canUndo()) {
             this._requestUndoRewardAd(session);
+            return;
+        }
+        if (!session.canUndo()) {
+            session.undoBatch();
             return;
         }
         session.registerUndoButtonPress();
@@ -273,15 +338,19 @@ export class OpticalPuzzleInputHud extends Component {
         const dir = this._directionFromKey(keyCode);
         if (dir !== null) {
             this._suppressBrowserKeyDefault(e, keyCode);
-            this._applyDirection(dir);
+            this._pulseDirButton(dir);
+            this._applyDirection(dir, true);
             return;
         }
         switch (keyCode) {
             case KeyCode.KEY_Z:
+                this._pulseActionButton(this.btnUndo);
                 this._playUiClick();
                 this._handleUndoRequest();
                 break;
             case KeyCode.KEY_R:
+                this._pulseActionButton(this.btnReset);
+                this._playUiClick();
                 this._session.resetLevel();
                 break;
             default:

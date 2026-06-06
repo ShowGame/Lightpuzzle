@@ -1,16 +1,36 @@
-import { _decorator, Component, find, Node, UITransform, Vec3 } from 'cc';
+import { _decorator, Component, director, find, Node, UITransform, Vec3 } from 'cc';
 import { DataManager } from '../../../Manager/DataManager';
+import { ToastManager } from '../../../Manager/ToastManager';
 import { AUDIO_EFFECT_ENUM, EVENT_ENUM } from '../../../Utils/Enum';
-import { OPTICAL_PUZZLE, PLAY_AUDIO } from '../../../Utils/Event';
-import { OpticalPuzzleSession, type OpticalSessionNotifyReason } from '../Application/OpticalPuzzleSession';
+import { OPTICAL_PUZZLE, PLAY_AUDIO, SHOW_TOAST } from '../../../Utils/Event';
+import {
+    OpticalPuzzleSession,
+    type OpticalSessionNotifyReason,
+    type OpticalSnapshotNotify,
+} from '../Application/OpticalPuzzleSession';
 import { getOpticalLevelById } from '../Config/OpticalPuzzleLevels';
 import { DEV_LEVEL_MINIMAL } from '../Config/OpticalPuzzleLevelSchema';
 import { OpticalPuzzleBeamView } from './OpticalPuzzleBeamView';
 import { OpticalPuzzleBoardView } from './OpticalPuzzleBoardView';
 import { OpticalPuzzleInputHud } from './OpticalPuzzleInputHud';
 import { computePlayLayerPosition, computePlayLayerScale } from './OpticalPuzzleLayout';
+import {
+    OpticalPuzzleWinPanelNextLevelButtonView,
+    resolveWinPanelNextLevelNode,
+} from './OpticalPuzzleWinPanelNextLevelButtonView';
+import {
+    resolveWinPanelNode,
+    resolveWinPanelWindsNode,
+} from './OpticalPuzzleWinPanelWindsView';
 
 const { ccclass, property } = _decorator;
+
+/** SHOW_TOAST 事件载荷（与 ToastManager.show 入参一致） */
+interface ToastShowPayload {
+    message: string;
+    bgWidth?: number;
+    localY?: number;
+}
 
 /**
  * 光学解谜局内入口：创建 Session、绑定视图与输入、广播快照事件。
@@ -37,12 +57,12 @@ export class OpticalPuzzleRoot extends Component {
 
     /** 缩放后棋盘顶边距 Canvas 顶边（设计像素） */
     @property
-    playAreaTopMargin = 150;
+    playAreaTopMargin = 125;
 
     private readonly _session = new OpticalPuzzleSession();
 
     protected onLoad(): void {
-        DataManager.instance.restore();
+        DataManager.instance.init();
 
         if (!this.boardView) {
             this.boardView =
@@ -69,6 +89,7 @@ export class OpticalPuzzleRoot extends Component {
         }
 
         this._session.onStateChanged = (reason) => this._onSessionChanged(reason);
+        SHOW_TOAST.on(EVENT_ENUM.SHOW_TOAST, this._onShowToast, this);
 
         if (this.inputHud) {
             this.inputHud.setup(this._session, this.boardView ?? undefined);
@@ -79,21 +100,72 @@ export class OpticalPuzzleRoot extends Component {
         this.reloadCurrentLevel();
     }
 
-    /** 按 DataManager.opticalCurrentLevelId 重载关卡（局内跳关时调用） */
+    /** 本局当前关卡 id（来自 Session 快照，非存档） */
+    getCurrentLevelId(): number {
+        return this._session.getSnapshot().levelId;
+    }
+
+    /** 按 DataManager.opticalCurrentLevelId 重载关卡（菜单进局 / 读档） */
     reloadCurrentLevel(): void {
-        const id = DataManager.instance.opticalCurrentLevelId;
-        const resolved = getOpticalLevelById(id);
+        this.loadLevelById(DataManager.instance.opticalCurrentLevelId);
+    }
+
+    /** 按关卡 id 加载本局（局内下一关等，不写存档） */
+    loadLevelById(levelId: number): void {
+        const resolved = getOpticalLevelById(levelId);
         const level = resolved ?? DEV_LEVEL_MINIMAL;
         if (!resolved) {
-            console.warn(`[OpticalPuzzleRoot] 未知关卡 id=${id}，使用 DEV_LEVEL_MINIMAL`);
+            console.warn(`[OpticalPuzzleRoot] 未知关卡 id=${levelId}，使用 DEV_LEVEL_MINIMAL`);
         }
         this._session.loadLevel(level);
         this._applyPlayLayerLayout(level.width, level.height);
+        this._setWinPanelVisible(false);
     }
 
     protected onDestroy(): void {
+        SHOW_TOAST.off(EVENT_ENUM.SHOW_TOAST, this._onShowToast, this);
         this._session.onStateChanged = null;
         this.inputHud?.teardown();
+    }
+
+    private _resolveGameRoot(): Node | null {
+        let node: Node | null = this.node;
+        while (node?.parent) {
+            if (node.name === 'GameRoot') {
+                return node;
+            }
+            node = node.parent;
+        }
+        return null;
+    }
+
+    private _setWinPanelVisible(visible: boolean): void {
+        const panel = resolveWinPanelNode(this._resolveGameRoot());
+        if (panel?.isValid) {
+            panel.active = visible;
+        }
+    }
+
+    private _showWinPanel(): void {
+        const gameRoot = this._resolveGameRoot();
+        this._setWinPanelVisible(true);
+        const nextLevelBtn = resolveWinPanelNextLevelNode(gameRoot)?.getComponent(
+            OpticalPuzzleWinPanelNextLevelButtonView,
+        );
+        nextLevelBtn?.setLabelForLevel(this.getCurrentLevelId());
+        nextLevelBtn?.refresh();
+    }
+
+    /** 转发到场景内 ToastManager，不修改 ToastManager 本身 */
+    private _onShowToast(payload: ToastShowPayload): void {
+        if (!payload?.message) {
+            return;
+        }
+        const scene = director.getScene();
+        const mgr = scene
+            ?.getComponentsInChildren(ToastManager)
+            .find((m) => m?.isValid && m.enabled);
+        mgr?.show(payload.message, payload.bgWidth, payload.localY ?? 0);
     }
 
     private _onSessionChanged(reason: OpticalSessionNotifyReason): void {
@@ -105,6 +177,7 @@ export class OpticalPuzzleRoot extends Component {
         }
         if (reason === 'complete') {
             PLAY_AUDIO.emit(EVENT_ENUM.PLAY_AUDIO, AUDIO_EFFECT_ENUM.OPTICAL_LEVEL_COMPLETE);
+            this._showWinPanel();
         }
         if (reason === 'face') {
             this.boardView?.notifyPlayerMoveBlocked();
@@ -120,7 +193,12 @@ export class OpticalPuzzleRoot extends Component {
         this.boardView?.renderTargetsOverlay(snap);
         this.boardView?.syncPlaySnapshot(snap, reason);
         this.inputHud?.refreshActionButtons();
-        OPTICAL_PUZZLE.emit(EVENT_ENUM.OPTICAL_SNAPSHOT_CHANGED, snap);
+        const notify: OpticalSnapshotNotify = {
+            snapshot: snap,
+            moveCount: this._session.moveCount,
+            notifyReason: reason,
+        };
+        OPTICAL_PUZZLE.emit(EVENT_ENUM.OPTICAL_SNAPSHOT_CHANGED, notify);
     }
 
     /** 按关卡尺寸缩放并定位 layerPlay：宽撑满、顶边距 Canvas 顶 playAreaTopMargin */

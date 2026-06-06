@@ -76,9 +76,25 @@ export interface IOpticalLevelLayeredData {
     directions: readonly string[];
 }
 
+/** 通关步数评星阈值（步数越少越好） */
+export interface IOpticalLevelStarThresholds {
+    /** 完美步数：三颗星均发光 */
+    perfectSteps: number;
+    /** 三星步数：三颗星涂满 */
+    threeStarSteps: number;
+    /** 二星步数：左+中涂满，右不发光 */
+    twoStarSteps: number;
+    /** 一星步数：仅左涂满，中+右不发光 */
+    oneStarSteps: number;
+}
+
 export type IOpticalLevelLayeredSource = IOpticalLevelLayeredData & {
     levelId: number;
     levelName: string;
+    perfectSteps?: number;
+    threeStarSteps?: number;
+    twoStarSteps?: number;
+    oneStarSteps?: number;
 };
 
 /** 运行时关卡（terrain 行优先：i = y * width + x） */
@@ -92,6 +108,28 @@ export interface IOpticalLevelConfig {
     pieces: IOpticalPiece[];
     sources: IOpticalLightSource[];
     targets: IOpticalTarget[];
+    starThresholds: IOpticalLevelStarThresholds;
+}
+
+/** 未在关卡源数据中填写时的默认评星步数 */
+export function defaultStarThresholdsForLevel(levelId: number): IOpticalLevelStarThresholds {
+    const base = Math.max(4, 5 + levelId * 2);
+    return {
+        perfectSteps: base,
+        threeStarSteps: base + 3,
+        twoStarSteps: base + 8,
+        oneStarSteps: base + 15,
+    };
+}
+
+function resolveStarThresholds(src: IOpticalLevelLayeredSource): IOpticalLevelStarThresholds {
+    const fallback = defaultStarThresholdsForLevel(src.levelId);
+    return {
+        perfectSteps: src.perfectSteps ?? fallback.perfectSteps,
+        threeStarSteps: src.threeStarSteps ?? fallback.threeStarSteps,
+        twoStarSteps: src.twoStarSteps ?? fallback.twoStarSteps,
+        oneStarSteps: src.oneStarSteps ?? fallback.oneStarSteps,
+    };
 }
 
 /** 旧层 2 字符 → 通道类型（`-` 须在层 4 写 `d` 表横向） */
@@ -589,6 +627,7 @@ export function parseLayeredGridsToLevelConfig(src: IOpticalLevelLayeredSource):
         pieces,
         sources,
         targets,
+        starThresholds: resolveStarThresholds(src),
     };
 }
 

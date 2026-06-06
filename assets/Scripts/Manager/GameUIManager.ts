@@ -1,6 +1,16 @@
-import { _decorator, Button, Component, director, Node } from 'cc';
+import { _decorator, Button, Component, director, Label, Node } from 'cc';
+import type { OpticalSnapshotNotify } from '../Games/OpticalPuzzle/Application/OpticalPuzzleSession';
+import { ensureBackButtonView } from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleBackButtonView';
+import { ensureLevelSelectButtonView } from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleLevelSelectButtonView';
+import { ensureStepViews } from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleStepView';
+import { ensureWinPanelNextLevelButtonView } from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleWinPanelNextLevelButtonView';
+import { ensureWinPanelStarsView } from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleWinPanelStarsView';
+import { ensureWinPanelStepViews } from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleWinPanelStepView';
+import { ensureWinPanelTitleView } from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleWinPanelTitleView';
+import { ensureWinPanelWindsView } from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleWinPanelWindsView';
+import { DataManager } from './DataManager';
 import { AUDIO_EFFECT_ENUM, EVENT_ENUM, SCENE_ENUM } from '../Utils/Enum';
-import { PLAY_AUDIO } from '../Utils/Event';
+import { OPTICAL_PUZZLE, PLAY_AUDIO } from '../Utils/Event';
 
 const { ccclass, property } = _decorator;
 
@@ -22,16 +32,49 @@ export class GameUIManager extends Component {
     @property(Node)
     levelSelectPanel: Node = null;
 
+    /** 当前关卡标题（TopBar/LabelLevel 的 cc.Label） */
+    @property(Label)
+    labelLevel: Label | null = null;
+
+    private _displayedLevelId = -1;
+
     protected onLoad(): void {
         director.preloadScene(SCENE_ENUM.MENU);
+        this._resolveLabelLevel();
+        this._ensureTopBarIconButtons();
+        ensureWinPanelWindsView(this.node);
+        ensureWinPanelTitleView(this.node);
+        ensureWinPanelStarsView(this.node);
+        ensureWinPanelStepViews(this.node);
+        ensureWinPanelNextLevelButtonView(this.node);
         this.closeLevelSelect();
         this.bindBackMenuButton();
         this.bindLevelSelectButton();
+        OPTICAL_PUZZLE.on(
+            EVENT_ENUM.OPTICAL_SNAPSHOT_CHANGED,
+            this._onOpticalSnapshotChanged,
+            this,
+        );
+        this.refreshLevelLabel(DataManager.instance.opticalCurrentLevelId);
     }
 
     protected onDestroy(): void {
+        OPTICAL_PUZZLE.off(
+            EVENT_ENUM.OPTICAL_SNAPSHOT_CHANGED,
+            this._onOpticalSnapshotChanged,
+            this,
+        );
         this.unbindBackMenuButton();
         this.unbindLevelSelectButton();
+    }
+
+    /** 将 TopBar 关卡标题设为「第 X 关」 */
+    refreshLevelLabel(levelId: number): void {
+        if (!this.labelLevel?.isValid || levelId <= 0) {
+            return;
+        }
+        this.labelLevel.string = `第 ${levelId} 关`;
+        this._displayedLevelId = levelId;
     }
 
     /** 返回 Menu 场景 */
@@ -88,8 +131,9 @@ export class GameUIManager extends Component {
             return;
         }
         const button = node.getComponent(Button);
-        if (button) {
-            button.node.off(Button.EventType.CLICK, handler, this);
+        const clickNode = button?.node;
+        if (clickNode?.isValid) {
+            clickNode.off(Button.EventType.CLICK, handler, this);
             return;
         }
         node.off(Node.EventType.TOUCH_END, handler, this);
@@ -103,5 +147,43 @@ export class GameUIManager extends Component {
     private onLevelSelectClick(): void {
         PLAY_AUDIO.emit(EVENT_ENUM.PLAY_AUDIO, AUDIO_EFFECT_ENUM.CLICK_BUTTON);
         this.openLevelSelect();
+    }
+
+    /** TopBar 图标键：Graphics 绘制 + 与四向键一致的按压缩放 */
+    private _ensureTopBarIconButtons(): void {
+        const topBar = this.node.getChildByName('layHub')?.getChildByName('TopBar') ?? null;
+        if (!this.btnBackMenu?.isValid) {
+            this.btnBackMenu = topBar?.getChildByName('BtnBackMenu') ?? null;
+        }
+        if (!this.btnLevelSelect?.isValid) {
+            this.btnLevelSelect = topBar?.getChildByName('BtnLevelSelect') ?? null;
+        }
+        ensureBackButtonView(this.btnBackMenu);
+        ensureLevelSelectButtonView(this.btnLevelSelect);
+        ensureStepViews(topBar);
+    }
+
+    /** 未在检查器绑定时，按 GameRoot/layHub/TopBar/LabelLevel 解析 */
+    private _resolveLabelLevel(): void {
+        if (this.labelLevel?.isValid) {
+            return;
+        }
+        const labelNode =
+            this.node.getChildByName('layHub')?.getChildByName('TopBar')?.getChildByName('LabelLevel') ??
+            null;
+        if (!labelNode?.isValid) {
+            return;
+        }
+        this.labelLevel = labelNode.getComponent(Label);
+    }
+
+    private _onOpticalSnapshotChanged(payload: OpticalSnapshotNotify): void {
+        const snap = payload?.snapshot;
+        if (!snap) {
+            return;
+        }
+        if (snap.levelId !== this._displayedLevelId) {
+            this.refreshLevelLabel(snap.levelId);
+        }
     }
 }

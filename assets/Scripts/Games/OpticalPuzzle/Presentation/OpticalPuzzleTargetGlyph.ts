@@ -3,6 +3,7 @@ import { lerpBeamColor } from './OpticalPuzzleBeamGradient';
 import {
     targetDimFillColor,
     targetLitFillColor,
+    targetUnlitBulbFillColor,
 } from './OpticalPuzzleColorUtil';
 import { OPTICAL_CELL_SIZE } from './OpticalPuzzleLayout';
 
@@ -174,12 +175,7 @@ export function drawTargetLamp(
     }
 
     const dim = targetDimFillColor(colorKey);
-    const bulbFill = new Color(
-        Math.floor(dim.r * 0.76),
-        Math.floor(dim.g * 0.76),
-        Math.floor(dim.b * 0.76),
-        255,
-    );
+    const bulbFill = targetUnlitBulbFillColor(colorKey);
     g.fillColor = bulbFill;
     g.circle(cx, cy, bulbR);
     g.fill();

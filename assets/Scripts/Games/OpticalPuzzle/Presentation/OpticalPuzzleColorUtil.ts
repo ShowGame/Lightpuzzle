@@ -210,6 +210,17 @@ export function targetDimFillColor(colorKey?: string): Color {
     }
 }
 
+/** 目标未点亮中心灯体色（与 TargetGlyph 一致） */
+export function targetUnlitBulbFillColor(colorKey?: string): Color {
+    const dim = targetDimFillColor(colorKey);
+    return new Color(
+        Math.floor(dim.r * 0.76),
+        Math.floor(dim.g * 0.76),
+        Math.floor(dim.b * 0.76),
+        225,
+    );
+}
+
 /** 通道元件臂/描边色（层 3 `W` 为中性灰，RGB 为对应染色） */
 export function pieceChannelColors(colorKey?: string): { stroke: Color; fill: Color } {
     switch (normalizeLightColorKey(colorKey)) {

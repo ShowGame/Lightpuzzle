@@ -10,6 +10,10 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
     {
         levelId: 1,
         levelName: '点亮',
+        perfectSteps: 4,
+        threeStarSteps: 6,
+        twoStarSteps: 10,
+        oneStarSteps: 16,
         height: 7,
         width: 9,
         staticLayout: [
@@ -52,6 +56,10 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
     {
         levelId: 2,
         levelName: '绕十字',
+        perfectSteps: 8,
+        threeStarSteps: 12,
+        twoStarSteps: 18,
+        oneStarSteps: 26,
         height: 9,
         width: 9,
         staticLayout: [
@@ -102,6 +110,10 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
     {
         levelId: 3,
         levelName: '染红',
+        perfectSteps: 10,
+        threeStarSteps: 14,
+        twoStarSteps: 20,
+        oneStarSteps: 30,
         height: 6,
         width: 11,
         staticLayout: [
@@ -140,6 +152,10 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
     {
         levelId: 4,
         levelName: '穿门洞',
+        perfectSteps: 14,
+        threeStarSteps: 20,
+        twoStarSteps: 28,
+        oneStarSteps: 40,
         height: 9,
         width: 13,
         staticLayout: [
@@ -190,6 +206,10 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
     {
         levelId: 5,
         levelName: '绕十字',
+        perfectSteps: 16,
+        threeStarSteps: 22,
+        twoStarSteps: 32,
+        oneStarSteps: 45,
         height: 9,
         width: 9,
         staticLayout: [
@@ -239,65 +259,49 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
     },
     {
         levelId: 6,
-        levelName: '光源与目标',
-        height: 11,
+        levelName: '点亮目标',
+        perfectSteps: 2,
+        threeStarSteps: 2,
+        twoStarSteps: 4,
+        oneStarSteps: 6,
+        height: 5,
         width: 9,
         staticLayout: [
             '#########',
+            '#..#.#..#',
             '#.......#',
-            '#.......#',
-            '#.......#',
-            '#.......#',
-            '#.......#',
-            '#.......#',
-            '#.......#',
-            '#.......#',
-            '#.......#',
+            '#..#.#..#',
             '#########',
         ],
         objects: [
             '#########',
-            '#...S...#',
-            '#.......#',
-            '#.......#',
-            '#.......#',
-            '#.@.....#',
-            '#.......#',
-            '#.......#',
-            '#.......#',
-            '#...E...#',
+            '#..#.#..#',
+            '#S..0..E#',
+            '#..#@#..#',
             '#########',
         ],
         colors: [
             '#########',
-            '#...W...#',
-            '#.......#',
-            '#.......#',
-            '#.......#',
-            '#.......#',
-            '#.......#',
-            '#.......#',
-            '#.......#',
-            '#...W...#',
+            '#..#.#..#',
+            '#W..W..W#',
+            '#..#.#..#',
             '#########',
         ],
         directions: [
             '#########',
-            '#...s...#',
-            '#.......#',
-            '#.......#',
-            '#.......#',
-            '#.......#',
-            '#.......#',
-            '#.......#',
-            '#.......#',
-            '#.......#',
+            '#..#.#..#',
+            '#d..w...#',
+            '#..#.#..#',
             '#########',
         ],
     },
     {
         levelId: 7,
         levelName: '双目标',
+        perfectSteps: 18,
+        threeStarSteps: 25,
+        twoStarSteps: 35,
+        oneStarSteps: 50,
         height: 8,
         width: 10,
         staticLayout: [
@@ -344,6 +348,10 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
     {
         levelId: 8,
         levelName: '地形测试',
+        perfectSteps: 24,
+        threeStarSteps: 32,
+        twoStarSteps: 45,
+        oneStarSteps: 60,
         height: 15,
         width: 19,
         staticLayout: [
@@ -425,4 +433,18 @@ const _byId = new Map<number, IOpticalLevelConfig>(OPTICAL_LEVELS.map((lv) => [l
 
 export function getOpticalLevelById(levelId: number): IOpticalLevelConfig | undefined {
     return _byId.get(levelId);
+}
+
+/** 大于当前 id 的最小关卡 id；无后续关卡时返回 null */
+export function getNextOpticalLevelId(currentLevelId: number): number | null {
+    let next: number | null = null;
+    for (const lv of OPTICAL_LEVELS) {
+        if (lv.levelId <= currentLevelId) {
+            continue;
+        }
+        if (next === null || lv.levelId < next) {
+            next = lv.levelId;
+        }
+    }
+    return next;
 }
