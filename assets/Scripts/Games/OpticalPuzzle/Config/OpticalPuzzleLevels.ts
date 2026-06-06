@@ -435,6 +435,17 @@ export function getOpticalLevelById(levelId: number): IOpticalLevelConfig | unde
     return _byId.get(levelId);
 }
 
+/** 关卡表中最小 levelId（通常为第 1 关） */
+export function getFirstOpticalLevelId(): number {
+    let first: number | null = null;
+    for (const lv of OPTICAL_LEVELS) {
+        if (first === null || lv.levelId < first) {
+            first = lv.levelId;
+        }
+    }
+    return first ?? 1;
+}
+
 /** 大于当前 id 的最小关卡 id；无后续关卡时返回 null */
 export function getNextOpticalLevelId(currentLevelId: number): number | null {
     let next: number | null = null;

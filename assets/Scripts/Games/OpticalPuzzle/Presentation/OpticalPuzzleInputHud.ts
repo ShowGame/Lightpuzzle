@@ -10,6 +10,7 @@ import {
     sys,
 } from 'cc';
 import { OpticalPuzzleSession } from '../Application/OpticalPuzzleSession';
+import { OpticalGameFlowState } from '../Application/OpticalPuzzleStateMachine';
 import { Direction } from '../Core/OpticalPuzzleTypes';
 import { AUDIO_EFFECT_ENUM, EVENT_ENUM } from '../../../Utils/Enum';
 import { PLAY_AUDIO } from '../../../Utils/Event';
@@ -122,12 +123,16 @@ export class OpticalPuzzleInputHud extends Component {
         node.off(Button.EventType.CLICK, handler, this);
     }
 
-    private _isMoveInputLocked(): boolean {
-        return this._boardView?.isMoveAnimating() ?? false;
+    /** 移动动画中或已进入结算等非 RUNNING 状态时，与遮罩挡按钮一致禁止局内输入 */
+    private _isPlayInputLocked(): boolean {
+        if (this._boardView?.isMoveAnimating()) {
+            return true;
+        }
+        return !this._session || this._session.flowState !== OpticalGameFlowState.RUNNING;
     }
 
     private _applyDirection(dir: Direction, playClickOnButton = false): void {
-        if (!this._session || this._isMoveInputLocked()) {
+        if (this._isPlayInputLocked()) {
             return;
         }
         const result = this._session.applyDirection(dir);
@@ -210,6 +215,9 @@ export class OpticalPuzzleInputHud extends Component {
     }
 
     private _onUndo(): void {
+        if (this._isPlayInputLocked()) {
+            return;
+        }
         this._playUiClick();
         this._handleUndoRequest();
     }
@@ -266,6 +274,9 @@ export class OpticalPuzzleInputHud extends Component {
     }
 
     private _onReset(): void {
+        if (this._isPlayInputLocked()) {
+            return;
+        }
         this._playUiClick();
         this._session?.resetLevel();
     }
@@ -331,7 +342,7 @@ export class OpticalPuzzleInputHud extends Component {
     }
 
     private _onKeyDown(e: EventKeyboard): void {
-        if (!this._session) {
+        if (this._isPlayInputLocked()) {
             return;
         }
         const keyCode = e.keyCode as number;

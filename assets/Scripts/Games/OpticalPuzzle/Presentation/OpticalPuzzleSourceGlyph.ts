@@ -2,19 +2,12 @@ import { Color, Graphics } from 'cc';
 import { Direction } from '../Core/OpticalPuzzleTypes';
 import { fillBeamCrossSection } from './OpticalPuzzleBeamGradient';
 import { OPTICAL_CELL_SIZE } from './OpticalPuzzleLayout';
-import { sourceEmitterColors } from './OpticalPuzzleColorUtil';
+import { sourceEmitterColors, sourceFillColor } from './OpticalPuzzleColorUtil';
 
 /** 发射器外轮廓圆角（设计像素，随格宽等比缩放） */
 const EMITTER_CORNER_RADIUS = 4;
 /** 六边形框路径半宽（viewBox 1024，iconR=10） */
 const SOURCE_HEX_FRAME_HALF_W = 7.646;
-/** 四角螺丝尺寸（相对格宽，直径） */
-const SOURCE_CORNER_SCREW_SIZE_RATIO = 0.085;
-/** 螺丝双层圆环半径比例（外环 → 内环，相对螺丝半径 1.0） */
-const SOURCE_SCREW_OUTER_HOLE_RATIO = 0.68;
-const SOURCE_SCREW_INNER_RING_RATIO = 0.52;
-const SOURCE_SCREW_INNER_HOLE_RATIO = 0.22;
-
 type SvgSeg =
     | { t: 'M'; x: number; y: number }
     | { t: 'L'; x: number; y: number }
@@ -200,78 +193,27 @@ function strokeSourceHexFrame(
     g.stroke();
 }
 
-/** 单颗螺丝头：外环 + 内环（各挖孔），对应 SVG 双层圆环 */
-function drawSourceScrewAt(
-    g: Graphics,
-    atX: number,
-    atY: number,
-    screwRadius: number,
-    outerColor: Color,
-    innerRingColor: Color,
-    holeColor: Color,
-    strokeColor: Color,
-    lineWidth: number,
-): void {
-    const rOuter = screwRadius;
-    const rOuterHole = screwRadius * SOURCE_SCREW_OUTER_HOLE_RATIO;
-    const rInner = screwRadius * SOURCE_SCREW_INNER_RING_RATIO;
-    const rInnerHole = screwRadius * SOURCE_SCREW_INNER_HOLE_RATIO;
-
-    g.fillColor = outerColor;
-    g.circle(atX, atY, rOuter);
-    g.fill();
-    g.fillColor = holeColor;
-    g.circle(atX, atY, rOuterHole);
-    g.fill();
-
-    g.fillColor = innerRingColor;
-    g.circle(atX, atY, rInner);
-    g.fill();
-    g.fillColor = holeColor;
-    g.circle(atX, atY, rInnerHole);
-    g.fill();
-
-    g.strokeColor = strokeColor;
-    g.lineWidth = lineWidth;
-    g.circle(atX, atY, rOuter);
-    g.stroke();
-    g.circle(atX, atY, rInner);
-    g.stroke();
-}
-
-/** 六边形框四角小螺丝（格心 screen 对称） */
-function drawSourceCornerScrews(
+/** 六边形框四角指示点（本色调实心圆，同 Target 四角小圆） */
+function drawSourceCornerDots(
     g: Graphics,
     cx: number,
     cy: number,
     size: number,
     halfW: number,
-    outerColor: Color,
-    innerRingColor: Color,
-    holeColor: Color,
-    strokeColor: Color,
+    fillColor: Color,
 ): void {
     const corner = halfW + size * 0.12;
-    const screwRadius = size * SOURCE_CORNER_SCREW_SIZE_RATIO * 0.5;
-    const lineW = Math.max(0.75, size * 0.012);
+    const dotR = size * 0.035;
     const corners = [
         { x: -corner, y: -corner },
         { x: corner, y: -corner },
         { x: corner, y: corner },
         { x: -corner, y: corner },
     ];
+    g.fillColor = fillColor;
     for (const c of corners) {
-        drawSourceScrewAt(
-            g,
-            cx + c.x,
-            cy + c.y,
-            screwRadius,
-            outerColor,
-            innerRingColor,
-            holeColor,
-            strokeColor,
-            lineW,
-        );
+        g.circle(cx + c.x, cy + c.y, dotR);
+        g.fill();
     }
 }
 
@@ -401,17 +343,7 @@ export function drawSourceEmitter(
 
     strokeSourceHexFrame(g, cx, cy, size, halfW, colors.accent, hexLineW);
 
-    drawSourceCornerScrews(
-        g,
-        cx,
-        cy,
-        size,
-        halfW,
-        colors.chassisEdge,
-        colors.accent,
-        new Color(8, 12, 20, 255),
-        colors.accent,
-    );
+    drawSourceCornerDots(g, cx, cy, size, halfW, sourceFillColor(colorKey));
 
     const railLen = size * 0.14;
     for (const side of [-1, 1]) {

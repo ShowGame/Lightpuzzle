@@ -1,4 +1,5 @@
 import { _decorator, Button, Component, director, Node } from 'cc';
+import { ensureMenuStartButtonView } from '../MenuStartButtonView';
 import { DataManager } from './DataManager';
 import { AUDIO_EFFECT_ENUM, EVENT_ENUM, SCENE_ENUM } from '../Utils/Enum';
 import { PLAY_AUDIO } from '../Utils/Event';
@@ -26,6 +27,8 @@ export class MenuManager extends Component {
     protected onLoad(): void {
         DataManager.instance.init();
         director.preloadScene(SCENE_ENUM.GAME);
+        this._resolveBtnStart();
+        ensureMenuStartButtonView(this.btnStart);
         this.closeLevelSelect();
         this.bindStartButton();
         this.bindLevelSelectButton();
@@ -55,6 +58,14 @@ export class MenuManager extends Component {
             return;
         }
         this.levelSelectPanel.active = false;
+    }
+
+    /** 未在检查器绑定时，按 MenuRoot/MainPanel/BtnStart 解析 */
+    private _resolveBtnStart(): void {
+        if (this.btnStart?.isValid) {
+            return;
+        }
+        this.btnStart = this.node.getChildByName('MainPanel')?.getChildByName('BtnStart') ?? null;
     }
 
     private bindStartButton(): void {

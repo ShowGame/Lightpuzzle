@@ -26,6 +26,7 @@ export function drawWinPanelNextLevelButtonGlyph(
     width: number,
     height: number,
     pressed = false,
+    borderPx: number = WIN_NEXT_LEVEL_BORDER_PX,
 ): void {
     const size = Math.min(width, height);
     const corner = scaleHudDesign(size, HUD_KEY_CORNER_DESIGN);
@@ -49,7 +50,7 @@ export function drawWinPanelNextLevelButtonGlyph(
     }
 
     g.strokeColor = NEXT_LEVEL_BORDER;
-    g.lineWidth = WIN_NEXT_LEVEL_BORDER_PX;
+    g.lineWidth = borderPx;
     traceChrome();
     g.stroke();
 }

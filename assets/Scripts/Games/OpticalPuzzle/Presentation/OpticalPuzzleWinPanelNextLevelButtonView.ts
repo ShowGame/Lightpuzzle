@@ -11,7 +11,7 @@ import {
 import { DataManager } from '../../../Manager/DataManager';
 import { AUDIO_EFFECT_ENUM, EVENT_ENUM, SCENE_ENUM } from '../../../Utils/Enum';
 import { PLAY_AUDIO } from '../../../Utils/Event';
-import { getNextOpticalLevelId } from '../Config/OpticalPuzzleLevels';
+import { getFirstOpticalLevelId, getNextOpticalLevelId } from '../Config/OpticalPuzzleLevels';
 import { OpticalPuzzleRoot } from './OpticalPuzzleRoot';
 import { HudButtonPressController } from './OpticalPuzzleHudButtonCommon';
 import { drawWinPanelNextLevelButtonGlyph } from './OpticalPuzzleWinPanelNextLevelButtonGlyph';
@@ -118,6 +118,7 @@ export class OpticalPuzzleWinPanelNextLevelButtonView extends Component {
             return;
         }
 
+        DataManager.instance.opticalCurrentLevelId = getFirstOpticalLevelId();
         director.loadScene(SCENE_ENUM.MENU);
     }
 
