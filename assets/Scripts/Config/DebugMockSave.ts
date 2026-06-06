@@ -12,5 +12,5 @@ export const MOCK_PLAYER_DATA: {
     bgmOn?: boolean;
     sfxOn?: boolean;
 } = {
-    opticalCurrentLevelId: 6,
+    opticalCurrentLevelId: 1,
 };

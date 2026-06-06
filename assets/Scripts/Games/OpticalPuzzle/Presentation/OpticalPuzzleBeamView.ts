@@ -18,7 +18,7 @@ import type { OpticalBeamSnapshot } from '../Core/OpticalPuzzleCore';
 
 import { mixLightColors } from '../Core/OpticalColorMix';
 
-import type { OpticalBeamSegment } from '../Core/OpticalBeamTracer';
+import type { OpticalBeamSegment } from '../Core/OpticalBeamTypes';
 
 
 
@@ -381,7 +381,6 @@ export class OpticalPuzzleBeamView extends Component {
         const g = this._ensureGraphics();
 
         if (!g) {
-
             return;
 
         }

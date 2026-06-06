@@ -12,7 +12,6 @@ import { DataManager } from '../../../Manager/DataManager';
 import { AUDIO_EFFECT_ENUM, EVENT_ENUM, SCENE_ENUM } from '../../../Utils/Enum';
 import { PLAY_AUDIO } from '../../../Utils/Event';
 import { getFirstOpticalLevelId, getNextOpticalLevelId } from '../Config/OpticalPuzzleLevels';
-import { OpticalPuzzleRoot } from './OpticalPuzzleRoot';
 import { HudButtonPressController } from './OpticalPuzzleHudButtonCommon';
 import { drawWinPanelNextLevelButtonGlyph } from './OpticalPuzzleWinPanelNextLevelButtonGlyph';
 import {
@@ -28,6 +27,12 @@ const NEXT_LEVEL_BUTTON_ZOOM_SCALE = 0.95;
 /** nextlevel/label 文案 */
 const WIN_NEXT_LEVEL_TEXT = '下 一 关';
 const WIN_RETURN_TEXT = '返   回';
+
+/** 局内入口能力（避免与 OpticalPuzzleRoot 循环引用） */
+interface IOpticalPuzzleRootApi {
+    getCurrentLevelId(): number;
+    reloadCurrentLevel(): void;
+}
 
 /** winPanel/winds/nextlevel：下一关 / 返回主菜单 */
 @ccclass('OpticalPuzzleWinPanelNextLevelButtonView')
@@ -133,15 +138,15 @@ export class OpticalPuzzleWinPanelNextLevelButtonView extends Component {
         return null;
     }
 
-    private _resolveOpticalPuzzleRoot(gameRoot?: Node | null): OpticalPuzzleRoot | null {
+    private _resolveOpticalPuzzleRoot(gameRoot?: Node | null): IOpticalPuzzleRootApi | null {
         const root = gameRoot ?? this._resolveGameRoot();
         if (!root?.isValid) {
             return null;
         }
-        return (
-            root.getComponent(OpticalPuzzleRoot) ??
-            root.getComponentInChildren(OpticalPuzzleRoot)
-        );
+        const comp =
+            root.getComponent('OpticalPuzzleRoot') ??
+            root.getComponentInChildren('OpticalPuzzleRoot');
+        return comp as unknown as IOpticalPuzzleRootApi | null;
     }
 
     private _ensureGraphics(): Graphics | null {

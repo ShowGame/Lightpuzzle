@@ -3,6 +3,8 @@ import {
     mergeOverlappingBeamSegments,
     recomputeTargetLitFromSegments,
 } from './OpticalBeamOverlapMerge';
+import type { OpticalBeamSegment } from './OpticalBeamTypes';
+export type { OpticalBeamSegment } from './OpticalBeamTypes';
 import { mixLightColors } from './OpticalColorMix';
 import { colorModeToKey, lightMatchesTarget, resolveBeamColorKey } from './OpticalLightColor';
 import {
@@ -10,18 +12,10 @@ import {
     openDirectionsForPiece,
     propagationToEntrySide,
 } from './OpticalPieceConnectivity';
-import { Direction, TerrainKind } from './OpticalPuzzleTypes';
+import { Direction, normalizeDirection, TerrainKind } from './OpticalPuzzleTypes';
 
 const DIR_DX: ReadonlyArray<number> = [1, 0, -1, 0];
 const DIR_DY: ReadonlyArray<number> = [0, -1, 0, 1];
-
-export interface OpticalBeamSegment {
-    x0: number;
-    y0: number;
-    x1: number;
-    y1: number;
-    colorKey: string;
-}
 
 export interface OpticalBeamTraceInput {
     width: number;
@@ -106,14 +100,20 @@ function traceOneSource(
     outSegments: OpticalBeamSegment[],
 ): void {
     const { width: w, height: h, terrain, player, targets } = input;
+    const srcDir = normalizeDirection(src.direction, Direction.Down);
+    const dx0 = DIR_DX[srcDir];
+    const dy0 = DIR_DY[srcDir];
+    if (dx0 === undefined || dy0 === undefined) {
+        return;
+    }
     const visited = new Set<string>();
     const queue: BeamRay[] = [
         {
-            ax: src.x + 0.5 + DIR_DX[src.direction] * 0.5,
-            ay: src.y + 0.5 + DIR_DY[src.direction] * 0.5,
-            cx: src.x + DIR_DX[src.direction],
-            cy: src.y + DIR_DY[src.direction],
-            dir: src.direction,
+            ax: src.x + 0.5 + dx0 * 0.5,
+            ay: src.y + 0.5 + dy0 * 0.5,
+            cx: src.x + dx0,
+            cy: src.y + dy0,
+            dir: srcDir,
             colorKey: resolveBeamColorKey(src.colorKey),
         },
     ];

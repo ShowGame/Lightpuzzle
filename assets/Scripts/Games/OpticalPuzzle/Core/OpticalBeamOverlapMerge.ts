@@ -1,6 +1,6 @@
 import type { IOpticalTarget } from '../Config/OpticalPuzzleLevelSchema';
 import { mixLightColors } from './OpticalColorMix';
-import type { OpticalBeamSegment } from './OpticalBeamTracer';
+import type { OpticalBeamSegment } from './OpticalBeamTypes';
 import { lightMatchesTarget } from './OpticalLightColor';
 
 const EPS = 1e-3;
@@ -27,7 +27,14 @@ export interface OpticalCrossBeamOverlay {
 function toAxisInterval(seg: OpticalBeamSegment): AxisInterval | null {
     const dx = seg.x1 - seg.x0;
     const dy = seg.y1 - seg.y0;
-    if (Math.abs(dy) < EPS && Math.abs(dx) > EPS) {
+    const adx = Math.abs(dx);
+    const ady = Math.abs(dy);
+    const span = Math.max(adx, ady);
+    if (span < EPS) {
+        return null;
+    }
+    // 主方向归类：避免微信等环境 dy 微非零导致无法进 bucket、sweep 后又丢段
+    if (adx >= ady) {
         return {
             axis: 'h',
             fixed: (seg.y0 + seg.y1) * 0.5,
@@ -36,16 +43,13 @@ function toAxisInterval(seg: OpticalBeamSegment): AxisInterval | null {
             colorKey: seg.colorKey,
         };
     }
-    if (Math.abs(dx) < EPS && Math.abs(dy) > EPS) {
-        return {
-            axis: 'v',
-            fixed: (seg.x0 + seg.x1) * 0.5,
-            start: Math.min(seg.y0, seg.y1),
-            end: Math.max(seg.y0, seg.y1),
-            colorKey: seg.colorKey,
-        };
-    }
-    return null;
+    return {
+        axis: 'v',
+        fixed: (seg.x0 + seg.x1) * 0.5,
+        start: Math.min(seg.y0, seg.y1),
+        end: Math.max(seg.y0, seg.y1),
+        colorKey: seg.colorKey,
+    };
 }
 
 function axisIntervalToSegment(interval: AxisInterval): OpticalBeamSegment {
@@ -112,6 +116,9 @@ function sweepMergeIntervals(list: readonly AxisInterval[]): AxisInterval[] {
         } else {
             merged.push({ ...seg });
         }
+    }
+    if (merged.length === 0 && list.length > 0) {
+        return list.map((s) => ({ ...s }));
     }
     return merged;
 }
@@ -294,7 +301,11 @@ export function mergeOverlappingBeamSegments(segments: readonly OpticalBeamSegme
         }
     }
 
-    return mergeCollinearBeamSegments(merged);
+    const collinear = mergeCollinearBeamSegments(merged);
+    if (collinear.length === 0 && segments.length > 0) {
+        return mergeCollinearBeamSegments(segments.map((s) => ({ ...s })));
+    }
+    return collinear;
 }
 
 function pointOnTargetEdge(x: number, y: number, tx: number, ty: number): boolean {

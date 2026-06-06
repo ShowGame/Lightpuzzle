@@ -13,6 +13,7 @@ import {
 import {
     Direction,
     MoveAttemptResult,
+    normalizeDirection,
     type OpticalBoardSnapshot,
     type OpticalPieceSnapshot,
     type OpticalSourceSnapshot,
@@ -70,9 +71,15 @@ export class OpticalPuzzleCore {
         this._px = level.player.x;
         this._py = level.player.y;
         this._playerFacing = Direction.Left;
-        this._sources = level.sources.map((s) => ({ ...s }));
+        this._sources = level.sources.map((s) => ({
+            ...s,
+            direction: normalizeDirection(s.direction, Direction.Down),
+        }));
         this._targets = level.targets.map((t) => ({ ...t }));
-        this._pieces = level.pieces.map((p) => ({ ...p }));
+        this._pieces = level.pieces.map((p) => ({
+            ...p,
+            direction: normalizeDirection(p.direction, Direction.Up),
+        }));
         this._recomputeLighting();
     }
 
