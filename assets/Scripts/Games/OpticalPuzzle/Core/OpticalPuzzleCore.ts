@@ -6,6 +6,7 @@ import type {
 } from '../Config/OpticalPuzzleLevelSchema';
 import { colorModeToKey, resolveBeamColorKey } from './OpticalLightColor';
 import {
+    type OpticalBeamBlockContact,
     type OpticalBeamSegment,
     type OpticalBeamTraceInput,
     traceBeams,
@@ -28,6 +29,7 @@ export interface OpticalBeamSnapshot {
     width: number;
     height: number;
     segments: OpticalBeamSegment[];
+    blockContacts: OpticalBeamBlockContact[];
 }
 
 /** 撤回栈条目：玩家位置 + 元件布局（地形本关不变） */
@@ -54,6 +56,7 @@ export class OpticalPuzzleCore {
     private _targets: IOpticalTarget[] = [];
     private _pieces: IOpticalPiece[] = [];
     private _beamSegments: OpticalBeamSegment[] = [];
+    private _beamBlockContacts: OpticalBeamBlockContact[] = [];
     private _targetLit: boolean[] = [];
 
     reset(level: IOpticalLevelConfig): void {
@@ -104,6 +107,7 @@ export class OpticalPuzzleCore {
             width: this._w,
             height: this._h,
             segments: this._beamSegments.map((s) => ({ ...s })),
+            blockContacts: this._beamBlockContacts.map((c) => ({ ...c })),
         };
     }
 
@@ -243,6 +247,7 @@ export class OpticalPuzzleCore {
         };
         const result = traceBeams(input);
         this._beamSegments = result.segments;
+        this._beamBlockContacts = result.blockContacts;
         this._targetLit = result.targetLit;
     }
 }

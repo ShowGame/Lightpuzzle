@@ -3,9 +3,10 @@ import {
     mergeOverlappingBeamSegments,
     recomputeTargetLitFromSegments,
 } from './OpticalBeamOverlapMerge';
-import type { OpticalBeamSegment } from './OpticalBeamTypes';
-export type { OpticalBeamSegment } from './OpticalBeamTypes';
-import { mixLightColors } from './OpticalColorMix';
+import { alignBlockContactsWithSegments } from './OpticalBeamContactResolve';
+import type { OpticalBeamBlockContact, OpticalBeamSegment } from './OpticalBeamTypes';
+export type { OpticalBeamBlockContact, OpticalBeamSegment } from './OpticalBeamTypes';
+import { mixLightColors, coerceBeamColorKey, collectColorKeyStrings } from './OpticalColorMix';
 import { colorModeToKey, lightMatchesTarget, resolveBeamColorKey } from './OpticalLightColor';
 import {
     entrySideToPropagation,
@@ -29,6 +30,7 @@ export interface OpticalBeamTraceInput {
 
 export interface OpticalBeamTraceResult {
     segments: OpticalBeamSegment[];
+    blockContacts: OpticalBeamBlockContact[];
     targetLit: boolean[];
 }
 
@@ -72,6 +74,69 @@ function pushSegment(
     segments.push({ x0, y0, x1, y1, colorKey });
 }
 
+function blockContactAtCellFace(
+    cx: number,
+    cy: number,
+    dir: Direction,
+): { x: number; y: number } {
+    return {
+        x: cx + 0.5 - DIR_DX[dir] * 0.5,
+        y: cy + 0.5 - DIR_DY[dir] * 0.5,
+    };
+}
+
+/** 光线在地图边界被截断时的接触点（当前格朝传播方向的外侧面） */
+function blockContactAtMapEdge(
+    cx: number,
+    cy: number,
+    dir: Direction,
+): { x: number; y: number } {
+    return {
+        x: cx + 0.5 + DIR_DX[dir] * 0.5,
+        y: cy + 0.5 + DIR_DY[dir] * 0.5,
+    };
+}
+
+function pushBlockContact(
+    contacts: OpticalBeamBlockContact[],
+    cx: number,
+    cy: number,
+    dir: Direction,
+    colorKey: string,
+    atMapEdge = false,
+): void {
+    const { x, y } = atMapEdge
+        ? blockContactAtMapEdge(cx, cy, dir)
+        : blockContactAtCellFace(cx, cy, dir);
+    contacts.push({ x, y, dir, colorKey });
+}
+
+function dedupeBlockContacts(contacts: readonly OpticalBeamBlockContact[]): OpticalBeamBlockContact[] {
+    const grouped = new Map<string, { x: number; y: number; dir: Direction; colorKeys: Set<string> }>();
+    for (const contact of contacts) {
+        const key = `${Math.round(contact.x * 2000)},${Math.round(contact.y * 2000)},${contact.dir}`;
+        let entry = grouped.get(key);
+        if (!entry) {
+            entry = { x: contact.x, y: contact.y, dir: contact.dir as Direction, colorKeys: new Set() };
+            grouped.set(key, entry);
+        }
+        for (const colorKey of collectColorKeyStrings(contact.colorKey)) {
+            entry.colorKeys.add(resolveBeamColorKey(colorKey));
+        }
+    }
+    const out: OpticalBeamBlockContact[] = [];
+    for (const entry of grouped.values()) {
+        const keys = [...entry.colorKeys];
+        out.push({
+            x: entry.x,
+            y: entry.y,
+            dir: entry.dir,
+            colorKey: coerceBeamColorKey(keys),
+        });
+    }
+    return out;
+}
+
 function tryLightTarget(
     x: number,
     y: number,
@@ -98,6 +163,7 @@ function traceOneSource(
     targetAt: ReadonlyMap<number, number>,
     targetLit: boolean[],
     outSegments: OpticalBeamSegment[],
+    outBlockContacts: OpticalBeamBlockContact[],
 ): void {
     const { width: w, height: h, terrain, player, targets } = input;
     const srcDir = normalizeDirection(src.direction, Direction.Down);
@@ -146,6 +212,7 @@ function traceOneSource(
                 cy + 0.5 - DIR_DY[dir] * 0.5,
                 colorKey,
             );
+            pushBlockContact(outBlockContacts, cx, cy, dir, colorKey);
             continue;
         }
 
@@ -185,6 +252,7 @@ function traceOneSource(
                     cy + 0.5 - DIR_DY[dir] * 0.5,
                     colorKey,
                 );
+                pushBlockContact(outBlockContacts, cx, cy, dir, colorKey);
                 continue;
             }
 
@@ -199,6 +267,7 @@ function traceOneSource(
                     cy + 0.5 + DIR_DY[dir] * 0.5,
                     colorKey,
                 );
+                pushBlockContact(outBlockContacts, cx, cy, dir, colorKey, true);
                 continue;
             }
             pushSegment(
@@ -226,6 +295,7 @@ function traceOneSource(
                 cy + 0.5 - DIR_DY[dir] * 0.5,
                 colorKey,
             );
+            pushBlockContact(outBlockContacts, cx, cy, dir, colorKey);
             continue;
         }
 
@@ -269,14 +339,19 @@ export function traceBeams(input: OpticalBeamTraceInput): OpticalBeamTraceResult
     });
 
     const rawSegments: OpticalBeamSegment[] = [];
+    const rawBlockContacts: OpticalBeamBlockContact[] = [];
     const scratchTargetLit = targets.map(() => false);
 
     for (const src of sources) {
-        traceOneSource(src, input, pieceAt, targetAt, scratchTargetLit, rawSegments);
+        traceOneSource(src, input, pieceAt, targetAt, scratchTargetLit, rawSegments, rawBlockContacts);
     }
 
     const segments = mergeOverlappingBeamSegments(rawSegments);
+    const blockContacts = alignBlockContactsWithSegments(
+        dedupeBlockContacts(rawBlockContacts),
+        segments,
+    );
     const targetLit = recomputeTargetLitFromSegments(segments, targets);
 
-    return { segments, targetLit };
+    return { segments, blockContacts, targetLit };
 }

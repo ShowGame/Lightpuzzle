@@ -1,4 +1,5 @@
 import type { LightColorKey } from './OpticalLightColor';
+import { resolveBeamColorKey } from './OpticalLightColor';
 
 /** 运行时混色结果（含二次色） */
 export type MixedLightColorKey =
@@ -108,4 +109,62 @@ export function mixLightColors(colors: readonly string[]): MixedLightColorKey {
     }
 
     return 'white';
+}
+
+function isSetLike(raw: unknown): raw is { forEach: (cb: (value: unknown) => void) => void } {
+    return raw != null
+        && typeof raw === 'object'
+        && typeof (raw as { forEach?: unknown }).forEach === 'function';
+}
+
+/** 从 runtime 各种形态（含微信包 Set duck-type）提取色键字符串 */
+export function collectColorKeyStrings(raw: unknown): string[] {
+    if (typeof raw === 'string') {
+        return [raw];
+    }
+    if (raw == null) {
+        return [];
+    }
+    if (Array.isArray(raw)) {
+        return raw.filter((k): k is string => typeof k === 'string');
+    }
+    if (isSetLike(raw)) {
+        const out: string[] = [];
+        raw.forEach((value) => {
+            if (typeof value === 'string') {
+                out.push(value);
+            }
+        });
+        return out;
+    }
+    if (typeof raw === 'object') {
+        const boxed = Object.prototype.toString.call(raw);
+        if (boxed === '[object String]') {
+            return [String(raw)];
+        }
+        const nested = (raw as { colorKey?: unknown; colorKeys?: unknown }).colorKey;
+        if (nested != null && nested !== raw) {
+            return collectColorKeyStrings(nested);
+        }
+        const nestedKeys = (raw as { colorKeys?: unknown }).colorKeys;
+        if (nestedKeys != null && nestedKeys !== raw) {
+            return collectColorKeyStrings(nestedKeys);
+        }
+    }
+    return [];
+}
+
+/**
+ * 将阻挡接触 / 光路 snapshot 中的 colorKey 规范为 BeamColorKey。
+ * 微信 Rollup 后偶发 Set、类数组 object 等，避免 instanceof Set 失效。
+ */
+export function coerceBeamColorKey(raw: unknown): MixedLightColorKey {
+    const keys = collectColorKeyStrings(raw);
+    if (keys.length === 0) {
+        return 'white';
+    }
+    if (keys.length === 1) {
+        return resolveBeamColorKey(keys[0]);
+    }
+    return mixLightColors(keys);
 }

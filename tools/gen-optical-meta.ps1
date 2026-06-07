@@ -41,6 +41,8 @@ $tsFiles = @(
   (Join-Path $op 'Presentation\OpticalPuzzleRoot.ts'),
   (Join-Path $op 'Presentation\OpticalPuzzleBoardView.ts'),
   (Join-Path $op 'Presentation\OpticalPuzzleBeamView.ts'),
+  (Join-Path $op 'Presentation\OpticalPuzzleBeamImpactView.ts'),
+  (Join-Path $op 'Core\OpticalBeamTypes.ts'),
   (Join-Path $op 'Presentation\OpticalPuzzlePieceGlyph.ts'),
   (Join-Path $op 'Presentation\OpticalPuzzleColorUtil.ts'),
   (Join-Path $op 'Presentation\OpticalPuzzleInputHud.ts')

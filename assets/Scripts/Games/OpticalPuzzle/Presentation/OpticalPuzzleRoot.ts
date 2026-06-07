@@ -1,4 +1,4 @@
-import { _decorator, Component, director, find, Node, UITransform, Vec3 } from 'cc';
+import { _decorator, Component, director, find, Node, SpriteFrame, UITransform, Vec3 } from 'cc';
 import { DataManager } from '../../../Manager/DataManager';
 import { ToastManager } from '../../../Manager/ToastManager';
 import { AUDIO_EFFECT_ENUM, EVENT_ENUM } from '../../../Utils/Enum';
@@ -10,6 +10,7 @@ import {
 } from '../Application/OpticalPuzzleSession';
 import { getOpticalLevelById } from '../Config/OpticalPuzzleLevels';
 import { DEV_LEVEL_MINIMAL } from '../Config/OpticalPuzzleLevelSchema';
+import type { OpticalBeamSnapshot } from '../Core/OpticalPuzzleCore';
 import { OpticalPuzzleBeamView } from './OpticalPuzzleBeamView';
 import { OpticalPuzzleBoardView } from './OpticalPuzzleBoardView';
 import { OpticalPuzzleInputHud } from './OpticalPuzzleInputHud';
@@ -24,6 +25,14 @@ import {
 } from './OpticalPuzzleWinPanelWindsView';
 
 const { ccclass, property } = _decorator;
+
+/** 阻挡点粒子视图（按 ccclass 名运行时解析，避免与 Root 强耦合） */
+interface IBeamImpactView {
+    render(snapshot: OpticalBeamSnapshot): void;
+    applyExternalSparkSpriteFrames?(frames: ReadonlyArray<SpriteFrame>): void;
+}
+
+const BEAM_IMPACT_VIEW_CLASS = 'OpticalPuzzleBeamImpactView';
 
 /** SHOW_TOAST 事件载荷（与 ToastManager.show 入参一致） */
 interface ToastShowPayload {
@@ -59,7 +68,12 @@ export class OpticalPuzzleRoot extends Component {
     @property
     playAreaTopMargin = 125;
 
+    /** 构建保活：七色 beam_spark SpriteFrame，微信端依赖贴图烘焙色（非顶点色） */
+    @property({ type: [SpriteFrame], tooltip: 'Sprites/OpticalFX 下 beam_spark 七色' })
+    beamSparkKeepAlive: SpriteFrame[] = [];
+
     private readonly _session = new OpticalPuzzleSession();
+    private _beamImpactView: IBeamImpactView | null = null;
 
     protected onLoad(): void {
         DataManager.instance.init();
@@ -82,6 +96,7 @@ export class OpticalPuzzleRoot extends Component {
                     beamNode.addComponent(OpticalPuzzleBeamView);
             }
         }
+        this._resolveBeamImpactView();
         if (!this.inputHud) {
             this.inputHud =
                 this.getComponent(OpticalPuzzleInputHud) ??
@@ -190,6 +205,7 @@ export class OpticalPuzzleRoot extends Component {
 
         this.boardView?.render(snap);
         this.beamView?.render(beam);
+        this._beamImpactView?.render(beam);
         this.boardView?.renderTargetsOverlay(snap);
         this.boardView?.syncPlaySnapshot(snap, reason);
         this.inputHud?.refreshActionButtons();
@@ -199,6 +215,41 @@ export class OpticalPuzzleRoot extends Component {
             notifyReason: reason,
         };
         OPTICAL_PUZZLE.emit(EVENT_ENUM.OPTICAL_SNAPSHOT_CHANGED, notify);
+    }
+
+    private _resolveBeamImpactView(): void {
+        if (this._beamImpactView) {
+            this._syncBeamSparkKeepAlive(this._beamImpactView);
+            return;
+        }
+        const fromSelf =
+            this.getComponent(BEAM_IMPACT_VIEW_CLASS) ??
+            this.getComponentInChildren(BEAM_IMPACT_VIEW_CLASS);
+        if (fromSelf) {
+            this._beamImpactView = fromSelf as unknown as IBeamImpactView;
+            this._syncBeamSparkKeepAlive(this._beamImpactView);
+            return;
+        }
+        const beamNode = this.node.getChildByName('BeamLayer');
+        if (!beamNode?.isValid) {
+            return;
+        }
+        const onBeam =
+            beamNode.getComponent(BEAM_IMPACT_VIEW_CLASS) ??
+            beamNode.addComponent(BEAM_IMPACT_VIEW_CLASS);
+        this._beamImpactView = onBeam as unknown as IBeamImpactView;
+        this._syncBeamSparkKeepAlive(this._beamImpactView);
+    }
+
+    private _syncBeamSparkKeepAlive(view: IBeamImpactView | null): void {
+        if (!view?.applyExternalSparkSpriteFrames) {
+            return;
+        }
+        if (this.beamSparkKeepAlive.length === 0) {
+            console.warn('[OpticalPuzzleRoot] beamSparkKeepAlive 未绑定，微信包可能缺少 beam_spark 贴图');
+            return;
+        }
+        view.applyExternalSparkSpriteFrames(this.beamSparkKeepAlive);
     }
 
     /** 按关卡尺寸缩放并定位 layerPlay：宽撑满、顶边距 Canvas 顶 playAreaTopMargin */
