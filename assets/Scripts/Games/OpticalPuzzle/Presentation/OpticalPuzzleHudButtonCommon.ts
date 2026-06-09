@@ -204,6 +204,8 @@ export class HudButtonPressController {
     constructor(
         private readonly _node: Node,
         private readonly _onChange: (pressed: boolean) => void,
+        /** 与 Button 同节点时须 true，否则 Button 抢先消费触摸导致不发光 */
+        private readonly _useCapture = false,
     ) {}
 
     bind(): void {
@@ -211,10 +213,10 @@ export class HudButtonPressController {
             return;
         }
         this._unbindListeners();
-        this._node.on(NodeEventType.TOUCH_START, this._onPressStart, this);
-        this._node.on(NodeEventType.TOUCH_MOVE, this._onTouchMove, this);
-        this._node.on(NodeEventType.TOUCH_END, this._onPressEnd, this);
-        this._node.on(NodeEventType.TOUCH_CANCEL, this._onPressEnd, this);
+        this._node.on(NodeEventType.TOUCH_START, this._onPressStart, this, this._useCapture);
+        this._node.on(NodeEventType.TOUCH_MOVE, this._onTouchMove, this, this._useCapture);
+        this._node.on(NodeEventType.TOUCH_END, this._onPressEnd, this, this._useCapture);
+        this._node.on(NodeEventType.TOUCH_CANCEL, this._onPressEnd, this, this._useCapture);
     }
 
     /** 是否处于触摸按压中（键盘脉冲发光时勿覆盖） */
@@ -234,10 +236,10 @@ export class HudButtonPressController {
         if (!this._node?.isValid) {
             return;
         }
-        this._node.off(NodeEventType.TOUCH_START, this._onPressStart, this);
-        this._node.off(NodeEventType.TOUCH_MOVE, this._onTouchMove, this);
-        this._node.off(NodeEventType.TOUCH_END, this._onPressEnd, this);
-        this._node.off(NodeEventType.TOUCH_CANCEL, this._onPressEnd, this);
+        this._node.off(NodeEventType.TOUCH_START, this._onPressStart, this, this._useCapture);
+        this._node.off(NodeEventType.TOUCH_MOVE, this._onTouchMove, this, this._useCapture);
+        this._node.off(NodeEventType.TOUCH_END, this._onPressEnd, this, this._useCapture);
+        this._node.off(NodeEventType.TOUCH_CANCEL, this._onPressEnd, this, this._useCapture);
     }
 
     private _onPressStart(): void {

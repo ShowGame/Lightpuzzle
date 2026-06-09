@@ -1,6 +1,16 @@
 import { sys } from 'cc';
 import { MOCK_PLAYER_DATA, USE_DEBUG_MOCK_SAVE } from '../Config/DebugMockSave';
+import {
+    getOpticalLevelBestStepsFromFlat,
+    isOpticalLevelClearedInFlat,
+    mergeOpticalLevelClears,
+    OpticalLevelClearsFlat,
+    resolveOpticalMaxUnlockedLevelId,
+    upsertOpticalLevelBestSteps,
+} from '../Games/OpticalPuzzle/Infrastructure/OpticalPlayerPersist';
 import { GAME_STATE_ENUM } from '../Utils/Enum';
+
+export type { OpticalLevelClearsFlat } from '../Games/OpticalPuzzle/Infrastructure/OpticalPlayerPersist';
 
 const PLAYER_DATA_STORAGE_KEY = 'LightPuzzle_player_v1';
 
@@ -17,8 +27,15 @@ const LEGACY_OPTICAL_LEVEL_ID: Readonly<Record<string, number>> = {
 
 /** 持久化数据结构（可按玩法扩展字段） */
 export interface IPlayerPersistData {
-    /** 光学解谜当前关卡整数 id，与 `IOpticalLevelLayeredSource.levelId` 对齐 */
+    /**
+     * 继续游戏 / 上次退出时的关卡 id（菜单「开始游戏」、选关选中的关卡）。
+     * 与解锁无关；解锁见 opticalLevelClears + getOpticalMaxUnlockedLevelId()。
+     */
     opticalCurrentLevelId: number;
+    /**
+     * 已通关关卡最少步数：`[levelId, bestSteps, …]` 扁平 number 数组（紧凑 JSON）。
+     */
+    opticalLevelClears: OpticalLevelClearsFlat;
     bgmOn: boolean;
     sfxOn: boolean;
 }
@@ -26,6 +43,7 @@ export interface IPlayerPersistData {
 /** 新玩家默认存档（无本地档时使用） */
 const DEFAULT_DATA: IPlayerPersistData = {
     opticalCurrentLevelId: 1,
+    opticalLevelClears: [],
     bgmOn: true,
     sfxOn: true,
 };
@@ -88,11 +106,14 @@ function mergeOpticalCurrentLevelId(raw: unknown): number {
 
 function mergePlayerData(raw: unknown): IPlayerPersistData {
     if (!raw || typeof raw !== 'object') {
-        return { ...DEFAULT_DATA };
+        return { ...DEFAULT_DATA, opticalLevelClears: [] };
     }
     const o = raw as Record<string, unknown>;
+    const opticalCurrentLevelId = mergeOpticalCurrentLevelId(o.opticalCurrentLevelId);
+    const opticalLevelClears = mergeOpticalLevelClears(o.opticalLevelClears);
     return {
-        opticalCurrentLevelId: mergeOpticalCurrentLevelId(o.opticalCurrentLevelId),
+        opticalCurrentLevelId,
+        opticalLevelClears,
         bgmOn: typeof o.bgmOn === 'boolean' ? o.bgmOn : DEFAULT_DATA.bgmOn,
         sfxOn: typeof o.sfxOn === 'boolean' ? o.sfxOn : DEFAULT_DATA.sfxOn,
     };
@@ -104,8 +125,8 @@ function mergePlayerData(raw: unknown): IPlayerPersistData {
 export class DataManager {
     private static _instance: DataManager | null = null;
 
-    /** 本进程是否已执行过 init（避免切场景再次 restore / 重复套 mock） */
-    private static _initializedThisRun = false;
+    /** USE_DEBUG_MOCK_SAVE 时仅第一次 init 写入 mock */
+    private static _debugMockSeededThisRun = false;
 
     static get instance(): DataManager {
         if (this._instance === null) {
@@ -150,8 +171,34 @@ export class DataManager {
     }
 
     reset(): void {
-        this._data = { ...DEFAULT_DATA };
+        this._data = { ...DEFAULT_DATA, opticalLevelClears: [] };
         this.gameStatus = GAME_STATE_ENUM.INIT;
+        this.save();
+    }
+
+    /** 解锁前沿（由通关记录推算；无 clears 时回退 opticalCurrentLevelId 以兼容旧档） */
+    getOpticalMaxUnlockedLevelId(): number {
+        return resolveOpticalMaxUnlockedLevelId(
+            this._data.opticalCurrentLevelId,
+            this._data.opticalLevelClears,
+        );
+    }
+
+    isOpticalLevelCleared(levelId: number): boolean {
+        return isOpticalLevelClearedInFlat(this._data.opticalLevelClears, levelId);
+    }
+
+    getOpticalLevelBestSteps(levelId: number): number | null {
+        return getOpticalLevelBestStepsFromFlat(this._data.opticalLevelClears, levelId);
+    }
+
+    /** 关卡通关：仅写入/刷新最少步数；不修改 opticalCurrentLevelId（继续关卡由选关/下一关按钮等单独设置） */
+    recordOpticalLevelClear(levelId: number, steps: number): void {
+        const id = Math.trunc(levelId);
+        if (id <= 0) {
+            return;
+        }
+        upsertOpticalLevelBestSteps(this._data.opticalLevelClears, id, steps);
         this.save();
     }
 
@@ -164,24 +211,18 @@ export class DataManager {
     }
 
     /**
-     * 初始化：进程内仅执行一次。先读本地档合并默认值，再可选把 mock 覆盖进内存（不落盘）。
+     * 初始化：可选首次写入 mock 到本地，再 restore 合并默认存档。
      */
     init(): void {
-        if (DataManager._initializedThisRun) {
-            return;
+        if (USE_DEBUG_MOCK_SAVE && !DataManager._debugMockSeededThisRun) {
+            try {
+                setStorageItem(PLAYER_DATA_STORAGE_KEY, JSON.stringify(MOCK_PLAYER_DATA));
+                DataManager._debugMockSeededThisRun = true;
+            } catch (e) {
+                console.warn('[DataManager] 调试写入本地存档失败', e);
+            }
         }
-        DataManager._initializedThisRun = true;
-
         this.restore();
-
-        if (USE_DEBUG_MOCK_SAVE) {
-            this._applyDebugMockToMemory();
-        }
-    }
-
-    /** 将 MOCK_PLAYER_DATA 合并进内存，不触发 save */
-    private _applyDebugMockToMemory(): void {
-        this._data = mergePlayerData({ ...this._data, ...MOCK_PLAYER_DATA });
     }
 
     restore(): void {

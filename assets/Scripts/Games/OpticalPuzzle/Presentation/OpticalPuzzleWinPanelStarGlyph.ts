@@ -2,7 +2,6 @@ import { Color, Graphics } from 'cc';
 import { OpticalStarVisualState } from '../Core/OpticalPuzzleStarRating';
 import {
     fillGlowLayersMatchingStroke,
-    HUD_KEY_FILL,
     strokeGlowLayers,
 } from './OpticalPuzzleHudButtonCommon';
 import { beamColorFromKey } from './OpticalPuzzleColorUtil';
@@ -131,6 +130,7 @@ export function drawWinPanelStarGlyph(
     height: number,
     state: OpticalStarVisualState,
     rotationDeg = 0,
+    borderPx = WIN_STAR_BORDER_PX,
 ): void {
     const size = Math.min(width, height);
     const cx = left + width * 0.5;
@@ -155,12 +155,12 @@ export function drawWinPanelStarGlyph(
         return;
     }
 
-    g.fillColor = state === OpticalStarVisualState.Filled ? STAR_WHITE : HUD_KEY_FILL;
+    g.fillColor = state === OpticalStarVisualState.Filled ? STAR_WHITE : new Color(0, 0, 0, 0);
     trace();
     g.fill();
 
     g.strokeColor = STAR_BORDER;
-    g.lineWidth = WIN_STAR_BORDER_PX;
+    g.lineWidth = borderPx;
     g.lineJoin = Graphics.LineJoin.ROUND;
     g.lineCap = Graphics.LineCap.ROUND;
     trace();

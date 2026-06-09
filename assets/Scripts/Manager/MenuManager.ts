@@ -1,4 +1,8 @@
 import { _decorator, Button, Component, director, Node } from 'cc';
+import {
+    ensureLevelSelectPanel,
+    prewarmLevelSelectPanel,
+} from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleLevelSelectPanel';
 import { ensureMenuStartButtonView } from '../MenuStartButtonView';
 import { DataManager } from './DataManager';
 import { AUDIO_EFFECT_ENUM, EVENT_ENUM, SCENE_ENUM } from '../Utils/Enum';
@@ -29,7 +33,9 @@ export class MenuManager extends Component {
         director.preloadScene(SCENE_ENUM.GAME);
         this._resolveBtnStart();
         ensureMenuStartButtonView(this.btnStart);
+        ensureLevelSelectPanel(this.levelSelectPanel);
         this.closeLevelSelect();
+        prewarmLevelSelectPanel(this.levelSelectPanel);
         this.bindStartButton();
         this.bindLevelSelectButton();
     }

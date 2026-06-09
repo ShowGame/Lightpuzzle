@@ -191,6 +191,10 @@ export class OpticalPuzzleRoot extends Component {
             PLAY_AUDIO.emit(EVENT_ENUM.PLAY_AUDIO, AUDIO_EFFECT_ENUM.OPTICAL_PLAYER_MOVE);
         }
         if (reason === 'complete') {
+            DataManager.instance.recordOpticalLevelClear(
+                this.getCurrentLevelId(),
+                this._session.moveCount,
+            );
             PLAY_AUDIO.emit(EVENT_ENUM.PLAY_AUDIO, AUDIO_EFFECT_ENUM.OPTICAL_LEVEL_COMPLETE);
             this._showWinPanel();
         }

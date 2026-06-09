@@ -425,7 +425,12 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
     },*/
 ];
 
-export const OPTICAL_LEVELS: IOpticalLevelConfig[] = OPTICAL_LEVEL_LAYERED_SOURCES.map((src) =>
+/** 正式手工关卡 */
+const ALL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
+    ...OPTICAL_LEVEL_LAYERED_SOURCES,
+];
+
+export const OPTICAL_LEVELS: IOpticalLevelConfig[] = ALL_LAYERED_SOURCES.map((src) =>
     parseLayeredGridsToLevelConfig(src),
 );
 

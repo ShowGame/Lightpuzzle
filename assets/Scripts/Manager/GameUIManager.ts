@@ -2,6 +2,11 @@ import { _decorator, Button, Component, director, Label, Node } from 'cc';
 import type { OpticalSnapshotNotify } from '../Games/OpticalPuzzle/Application/OpticalPuzzleSession';
 import { ensureBackButtonView } from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleBackButtonView';
 import { ensureLevelSelectButtonView } from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleLevelSelectButtonView';
+import {
+    ensureLevelSelectPanel,
+    prewarmLevelSelectPanel,
+    syncLevelSelectPanelVisuals,
+} from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleLevelSelectPanel';
 import { ensureStepViews } from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleStepView';
 import { ensureWinPanelNextLevelButtonView } from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleWinPanelNextLevelButtonView';
 import { ensureWinPanelStarsView } from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleWinPanelStarsView';
@@ -47,7 +52,9 @@ export class GameUIManager extends Component {
         ensureWinPanelStarsView(this.node);
         ensureWinPanelStepViews(this.node);
         ensureWinPanelNextLevelButtonView(this.node);
+        ensureLevelSelectPanel(this.levelSelectPanel);
         this.closeLevelSelect();
+        prewarmLevelSelectPanel(this.levelSelectPanel);
         this.bindBackMenuButton();
         this.bindLevelSelectButton();
         OPTICAL_PUZZLE.on(
@@ -82,7 +89,7 @@ export class GameUIManager extends Component {
         director.loadScene(SCENE_ENUM.MENU);
     }
 
-    /** 显示局内选关面板（跳关列表后续在 Panel 脚本中处理） */
+    /** 显示局内选关面板（列表已在进入场景时预构建，直接展示） */
     openLevelSelect(): void {
         if (!this.levelSelectPanel?.isValid) {
             return;
@@ -141,7 +148,8 @@ export class GameUIManager extends Component {
 
     private onBackMenuClick(): void {
         PLAY_AUDIO.emit(EVENT_ENUM.PLAY_AUDIO, AUDIO_EFFECT_ENUM.CLICK_BUTTON);
-        this.backToMenu();
+        // 下一帧切场景，避免与 Button 缩放/绘制抢同一帧主线程
+        this.scheduleOnce(() => this.backToMenu(), 0);
     }
 
     private onLevelSelectClick(): void {
@@ -185,5 +193,6 @@ export class GameUIManager extends Component {
         if (snap.levelId !== this._displayedLevelId) {
             this.refreshLevelLabel(snap.levelId);
         }
+        syncLevelSelectPanelVisuals(this.levelSelectPanel);
     }
 }
