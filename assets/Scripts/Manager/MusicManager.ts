@@ -14,6 +14,7 @@ import {
     cancelWeChatRewardedVideoPreloadSchedule,
     scheduleWeChatRewardedVideoPreloadForGame,
 } from '../Utils/WeChatRewardedVideoAd';
+import { initWeChatMiniGameShare, trySettlePendingShareAfterWxOnShow } from '../Utils/WeChatShare';
 
 const { ccclass, property } = _decorator;
 
@@ -61,14 +62,21 @@ export class MusicManager extends Component {
     /** 当前正在播放的 BGM Clip，避免同曲重复 stop/play */
     private _currentBgmClip: AudioClip | null = null;
 
+    private readonly _wxOnShowHandler = (): void => {
+        trySettlePendingShareAfterWxOnShow();
+    };
+
     protected onLoad(): void {
         this.registerPersistRoot();
         director.on(Director.EVENT_AFTER_SCENE_LAUNCH, this.onAfterSceneLaunch, this);
         PLAY_AUDIO.on(EVENT_ENUM.PLAY_AUDIO, this.onAudioPlay, this);
         PLAY_BGM.on(EVENT_ENUM.PLAY_BGM, this.onPlayBgmEvent, this);
+        initWeChatMiniGameShare();
+        this._bindWeChatOnShow();
     }
 
     protected onDestroy(): void {
+        this._unbindWeChatOnShow();
         cancelWeChatRewardedVideoPreloadSchedule();
         director.off(Director.EVENT_AFTER_SCENE_LAUNCH, this.onAfterSceneLaunch, this);
         PLAY_AUDIO.off(EVENT_ENUM.PLAY_AUDIO, this.onAudioPlay, this);
@@ -190,5 +198,15 @@ export class MusicManager extends Component {
             node = node.parent;
         }
         return this.node;
+    }
+
+    private _bindWeChatOnShow(): void {
+        const wxApi = (globalThis as { wx?: { onShow?(fn: () => void): void; offShow?(fn: () => void): void } }).wx;
+        wxApi?.onShow?.(this._wxOnShowHandler);
+    }
+
+    private _unbindWeChatOnShow(): void {
+        const wxApi = (globalThis as { wx?: { offShow?(fn: () => void): void } }).wx;
+        wxApi?.offShow?.(this._wxOnShowHandler);
     }
 }

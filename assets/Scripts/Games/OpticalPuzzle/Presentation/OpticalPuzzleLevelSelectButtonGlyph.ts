@@ -4,8 +4,8 @@ import {
     HUD_BUTTON_DESIGN_SIZE,
 } from './OpticalPuzzleHudButtonCommon';
 
-/** 图标占按钮比例（与 TopBar 返回键一致） */
-const ICON_SIZE_RATIO = 0.58;
+/** 局内 TopBar 选关键：图标占按钮比例（与返回键一致） */
+export const HUD_LEVEL_SELECT_ICON_SIZE_RATIO = 0.58;
 /** 返回箭头外接框（与 OpticalPuzzleBackButtonGlyph 一致，用于与选关四宫格顶底对齐） */
 const BACK_ICON_TOP_NORM = 10.198;
 const BACK_ICON_BOTTOM_NORM = -10.125;
@@ -38,6 +38,23 @@ function traceLevelSelectIcon(g: Graphics, cx: number, cy: number, scale: number
     }
 }
 
+/** 四宫格 icon（与 Game TopBar BtnLevelSelect 同款几何） */
+export function traceLevelSelectGridIconForButton(
+    g: Graphics,
+    centerX: number,
+    centerY: number,
+    buttonSize: number,
+    iconSizeRatio: number = HUD_LEVEL_SELECT_ICON_SIZE_RATIO,
+): void {
+    const iconHalf = buttonSize * iconSizeRatio * 0.5;
+    const backScale = iconHalf / BACK_PATH_UNIT;
+    const backHeightNorm = BACK_ICON_TOP_NORM - BACK_ICON_BOTTOM_NORM;
+    const gridHeightNorm = GRID_TOP_NORM - GRID_BOTTOM_NORM;
+    const scale = (backHeightNorm * backScale) / gridHeightNorm;
+    const alignOffsetY = BACK_ICON_TOP_NORM * backScale - GRID_TOP_NORM * scale;
+    traceLevelSelectIcon(g, centerX, centerY + alignOffsetY, scale);
+}
+
 /**
  * 绘制选关键：无键帽外框，四枚圆角正方（描边/填色/按下光晕与四向键内芯一致）。
  */
@@ -52,16 +69,9 @@ export function drawLevelSelectButtonGlyph(
     const size = Math.min(width, height);
     const cx = left + width * 0.5;
     const cy = bottom + height * 0.5;
-    const iconHalf = size * ICON_SIZE_RATIO * 0.5;
-    const backScale = iconHalf / BACK_PATH_UNIT;
-    const backHeightNorm = BACK_ICON_TOP_NORM - BACK_ICON_BOTTOM_NORM;
-    const gridHeightNorm = GRID_TOP_NORM - GRID_BOTTOM_NORM;
-    // 等比放大四宫格，使外接框顶/底与返回箭头一致（宽高同 scale）
-    const scale = (backHeightNorm * backScale) / gridHeightNorm;
-    const alignOffsetY = BACK_ICON_TOP_NORM * backScale - GRID_TOP_NORM * scale;
     const refSize = size > 0 ? size : HUD_BUTTON_DESIGN_SIZE;
 
     drawHudShapeIcon(g, refSize, pressed, () => {
-        traceLevelSelectIcon(g, cx, cy + alignOffsetY, scale);
+        traceLevelSelectGridIconForButton(g, cx, cy, size);
     });
 }

@@ -7,22 +7,22 @@ import {
     UITransform,
 } from 'cc';
 import { HudButtonPressController } from './Games/OpticalPuzzle/Presentation/OpticalPuzzleHudButtonPressController';
-import { drawMenuStartButtonGlyph } from './Games/OpticalPuzzle/Presentation/MenuStartButtonGlyph';
+import { drawMenuShareButtonGlyph } from './Games/OpticalPuzzle/Presentation/MenuShareButtonGlyph';
 
 const { ccclass } = _decorator;
 
-/** 与 nextlevel / 四向键 Button.zoomScale 一致 */
-const START_BUTTON_ZOOM_SCALE = 0.95;
+/** 与开始键 Button.zoomScale 一致 */
+const SHARE_MENU_BUTTON_ZOOM_SCALE = 0.95;
 
-/** Menu/MainPanel/BtnStart：圆形键帽（点击逻辑由 MenuManager 绑定） */
-@ccclass('MenuStartButtonView')
-export class MenuStartButtonView extends Component {
+/** Menu/MainPanel/BtnShare：圆形键帽 + 分享 icon（点击由 MenuManager 绑定） */
+@ccclass('MenuShareButtonView')
+export class MenuShareButtonView extends Component {
     private _graphics: Graphics | null = null;
     private _pressed = false;
     private _pressCtrl: HudButtonPressController | null = null;
 
     protected onLoad(): void {
-        this._hidePlaceholderBg();
+        this._hidePlaceholderSplash();
         this._ensureButton();
         this._pressCtrl = new HudButtonPressController(this.node, (pressed) => {
             this._pressed = pressed;
@@ -45,10 +45,10 @@ export class MenuStartButtonView extends Component {
         this._pressCtrl?.unbind();
     }
 
-    private _hidePlaceholderBg(): void {
-        const bg = this.node.getChildByName('bg');
-        if (bg?.isValid) {
-            bg.active = false;
+    private _hidePlaceholderSplash(): void {
+        const splash = this.node.getChildByName('SpriteSplash') ?? this.node.getChildByName('bg');
+        if (splash?.isValid) {
+            splash.active = false;
         }
     }
 
@@ -58,7 +58,7 @@ export class MenuStartButtonView extends Component {
             btn = this.addComponent(Button);
             btn.transition = Button.Transition.SCALE;
         }
-        btn.zoomScale = START_BUTTON_ZOOM_SCALE;
+        btn.zoomScale = SHARE_MENU_BUTTON_ZOOM_SCALE;
         btn.transition = Button.Transition.SCALE;
     }
 
@@ -80,16 +80,16 @@ export class MenuStartButtonView extends Component {
         const h = ut.height;
         const left = -ut.anchorX * w;
         const bottom = -ut.anchorY * h;
-        drawMenuStartButtonGlyph(g, left, bottom, w, h, this._pressed);
+        drawMenuShareButtonGlyph(g, left, bottom, w, h, this._pressed);
     }
 }
 
-/** 为 MainPanel/BtnStart 挂上键帽绘制与按压缩放 */
-export function ensureMenuStartButtonView(btnStart: Node | null): void {
-    if (!btnStart?.isValid) {
+/** 为 MainPanel/BtnShare 挂上键帽绘制与按压缩放 */
+export function ensureMenuShareButtonView(btnShare: Node | null): void {
+    if (!btnShare?.isValid) {
         return;
     }
-    if (!btnStart.getComponent(MenuStartButtonView)) {
-        btnStart.addComponent(MenuStartButtonView);
+    if (!btnShare.getComponent(MenuShareButtonView)) {
+        btnShare.addComponent(MenuShareButtonView);
     }
 }

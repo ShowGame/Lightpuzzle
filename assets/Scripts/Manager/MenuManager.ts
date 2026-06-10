@@ -1,12 +1,21 @@
 import { _decorator, Button, Component, director, Node } from 'cc';
 import {
+    ensureAboutMePanel,
+    resolveAboutMePanelNode,
+} from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleAboutMePanel';
+import {
     ensureLevelSelectPanel,
     prewarmLevelSelectPanel,
+    resolveLevelSelectPanelNode,
 } from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleLevelSelectPanel';
+import { ensureMenuAboutButtonView } from '../MenuAboutButtonView';
+import { ensureMenuLevelSelectButtonView } from '../MenuLevelSelectButtonView';
+import { ensureMenuShareButtonView } from '../MenuShareButtonView';
 import { ensureMenuStartButtonView } from '../MenuStartButtonView';
 import { DataManager } from './DataManager';
 import { AUDIO_EFFECT_ENUM, EVENT_ENUM, SCENE_ENUM } from '../Utils/Enum';
 import { PLAY_AUDIO } from '../Utils/Event';
+import { invokeWeChatFriendShare } from '../Utils/WeChatShare';
 
 const { ccclass, property } = _decorator;
 
@@ -28,21 +37,42 @@ export class MenuManager extends Component {
     @property(Node)
     levelSelectPanel: Node = null;
 
+    /** 微信分享（MainPanel/BtnShare） */
+    @property(Node)
+    btnShare: Node = null;
+
+    /** 关于（MainPanel/BtnAbout） */
+    @property(Node)
+    btnAbout: Node = null;
+
+    /** 关于弹层（layerOverlay/aboutMePanel） */
+    @property(Node)
+    aboutMePanel: Node = null;
+
     protected onLoad(): void {
         DataManager.instance.init();
         director.preloadScene(SCENE_ENUM.GAME);
-        this._resolveBtnStart();
+        this._resolveMenuNodes();
         ensureMenuStartButtonView(this.btnStart);
+        ensureMenuLevelSelectButtonView(this.btnLevelSelect);
+        ensureMenuShareButtonView(this.btnShare);
+        ensureMenuAboutButtonView(this.btnAbout);
         ensureLevelSelectPanel(this.levelSelectPanel);
+        ensureAboutMePanel(this.aboutMePanel);
         this.closeLevelSelect();
+        this.closeAbout();
         prewarmLevelSelectPanel(this.levelSelectPanel);
         this.bindStartButton();
         this.bindLevelSelectButton();
+        this.bindShareButton();
+        this.bindAboutButton();
     }
 
     protected onDestroy(): void {
         this.unbindStartButton();
         this.unbindLevelSelectButton();
+        this.unbindShareButton();
+        this.unbindAboutButton();
     }
 
     /** 进入局内场景（当前进度关卡由 DataManager.opticalCurrentLevelId 决定） */
@@ -66,12 +96,47 @@ export class MenuManager extends Component {
         this.levelSelectPanel.active = false;
     }
 
-    /** 未在检查器绑定时，按 MenuRoot/MainPanel/BtnStart 解析 */
-    private _resolveBtnStart(): void {
-        if (this.btnStart?.isValid) {
+    /** 显示关于弹层 */
+    openAbout(): void {
+        if (!this.aboutMePanel?.isValid) {
             return;
         }
-        this.btnStart = this.node.getChildByName('MainPanel')?.getChildByName('BtnStart') ?? null;
+        this.closeLevelSelect();
+        this.aboutMePanel.active = true;
+    }
+
+    /** 隐藏关于弹层 */
+    closeAbout(): void {
+        if (!this.aboutMePanel?.isValid) {
+            return;
+        }
+        this.aboutMePanel.active = false;
+    }
+
+    /** 未在检查器绑定时，按 MenuRoot 子节点名解析 */
+    private _resolveMenuNodes(): void {
+        if (!this.btnStart?.isValid) {
+            this.btnStart = this._findMainPanel()?.getChildByName('BtnStart') ?? null;
+        }
+        if (!this.btnLevelSelect?.isValid) {
+            this.btnLevelSelect = this._findMainPanel()?.getChildByName('BtnLevelSelect') ?? null;
+        }
+        if (!this.btnShare?.isValid) {
+            this.btnShare = this._findMainPanel()?.getChildByName('BtnShare') ?? null;
+        }
+        if (!this.btnAbout?.isValid) {
+            this.btnAbout = this._findMainPanel()?.getChildByName('BtnAbout') ?? null;
+        }
+        if (!this.levelSelectPanel?.isValid) {
+            this.levelSelectPanel = resolveLevelSelectPanelNode(this.node);
+        }
+        if (!this.aboutMePanel?.isValid) {
+            this.aboutMePanel = resolveAboutMePanelNode(this.node);
+        }
+    }
+
+    private _findMainPanel(): Node | null {
+        return this.node.getChildByName('layerMain')?.getChildByName('MainPanel') ?? null;
     }
 
     private bindStartButton(): void {
@@ -88,6 +153,22 @@ export class MenuManager extends Component {
 
     private unbindLevelSelectButton(): void {
         this.unbindNodeClick(this.btnLevelSelect, this.onLevelSelectClick);
+    }
+
+    private bindShareButton(): void {
+        this.bindNodeClick(this.btnShare, this.onShareClick);
+    }
+
+    private unbindShareButton(): void {
+        this.unbindNodeClick(this.btnShare, this.onShareClick);
+    }
+
+    private bindAboutButton(): void {
+        this.bindNodeClick(this.btnAbout, this.onAboutClick);
+    }
+
+    private unbindAboutButton(): void {
+        this.unbindNodeClick(this.btnAbout, this.onAboutClick);
     }
 
     private bindNodeClick(node: Node | null, handler: () => void): void {
@@ -122,5 +203,23 @@ export class MenuManager extends Component {
     private onLevelSelectClick(): void {
         PLAY_AUDIO.emit(EVENT_ENUM.PLAY_AUDIO, AUDIO_EFFECT_ENUM.CLICK_BUTTON);
         this.openLevelSelect();
+    }
+
+    /** 微信好友分享（非微信环境 onFail） */
+    private onShareClick(): void {
+        invokeWeChatFriendShare({
+            onSuccess: () => {
+                /* 可按需加分享奖励 */
+            },
+            onFail: () => {
+                /* 浏览器预览等环境无 wx.shareAppMessage */
+            },
+        });
+        PLAY_AUDIO.emit(EVENT_ENUM.PLAY_AUDIO, AUDIO_EFFECT_ENUM.CLICK_BUTTON);
+    }
+
+    private onAboutClick(): void {
+        PLAY_AUDIO.emit(EVENT_ENUM.PLAY_AUDIO, AUDIO_EFFECT_ENUM.CLICK_BUTTON);
+        this.openAbout();
     }
 }
