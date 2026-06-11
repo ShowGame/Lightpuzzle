@@ -11,6 +11,7 @@ import {
     Node,
     ScrollView,
     Sprite,
+    sys,
     UITransform,
     Vec2,
 } from 'cc';
@@ -118,7 +119,6 @@ export class OpticalPuzzleLevelSelectPanel extends Component {
     private _listBuilding = false;
 
     protected onLoad(): void {
-        DataManager.instance.init();
         this._hidePlaceholderSplashes();
         this._ensureRootLayout();
         this._buildUiTree();
@@ -168,6 +168,28 @@ export class OpticalPuzzleLevelSelectPanel extends Component {
         }
         if (this._backdropNode?.isValid) {
             this._backdropNode.off(Node.EventType.TOUCH_END, this._onBackdropTouchEnd, this);
+        }
+    }
+
+    /** 打开面板前/时调用：保证列表已构建并刷新解锁态（避免首次打开空白） */
+    ensureLevelListReadyForOpen(): void {
+        if (!this.isLevelListReady()) {
+            if (!this._listBuilding) {
+                this._startAsyncLevelListBuild(false);
+            }
+            while (this._listBuilding) {
+                this._processLevelListBuildBatch();
+            }
+        }
+        this.syncLevelListVisuals();
+        this._scrollToCurrentLevelRowCenter();
+        if (sys.platform === sys.Platform.WECHAT_GAME) {
+            console.log('[LevelSelect] open', {
+                maxUnlocked: this._resolveMaxUnlockedLevelId(),
+                currentId: this._resolveCurrentPlayingLevelId(),
+                clearPairs: DataManager.instance.getOpticalLevelClearPairCount(),
+                level1Steps: DataManager.instance.getOpticalLevelBestSteps(1),
+            });
         }
     }
 
@@ -594,7 +616,7 @@ export class OpticalPuzzleLevelSelectPanel extends Component {
             return;
         }
 
-        const maxUnlocked = DataManager.instance.getOpticalMaxUnlockedLevelId();
+        const maxUnlocked = this._resolveMaxUnlockedLevelId();
         const currentId = this._resolveCurrentPlayingLevelId();
         const batch = this.node.activeInHierarchy
             ? LEVEL_LIST_BUILD_BATCH
@@ -626,8 +648,8 @@ export class OpticalPuzzleLevelSelectPanel extends Component {
         if (this._buildCursor >= this._sortedLevels.length) {
             this._listBuilding = false;
             this.unschedule(this._processLevelListBuildBatch);
+            this.syncLevelListVisuals();
             if (this.node.activeInHierarchy) {
-                this.syncLevelListVisuals();
                 this._scrollToCurrentLevelRowCenter();
             }
         }
@@ -676,7 +698,7 @@ export class OpticalPuzzleLevelSelectPanel extends Component {
     }
 
     private _applyLevelItemVisualStates(): void {
-        const maxUnlocked = DataManager.instance.getOpticalMaxUnlockedLevelId();
+        const maxUnlocked = this._resolveMaxUnlockedLevelId();
         const currentId = this._resolveCurrentPlayingLevelId();
         for (const itemNode of this._itemNodes) {
             if (!itemNode?.isValid) {
@@ -694,6 +716,7 @@ export class OpticalPuzzleLevelSelectPanel extends Component {
                 visualState = LevelSelectItemVisualState.Current;
             }
             view?.applyVisualState(visualState);
+            view?.refresh();
         }
     }
 
@@ -748,6 +771,11 @@ export class OpticalPuzzleLevelSelectPanel extends Component {
         return DataManager.instance.opticalCurrentLevelId;
     }
 
+    /** 解锁前沿：仅由通关记录推算（无 clears 时 DataManager 回退 currentLevelId 兼容旧档） */
+    private _resolveMaxUnlockedLevelId(): number {
+        return DataManager.instance.getOpticalMaxUnlockedLevelId();
+    }
+
     //#endregion
 
     //#region 交互
@@ -767,7 +795,7 @@ export class OpticalPuzzleLevelSelectPanel extends Component {
     }
 
     private _onLevelItemSelected(levelId: number): void {
-        const maxUnlocked = DataManager.instance.getOpticalMaxUnlockedLevelId();
+        const maxUnlocked = this._resolveMaxUnlockedLevelId();
         if (levelId > maxUnlocked) {
             SHOW_TOAST.emit(EVENT_ENUM.SHOW_TOAST, {
                 message: '关卡尚未解锁',
@@ -825,6 +853,15 @@ export function ensureLevelSelectPanel(panelNode: Node | null): void {
 /** 进入场景后预构建选关列表（Game / Menu 的 Manager onLoad 调用） */
 export function prewarmLevelSelectPanel(panelNode: Node | null): void {
     panelNode?.getComponent(OpticalPuzzleLevelSelectPanel)?.prewarmLevelList();
+}
+
+/** 打开选关面板并刷新解锁状态 */
+export function openLevelSelectPanel(panelNode: Node | null): void {
+    if (!panelNode?.isValid) {
+        return;
+    }
+    panelNode.active = true;
+    panelNode.getComponent(OpticalPuzzleLevelSelectPanel)?.ensureLevelListReadyForOpen();
 }
 
 /** 同步当前关 / 解锁高亮（换关、通关后调用） */

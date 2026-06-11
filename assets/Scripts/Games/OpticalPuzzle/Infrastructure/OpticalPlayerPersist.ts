@@ -7,21 +7,64 @@ import { getNextOpticalLevelId } from '../Config/OpticalPuzzleLevels';
  */
 export type OpticalLevelClearsFlat = number[];
 
+function normalizeLevelId(raw: unknown): number | null {
+    if (typeof raw === 'number' && Number.isFinite(raw)) {
+        return Math.trunc(raw);
+    }
+    if (typeof raw === 'string') {
+        const trimmed = raw.trim();
+        if (!trimmed) {
+            return null;
+        }
+        const n = Number.parseInt(trimmed, 10);
+        if (Number.isFinite(n)) {
+            return n;
+        }
+    }
+    return null;
+}
+
 function normalizeBestSteps(raw: unknown): number | null {
     if (typeof raw === 'number' && Number.isFinite(raw)) {
         return Math.max(0, Math.floor(raw));
+    }
+    if (typeof raw === 'string') {
+        const trimmed = raw.trim();
+        if (!trimmed) {
+            return null;
+        }
+        const n = Number.parseInt(trimmed, 10);
+        if (Number.isFinite(n)) {
+            return Math.max(0, n);
+        }
     }
     if (raw && typeof raw === 'object') {
         const steps = (raw as Record<string, unknown>).bestSteps;
         if (typeof steps === 'number' && Number.isFinite(steps)) {
             return Math.max(0, Math.floor(steps));
         }
+        if (typeof steps === 'string') {
+            return normalizeBestSteps(steps);
+        }
     }
     return null;
 }
 
-/** 读档合并：支持 flat 数组、旧版 `{ "1": { bestSteps } }`、过渡版 `{ "1": 4 }` */
+/** 读档合并：支持 flat 数组、JSON 字符串数组、旧版 `{ "1": { bestSteps } }`、过渡版 `{ "1": 4 }` */
 export function mergeOpticalLevelClears(raw: unknown): OpticalLevelClearsFlat {
+    if (typeof raw === 'string') {
+        const trimmed = raw.trim().replace(/^\uFEFF/, '');
+        if (!trimmed) {
+            return [];
+        }
+        try {
+            return mergeOpticalLevelClears(JSON.parse(trimmed));
+        } catch (e) {
+            console.warn('[OpticalPlayerPersist] opticalLevelClears 字符串解析失败', trimmed.slice(0, 120), e);
+            return [];
+        }
+    }
+
     const pairMap = new Map<number, number>();
 
     const put = (levelId: number, steps: number): void => {
@@ -36,10 +79,10 @@ export function mergeOpticalLevelClears(raw: unknown): OpticalLevelClearsFlat {
 
     if (Array.isArray(raw)) {
         for (let i = 0; i + 1 < raw.length; i += 2) {
-            const levelId = raw[i];
+            const levelId = normalizeLevelId(raw[i]);
             const steps = normalizeBestSteps(raw[i + 1]);
-            if (typeof levelId === 'number' && Number.isFinite(levelId) && steps != null) {
-                put(Math.trunc(levelId), steps);
+            if (levelId != null && levelId > 0 && steps != null) {
+                put(levelId, steps);
             }
         }
     } else if (raw && typeof raw === 'object') {

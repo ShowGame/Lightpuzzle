@@ -5,9 +5,11 @@ import {
 } from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleAboutMePanel';
 import {
     ensureLevelSelectPanel,
+    openLevelSelectPanel,
     prewarmLevelSelectPanel,
     resolveLevelSelectPanelNode,
 } from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleLevelSelectPanel';
+import { ensureMenuGameTitleView } from '../MenuGameTitleView';
 import { ensureMenuAboutButtonView } from '../MenuAboutButtonView';
 import { ensureMenuLevelSelectButtonView } from '../MenuLevelSelectButtonView';
 import { ensureMenuShareButtonView } from '../MenuShareButtonView';
@@ -49,6 +51,10 @@ export class MenuManager extends Component {
     @property(Node)
     aboutMePanel: Node = null;
 
+    /** 游戏标题（MainPanel/GameTitle，矢量描边） */
+    @property(Node)
+    gameTitle: Node = null;
+
     protected onLoad(): void {
         DataManager.instance.init();
         director.preloadScene(SCENE_ENUM.GAME);
@@ -59,6 +65,7 @@ export class MenuManager extends Component {
         ensureMenuAboutButtonView(this.btnAbout);
         ensureLevelSelectPanel(this.levelSelectPanel);
         ensureAboutMePanel(this.aboutMePanel);
+        ensureMenuGameTitleView(this.gameTitle);
         this.closeLevelSelect();
         this.closeAbout();
         prewarmLevelSelectPanel(this.levelSelectPanel);
@@ -82,10 +89,7 @@ export class MenuManager extends Component {
 
     /** 显示选关面板 */
     openLevelSelect(): void {
-        if (!this.levelSelectPanel?.isValid) {
-            return;
-        }
-        this.levelSelectPanel.active = true;
+        openLevelSelectPanel(this.levelSelectPanel);
     }
 
     /** 隐藏选关面板（MenuOverlayWindow 关闭时也可调） */
@@ -132,6 +136,9 @@ export class MenuManager extends Component {
         }
         if (!this.aboutMePanel?.isValid) {
             this.aboutMePanel = resolveAboutMePanelNode(this.node);
+        }
+        if (!this.gameTitle?.isValid) {
+            this.gameTitle = this._findMainPanel()?.getChildByName('GameTitle') ?? null;
         }
     }
 

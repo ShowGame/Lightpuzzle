@@ -4,6 +4,7 @@ import { ensureBackButtonView } from '../Games/OpticalPuzzle/Presentation/Optica
 import { ensureLevelSelectButtonView } from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleLevelSelectButtonView';
 import {
     ensureLevelSelectPanel,
+    openLevelSelectPanel,
     prewarmLevelSelectPanel,
     syncLevelSelectPanelVisuals,
 } from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleLevelSelectPanel';
@@ -89,12 +90,9 @@ export class GameUIManager extends Component {
         director.loadScene(SCENE_ENUM.MENU);
     }
 
-    /** 显示局内选关面板（列表已在进入场景时预构建，直接展示） */
+    /** 显示局内选关面板（列表已在进入场景时预构建，打开前刷新解锁） */
     openLevelSelect(): void {
-        if (!this.levelSelectPanel?.isValid) {
-            return;
-        }
-        this.levelSelectPanel.active = true;
+        openLevelSelectPanel(this.levelSelectPanel);
     }
 
     /** 隐藏局内选关面板 */
