@@ -4,6 +4,7 @@ import {
     getOpticalLevelBestStepsFromFlat,
     isOpticalLevelClearedInFlat,
     mergeOpticalLevelClears,
+    mergeOpticalLevelClearsFromPlayerJsonText,
     OpticalLevelClearsFlat,
     resolveOpticalMaxUnlockedLevelId,
     upsertOpticalLevelBestSteps,
@@ -68,9 +69,10 @@ function logSaveDebug(message: string, detail?: unknown): void {
 }
 
 function summarizeClears(clears: OpticalLevelClearsFlat): string {
+    const normalized = mergeOpticalLevelClears(clears);
     const pairs: string[] = [];
-    for (let i = 0; i + 1 < clears.length; i += 2) {
-        pairs.push(`${clears[i]}:${clears[i + 1]}`);
+    for (let i = 0; i + 1 < normalized.length; i += 2) {
+        pairs.push(`${normalized[i]}:${normalized[i + 1]}`);
     }
     return pairs.length > 0 ? pairs.join(',') : '(empty)';
 }
@@ -236,13 +238,20 @@ function mergeOpticalCurrentLevelId(raw: unknown): number {
     return DEFAULT_DATA.opticalCurrentLevelId;
 }
 
-function mergePlayerData(raw: unknown): IPlayerPersistData {
+function mergePlayerData(raw: unknown, storageJsonText?: string | null): IPlayerPersistData {
     if (!raw || typeof raw !== 'object') {
         return cloneDefaultData();
     }
     const o = raw as Record<string, unknown>;
     const opticalCurrentLevelId = mergeOpticalCurrentLevelId(o.opticalCurrentLevelId);
-    const opticalLevelClears = mergeOpticalLevelClears(o.opticalLevelClears);
+    let opticalLevelClears = mergeOpticalLevelClears(o.opticalLevelClears);
+    if (opticalLevelClears.length === 0 && storageJsonText) {
+        const fromText = mergeOpticalLevelClearsFromPlayerJsonText(storageJsonText);
+        if (fromText.length > 0) {
+            opticalLevelClears = fromText;
+            logSaveDebug('clears recovered from storage JSON text', summarizeClears(fromText));
+        }
+    }
     const merged: IPlayerPersistData = {
         opticalCurrentLevelId,
         opticalLevelClears,
@@ -256,6 +265,9 @@ function mergePlayerData(raw: unknown): IPlayerPersistData {
         rawClearsPreview: typeof o.opticalLevelClears === 'string'
             ? (o.opticalLevelClears as string).slice(0, 120)
             : o.opticalLevelClears,
+        rawClearsLength: Array.isArray(o.opticalLevelClears)
+            ? o.opticalLevelClears.length
+            : (o.opticalLevelClears as { length?: number } | null)?.length,
     });
     return merged;
 }
@@ -286,7 +298,7 @@ export class DataManager {
 
     /** 诊断：当前内存中通关记录条数 */
     getOpticalLevelClearPairCount(): number {
-        return Math.floor(this._data.opticalLevelClears.length / 2);
+        return Math.floor(mergeOpticalLevelClears(this._data.opticalLevelClears).length / 2);
     }
 
     get opticalCurrentLevelId(): number {
@@ -347,7 +359,8 @@ export class DataManager {
         if (id <= 0) {
             return;
         }
-        const changed = upsertOpticalLevelBestSteps(this._data.opticalLevelClears, id, steps);
+        const { changed, clears } = upsertOpticalLevelBestSteps(this._data.opticalLevelClears, id, steps);
+        this._data.opticalLevelClears = clears;
         logSaveDebug('recordOpticalLevelClear', {
             levelId: id,
             steps,
@@ -359,16 +372,31 @@ export class DataManager {
 
     save(): void {
         try {
+            const before = this._data.opticalLevelClears;
+            let sanitized = mergeOpticalLevelClears(before);
+            if (sanitized.length === 0 && before.length > 0) {
+                sanitized = mergeOpticalLevelClears(JSON.stringify(before));
+            }
+            if (sanitized.length > 0 || before.length === 0) {
+                this._data.opticalLevelClears = sanitized;
+            } else {
+                logSaveDebug('save: merge 未得到 clears，保留内存原数组', before);
+            }
             const json = JSON.stringify(this._data);
             setStorageItem(PLAYER_DATA_STORAGE_KEY, json);
             if (isWeChatMiniGameStorage()) {
-                const verify = parseStoragePayload(readRawStorageValue(PLAYER_DATA_STORAGE_KEY));
-                const verifyClears = verify
+                const verifyRaw = readRawStorageValue(PLAYER_DATA_STORAGE_KEY);
+                const verify = parseStoragePayload(verifyRaw);
+                let verifyClears = verify
                     ? mergeOpticalLevelClears(verify.opticalLevelClears)
                     : [];
+                if (verifyClears.length === 0 && typeof verifyRaw === 'string') {
+                    verifyClears = mergeOpticalLevelClearsFromPlayerJsonText(verifyRaw);
+                }
                 logSaveDebug('save verify readback', {
                     ok: verify != null,
                     clears: summarizeClears(verifyClears),
+                    rawClears: verify?.opticalLevelClears,
                 });
             }
         } catch (e) {
@@ -393,7 +421,9 @@ export class DataManager {
 
     restore(): void {
         try {
-            const parsed = readStoragePayload(PLAYER_DATA_STORAGE_KEY);
+            const rawStorage = readRawStorageValue(PLAYER_DATA_STORAGE_KEY);
+            const storageText = typeof rawStorage === 'string' ? rawStorage : null;
+            const parsed = parseStoragePayload(rawStorage);
             if (!parsed) {
                 if (!this._everRestoredFromDisk) {
                     this._data = cloneDefaultData();
@@ -407,7 +437,7 @@ export class DataManager {
                 this._everRestoredFromDisk = true;
                 return;
             }
-            this._data = mergePlayerData(parsed);
+            this._data = mergePlayerData(parsed, storageText);
             this._everRestoredFromDisk = true;
         } catch (e) {
             console.warn('[DataManager] restore failed', e);

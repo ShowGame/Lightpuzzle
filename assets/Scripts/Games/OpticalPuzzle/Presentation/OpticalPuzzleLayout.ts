@@ -39,8 +39,8 @@ export const WALL_OVERLAY_CONNECT_PAD = 1;
 /** 叠层左右连通扩展额外重叠（跨格缝再压 1px） */
 export const WALL_OVERLAY_CONNECT_PAD_H = 1;
 
-/** 地板（透明） */
-export const FLOOR_FILL = new Color(0x12, 0x37, 0x49, 0);
+/** 地板填充 #123749（与选关缩略图 THUMB_FLOOR 一致；不透明以免背景方框透出） */
+export const FLOOR_FILL = new Color(0x12, 0x37, 0x49, 255);
 
 /** 光路总宽度（与 BeamView 一致） */
 export const BEAM_LINE_WIDTH = 9;
