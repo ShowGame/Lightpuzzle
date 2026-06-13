@@ -44,6 +44,9 @@ export class OpticalPuzzleInputHud extends Component {
     @property(Button)
     btnReset: Button | null = null;
 
+    @property(Button)
+    btnAnswer: Button | null = null;
+
     private _session: OpticalPuzzleSession | null = null;
     private _boardView: OpticalPuzzleBoardView | null = null;
     /** 激励广告拉起中，避免重复点击 */
@@ -65,6 +68,7 @@ export class OpticalPuzzleInputHud extends Component {
         ensureActionButtonViews(actionPad);
         this.btnUndo = this._resolveButton(actionPad, 'BtnUndo', this.btnUndo);
         this.btnReset = this._resolveButton(actionPad, 'BtnReset', this.btnReset);
+        this.btnAnswer = this._resolveButton(actionPad, 'BtnAnswer', this.btnAnswer);
     }
 
     private _resolveButton(
@@ -99,6 +103,7 @@ export class OpticalPuzzleInputHud extends Component {
         this.btnRight?.node.on(Button.EventType.CLICK, this._onRight, this);
         this.btnUndo?.node.on(Button.EventType.CLICK, this._onUndo, this);
         this.btnReset?.node.on(Button.EventType.CLICK, this._onReset, this);
+        this.btnAnswer?.node.on(Button.EventType.CLICK, this._onAnswer, this);
         input.on(Input.EventType.KEY_DOWN, this._onKeyDown, this);
     }
 
@@ -110,6 +115,7 @@ export class OpticalPuzzleInputHud extends Component {
         this._unbindBtnClick(this.btnRight, this._onRight);
         this._unbindBtnClick(this.btnUndo, this._onUndo);
         this._unbindBtnClick(this.btnReset, this._onReset);
+        this._unbindBtnClick(this.btnAnswer, this._onAnswer);
         this._session = null;
         this._boardView = null;
         this._undoRewardAdPending = false;
@@ -279,6 +285,13 @@ export class OpticalPuzzleInputHud extends Component {
         }
         this._playUiClick();
         this._session?.resetLevel();
+    }
+
+    private _onAnswer(): void {
+        if (this._isPlayInputLocked()) {
+            return;
+        }
+        this._playUiClick();
     }
 
     /** 同步操作键图标（如撤回键横向填充阶段） */

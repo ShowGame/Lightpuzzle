@@ -19,6 +19,7 @@ export const ACTION_BUTTON_DESIGN_SIZE = HUD_BUTTON_DESIGN_SIZE;
 export enum ActionButtonKind {
     Undo = 'undo',
     Reset = 'reset',
+    Answer = 'answer',
 }
 
 /** 图标占键帽比例（与四向键 ARROW_SIZE_RATIO 一致） */
@@ -31,6 +32,13 @@ const RESET_PATH_UNIT = 10;
 const RESET_ICON_SIZE_RATIO = 1.22;
 /** 路径归一化最大半宽（iconR=10，用于光晕扩散换算） */
 const RESET_ICON_NORM_HALF = 10.323;
+/** 答案/提示图标路径半宽（viewBox 1024×1024，iconR=10） */
+const ANSWER_PATH_UNIT = 10;
+/** 钥匙路径归一化最大半宽（光晕扩散） */
+const ANSWER_KEY_NORM_HALF = 8.965;
+/** 与 Reset 视觉半宽对齐（Reset 1.22 × 10.323 / 钥匙 8.965） */
+const ANSWER_ICON_SIZE_RATIO =
+    RESET_ICON_SIZE_RATIO * (RESET_ICON_NORM_HALF / ANSWER_KEY_NORM_HALF);
 /** 用尽角标占键帽比例（贴右上角略溢出） */
 const UNDO_DISABLED_BADGE_SIZE_RATIO = 0.6;
 /** 角标外轮廓描边（设计 px，与 HUD_ICON_BORDER_DESIGN 一致） */
@@ -235,6 +243,48 @@ const BADGE_DIGIT3_SEGS: ReadonlyArray<UndoSeg> = [
     { t: 'Z' },
 ];
 
+/** 答案/提示：钥匙主体（用户 SVG 子路径 0） */
+const ANSWER_KEY_BODY_SEGS: ReadonlyArray<UndoSeg> = [
+    { t: 'M', x: -1.133, y: 6.708 },
+    { t: 'C', x1: 0.788, y1: 8.631, x2: 3.82, y2: 8.877, x: 6.027, y: 7.29 },
+    { t: 'C', x1: 8.233, y1: 5.703, x2: 8.965, y2: 2.75, x: 7.754, y: 0.317 },
+    { t: 'C', x1: 6.543, y1: -2.117, x2: 3.747, y2: -3.314, x: 1.15, y: -2.511 },
+    { t: 'L', x: -1.561, y: -5.221 },
+    { t: 'L', x: -2.344, y: -4.436 },
+    { t: 'C', x1: -2.748, y1: -4.032, x2: -3.393, y2: -4.001, x: -3.834, y: -4.364 },
+    { t: 'L', x: -3.913, y: -4.436 },
+    { t: 'C', x1: -4.317, y1: -4.84, x2: -4.348, y2: -5.484, x: -3.985, y: -5.925 },
+    { t: 'L', x: -3.913, y: -6.004 },
+    { t: 'L', x: -3.13, y: -6.789 },
+    { t: 'L', x: -4.457, y: -8.117 },
+    { t: 'C', x1: -4.609, y1: -8.269, x2: -4.821, y2: -8.348, x: -5.037, y: -8.331 },
+    { t: 'L', x: -7.464, y: -8.144 },
+    { t: 'C', x1: -7.827, y1: -8.116, x2: -8.116, y2: -7.827, x: -8.144, y: -7.464 },
+    { t: 'L', x: -8.331, y: -5.037 },
+    { t: 'C', x1: -8.348, y1: -4.821, x2: -8.269, y2: -4.609, x: -8.117, y: -4.457 },
+    { t: 'L', x: -2.511, y: 1.149 },
+    { t: 'C', x1: -3.118, y1: 3.114, x2: -2.588, y2: 5.254, x: -1.133, y: 6.708 },
+    { t: 'Z' },
+];
+
+/** 答案/提示：匙孔圆（子路径 1；未按时用键帽色镂空） */
+const ANSWER_KEY_HOLE_SEGS: ReadonlyArray<UndoSeg> = [
+    { t: 'M', x: 1.481, y: 4.095 },
+    { t: 'C', x1: 0.759, y1: 3.373, x2: 0.759, y2: 2.203, x: 1.481, y: 1.481 },
+    { t: 'C', x1: 2.203, y1: 0.759, x2: 3.373, y2: 0.759, x: 4.095, y: 1.481 },
+    { t: 'C', x1: 4.817, y1: 2.203, x2: 4.817, y2: 3.373, x: 4.095, y: 4.095 },
+    { t: 'C', x1: 3.373, y1: 4.817, x2: 2.203, y2: 4.817, x: 1.481, y: 4.095 },
+    { t: 'Z' },
+];
+
+/** 匙孔圆心（归一化坐标） */
+const ANSWER_KEY_HOLE_CENTER_NX = 2.788;
+const ANSWER_KEY_HOLE_CENTER_NY = 2.788;
+/** 匙孔未放大时的归一化半径 */
+const ANSWER_KEY_HOLE_NORM_RADIUS = 2.029;
+/** 按下发光时匙孔放大倍率 */
+const ANSWER_KEY_HOLE_PRESSED_SCALE = 1.5;
+
 function traceIconSegs(
     g: Graphics,
     segs: ReadonlyArray<UndoSeg>,
@@ -269,12 +319,126 @@ function traceIconSegs(
     }
 }
 
+function traceIconSegsScaledAbout(
+    g: Graphics,
+    segs: ReadonlyArray<UndoSeg>,
+    cx: number,
+    cy: number,
+    scale: number,
+    originNx: number,
+    originNy: number,
+    pointScale: number,
+): void {
+    const map = (x: number, y: number) => ({
+        x: originNx + (x - originNx) * pointScale,
+        y: originNy + (y - originNy) * pointScale,
+    });
+    for (const seg of segs) {
+        switch (seg.t) {
+            case 'M': {
+                const p = map(seg.x, seg.y);
+                g.moveTo(cx + p.x * scale, cy + p.y * scale);
+                break;
+            }
+            case 'L': {
+                const p = map(seg.x, seg.y);
+                g.lineTo(cx + p.x * scale, cy + p.y * scale);
+                break;
+            }
+            case 'C': {
+                const p1 = map(seg.x1, seg.y1);
+                const p2 = map(seg.x2, seg.y2);
+                const p = map(seg.x, seg.y);
+                g.bezierCurveTo(
+                    cx + p1.x * scale,
+                    cy + p1.y * scale,
+                    cx + p2.x * scale,
+                    cy + p2.y * scale,
+                    cx + p.x * scale,
+                    cy + p.y * scale,
+                );
+                break;
+            }
+            case 'Z':
+                g.close();
+                break;
+            default:
+                break;
+        }
+    }
+}
+
 function traceUndoIcon(g: Graphics, cx: number, cy: number, scale: number): void {
     traceIconSegs(g, UNDO_ICON_SEGS, cx, cy, scale);
 }
 
 function traceResetIcon(g: Graphics, cx: number, cy: number, scale: number): void {
     traceIconSegs(g, RESET_ICON_SEGS, cx, cy, scale);
+}
+
+function traceAnswerKeyBody(g: Graphics, cx: number, cy: number, scale: number): void {
+    traceIconSegs(g, ANSWER_KEY_BODY_SEGS, cx, cy, scale);
+}
+
+function traceAnswerKeyHole(
+    g: Graphics,
+    cx: number,
+    cy: number,
+    scale: number,
+    holeScale = 1,
+): void {
+    if (holeScale === 1) {
+        traceIconSegs(g, ANSWER_KEY_HOLE_SEGS, cx, cy, scale);
+        return;
+    }
+    traceIconSegsScaledAbout(
+        g,
+        ANSWER_KEY_HOLE_SEGS,
+        cx,
+        cy,
+        scale,
+        ANSWER_KEY_HOLE_CENTER_NX,
+        ANSWER_KEY_HOLE_CENTER_NY,
+        holeScale,
+    );
+}
+
+function traceAnswerKeyOutline(
+    g: Graphics,
+    cx: number,
+    cy: number,
+    scale: number,
+    holeScale = 1,
+): void {
+    traceAnswerKeyBody(g, cx, cy, scale);
+    traceAnswerKeyHole(g, cx, cy, scale, holeScale);
+}
+
+/** 匙孔向内光晕：与外圈同款 strokeGlowLayers，再内收暗心保留描边内侧半宽 */
+function fillHoleInwardGlow(
+    g: Graphics,
+    cx: number,
+    cy: number,
+    scale: number,
+    holeScale: number,
+    size: number,
+): void {
+    const holeRadiusPx = Math.max(scale * ANSWER_KEY_HOLE_NORM_RADIUS * holeScale, 1);
+    const traceHole = (): void => {
+        traceAnswerKeyHole(g, cx, cy, scale, holeScale);
+    };
+
+    g.fillColor = HUD_KEY_FILL;
+    traceHole();
+    g.fill();
+
+    strokeGlowLayers(g, size, PRESSED_GLOW_LAYERS, traceHole, true);
+
+    const maxHalfPx = scaleHudDesign(size, PRESSED_GLOW_LAYERS[0].width) * 0.5;
+    const centerScale = Math.max(0.05, holeScale * (1 - maxHalfPx / holeRadiusPx));
+    g.fillColor = HUD_KEY_FILL;
+    traceAnswerKeyHole(g, cx, cy, scale, centerScale);
+    g.fill();
 }
 
 /** 横向填充比例：stage0=100%，每 +1 少 33% 右缘 */
@@ -398,6 +562,55 @@ function drawResetIcon(
     g.stroke();
 }
 
+/** 答案/提示：浅白填充 + 3px 白描边；按下外轮廓外扩光晕 + 匙孔向内光晕 */
+function drawAnswerIcon(
+    g: Graphics,
+    cx: number,
+    cy: number,
+    size: number,
+    pressed: boolean,
+): void {
+    const iconHalf = size * ICON_SIZE_RATIO * 0.5;
+    const scale = (iconHalf * ANSWER_ICON_SIZE_RATIO) / ANSWER_PATH_UNIT;
+    const borderW = Math.max(1, scaleHudDesign(size, HUD_ICON_BORDER_DESIGN));
+    const traceOuterOutline = (): void => {
+        traceAnswerKeyBody(g, cx, cy, scale);
+    };
+    const traceFullOutline = (holeScale = 1): void => {
+        traceAnswerKeyOutline(g, cx, cy, scale, holeScale);
+    };
+    const fillKey = (bodyColor: Color, holeScale = 1): void => {
+        g.fillColor = bodyColor;
+        traceAnswerKeyBody(g, cx, cy, scale);
+        g.fill();
+        g.fillColor = HUD_KEY_FILL;
+        traceAnswerKeyHole(g, cx, cy, scale, holeScale);
+        g.fill();
+    };
+    const strokeOutline = (color: Color, holeScale = 1): void => {
+        g.strokeColor = color;
+        g.lineWidth = borderW;
+        g.lineJoin = Graphics.LineJoin.ROUND;
+        g.lineCap = Graphics.LineCap.ROUND;
+        traceFullOutline(holeScale);
+        g.stroke();
+    };
+
+    if (pressed) {
+        const holeScale = ANSWER_KEY_HOLE_PRESSED_SCALE;
+        strokeGlowLayers(g, size, PRESSED_GLOW_LAYERS, traceOuterOutline, true);
+        g.fillColor = pressedHudIconColor();
+        traceAnswerKeyBody(g, cx, cy, scale);
+        g.fill();
+        fillHoleInwardGlow(g, cx, cy, scale, holeScale, size);
+        strokeOutline(pressedHudIconColor(), holeScale);
+        return;
+    }
+
+    fillKey(unlitHudIconColor());
+    strokeOutline(ICON_STROKE);
+}
+
 /** 「+」：两枚圆角矩形交叉，3px 厚、1px 圆角，纯白填充 */
 function drawBadgePlusCross(
     g: Graphics,
@@ -504,6 +717,11 @@ export function drawActionButtonGlyph(
 
     if (kind === ActionButtonKind.Reset) {
         drawResetIcon(g, cx, cy, size, pressed);
+        return;
+    }
+
+    if (kind === ActionButtonKind.Answer) {
+        drawAnswerIcon(g, cx, cy, size, pressed);
         return;
     }
 

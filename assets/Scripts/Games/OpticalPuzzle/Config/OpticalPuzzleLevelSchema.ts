@@ -95,6 +95,10 @@ export type IOpticalLevelLayeredSource = IOpticalLevelLayeredData & {
     threeStarSteps?: number;
     twoStarSteps?: number;
     oneStarSteps?: number;
+    /**
+     * BFS 最佳解法：方向键 `w/a/s/d`（与层 4 朝向一致；回放时由 Core 判定移动或推块）。
+     */
+    bestSolution?: readonly string[];
 };
 
 /** 运行时关卡（terrain 行优先：i = y * width + x） */
@@ -109,6 +113,8 @@ export interface IOpticalLevelConfig {
     sources: IOpticalLightSource[];
     targets: IOpticalTarget[];
     starThresholds: IOpticalLevelStarThresholds;
+    /** 见 `IOpticalLevelLayeredSource.bestSolution` */
+    bestSolution?: readonly string[];
 }
 
 /** 未在关卡源数据中填写时的默认评星步数 */
@@ -628,6 +634,7 @@ export function parseLayeredGridsToLevelConfig(src: IOpticalLevelLayeredSource):
         sources,
         targets,
         starThresholds: resolveStarThresholds(src),
+        bestSolution: src.bestSolution?.length ? [...src.bestSolution] : undefined,
     };
 }
 

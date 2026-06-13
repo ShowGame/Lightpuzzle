@@ -15,7 +15,7 @@ export const MOCK_PLAYER_DATA: {
     sfxOn?: boolean;
 } = {
     /** 已通前三关，继续游戏从第 4 关开始 */
-    opticalCurrentLevelId: 4,
+    opticalCurrentLevelId: 8,
     /** [levelId, bestSteps, …]：1 关三星线、2 关二星线、3 关一星线 → 解锁第 4 关 */
-    opticalLevelClears: [1, 2, 2, 6, 3, 20],
+    opticalLevelClears: [1, 1, 2, 7, 3, 20],
 };

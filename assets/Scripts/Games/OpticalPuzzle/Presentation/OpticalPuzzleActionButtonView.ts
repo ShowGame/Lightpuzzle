@@ -1,5 +1,6 @@
 import {
     _decorator,
+    Button,
     Component,
     Graphics,
     Node,
@@ -14,10 +15,13 @@ import { HudButtonPressController } from './OpticalPuzzleHudButtonCommon';
 
 const { ccclass, property } = _decorator;
 
+/** 与 Undo/Reset 等 HUD 键一致：Button 缩放按压 */
+const ACTION_BUTTON_ZOOM_SCALE = 0.95;
+
 /** 撤回 / 重置虚拟键：键帽风格与四向键一致，内部符号不同 */
 @ccclass('OpticalPuzzleActionButtonView')
 export class OpticalPuzzleActionButtonView extends Component {
-    /** 留空则按节点名 BtnUndo / BtnReset 推断 */
+    /** 留空则按节点名 BtnUndo / BtnReset / BtnAnswer 推断 */
     @property
     kind: ActionButtonKind = ActionButtonKind.Undo;
 
@@ -28,7 +32,9 @@ export class OpticalPuzzleActionButtonView extends Component {
 
     protected onLoad(): void {
         this.kind = this._resolveKind(this.kind, this.node.name);
+        this._hidePlaceholderSplash();
         this._ensureTransform();
+        this._ensurePressButton();
         this._pressCtrl = new HudButtonPressController(this.node, (pressed) => {
             this._pressed = pressed;
             this._redraw();
@@ -87,6 +93,16 @@ export class OpticalPuzzleActionButtonView extends Component {
         }
     }
 
+    /** 触摸缩放 0.95（与 InputHud / 四向键 Button 一致） */
+    private _ensurePressButton(): void {
+        let btn = this.getComponent(Button);
+        if (!btn) {
+            btn = this.addComponent(Button);
+        }
+        btn.transition = Button.Transition.SCALE;
+        btn.zoomScale = ACTION_BUTTON_ZOOM_SCALE;
+    }
+
     private _ensureGraphics(): Graphics | null {
         if (!this._graphics?.isValid) {
             this._graphics = this.getComponent(Graphics) ?? this.addComponent(Graphics);
@@ -122,14 +138,25 @@ export class OpticalPuzzleActionButtonView extends Component {
         if (key.includes('reset')) {
             return ActionButtonKind.Reset;
         }
+        if (key.includes('answer')) {
+            return ActionButtonKind.Answer;
+        }
         if (key.includes('undo')) {
             return ActionButtonKind.Undo;
         }
         return fallback;
     }
+
+    /** 占位 SpriteSplash 会盖住根节点 Graphics 矢量图标 */
+    private _hidePlaceholderSplash(): void {
+        const splash = this.node.getChildByName('SpriteSplash');
+        if (splash?.isValid) {
+            splash.active = false;
+        }
+    }
 }
 
-/** 为 ActionPad 下 BtnUndo / BtnReset 批量挂上绘制 */
+/** 为 ActionPad 下 BtnUndo / BtnReset / BtnAnswer 等批量挂上绘制 */
 export function ensureActionButtonViews(actionPad: Node | null): void {
     if (!actionPad?.isValid) {
         return;

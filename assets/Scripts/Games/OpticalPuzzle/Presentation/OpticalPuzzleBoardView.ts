@@ -1,6 +1,5 @@
 import {
     _decorator,
-    Color,
     Component,
     Graphics,
     Node,
@@ -23,8 +22,8 @@ import {
 import { drawPlayerEyes } from './OpticalPuzzlePlayerGlyph';
 import { drawSourceEmitter } from './OpticalPuzzleSourceGlyph';
 import { drawTargetLamp } from './OpticalPuzzleTargetGlyph';
-import { FLOOR_FILL, OPTICAL_CELL_SIZE } from './OpticalPuzzleLayout';
-import { cellScreenRect, fillWallCell } from './OpticalPuzzleWallDraw';
+import { OPTICAL_CELL_SIZE } from './OpticalPuzzleLayout';
+import { cellScreenRect, fillBoardFloorBase, fillWallCell } from './OpticalPuzzleWallDraw';
 
 const { ccclass } = _decorator;
 
@@ -517,6 +516,7 @@ export class OpticalPuzzleBoardView extends Component {
         }
         g.clear();
         const { cell, ox, oy } = this._cellLayout(snapshot);
+        fillBoardFloorBase(g, snapshot.width, snapshot.height, ox, oy, cell);
 
         const sourceAt = new Map<string, { colorKey: string; direction: Direction }>();
         for (const s of snapshot.sources) {
@@ -543,16 +543,6 @@ export class OpticalPuzzleBoardView extends Component {
                         src?.colorKey,
                         src?.direction ?? Direction.Up,
                     );
-                } else if (t === TerrainKind.Target) {
-                    if (FLOOR_FILL.a > 0) {
-                        g.fillColor = FLOOR_FILL;
-                        g.rect(left, bottom, size, size);
-                        g.fill();
-                    }
-                } else if (FLOOR_FILL.a > 0) {
-                    g.fillColor = FLOOR_FILL;
-                    g.rect(left, bottom, size, size);
-                    g.fill();
                 }
             }
         }

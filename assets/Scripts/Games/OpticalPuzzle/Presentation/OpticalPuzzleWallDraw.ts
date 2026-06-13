@@ -2,6 +2,7 @@ import { Color, Graphics } from 'cc';
 import type { OpticalBoardSnapshot } from '../Core/OpticalPuzzleTypes';
 import { TerrainKind } from '../Core/OpticalPuzzleTypes';
 import {
+    FLOOR_FILL,
     OPTICAL_CELL_SIZE,
     WALL_ARM_FILL,
     WALL_ARM_THICK,
@@ -29,6 +30,45 @@ export function cellScreenRect(
         bottom: oy - (y + 1) * cell,
         size: cell,
     };
+}
+
+/** 棋盘全域铺地板（先于墙/光源；圆角元件四角透明时不透出背景布朗方块） */
+export function fillBoardFloorBase(
+    g: Graphics,
+    width: number,
+    height: number,
+    ox: number,
+    oy: number,
+    cell: number = OPTICAL_CELL_SIZE,
+    fill: Color = FLOOR_FILL,
+): void {
+    if (fill.a <= 0) {
+        return;
+    }
+    const boardW = width * cell;
+    const boardH = height * cell;
+    g.fillColor = fill;
+    g.rect(ox, oy - boardH, boardW, boardH);
+    g.fill();
+}
+
+/** 单格地板垫底（用于元件/目标等上层圆角透明区域） */
+export function fillFloorCell(
+    g: Graphics,
+    ox: number,
+    oy: number,
+    x: number,
+    y: number,
+    cell: number = OPTICAL_CELL_SIZE,
+    fill: Color = FLOOR_FILL,
+): void {
+    if (fill.a <= 0) {
+        return;
+    }
+    const { left, bottom, size } = cellScreenRect(ox, oy, x, y, cell);
+    g.fillColor = fill;
+    g.rect(left, bottom, size, size);
+    g.fill();
 }
 
 function isFloor(snapshot: OpticalBoardSnapshot, x: number, y: number): boolean {

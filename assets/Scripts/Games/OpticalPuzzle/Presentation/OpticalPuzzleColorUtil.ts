@@ -254,7 +254,7 @@ export function pieceBaseFillColor(colorKey?: string): Color {
         Math.floor(stroke.r * 0.68 + 50),
         Math.floor(stroke.g * 0.68 + 50),
         Math.floor(stroke.b * 0.68 + 50),
-        60,
+        80,
     );
 }
 

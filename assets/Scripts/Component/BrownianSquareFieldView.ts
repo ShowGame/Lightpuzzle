@@ -34,7 +34,7 @@ const BORDER_THICKNESS_RATIO = 0;
 const CORNER_RADIUS_RATIO = 0.1;
 
 /** 边框不透明度基准 d（0～255） */
-const OPACITY_BASE = 60;
+const OPACITY_BASE = 30;
 
 /** 不透明度随机幅度 c（0.2 = ±20% 相对 d） */
 const OPACITY_JITTER_RATIO = 0.2;
