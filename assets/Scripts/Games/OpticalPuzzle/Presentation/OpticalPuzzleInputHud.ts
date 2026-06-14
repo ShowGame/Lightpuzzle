@@ -15,6 +15,7 @@ import { Direction } from '../Core/OpticalPuzzleTypes';
 import { AUDIO_EFFECT_ENUM, EVENT_ENUM } from '../../../Utils/Enum';
 import { PLAY_AUDIO } from '../../../Utils/Event';
 import { showWeChatRewardedVideo } from '../../../Utils/WeChatRewardedVideoAd';
+import { openAnswerPanel, resolveAnswerPanelNode } from './OpticalPuzzleAnswerPanel';
 import { ensureActionButtonViews, OpticalPuzzleActionButtonView } from './OpticalPuzzleActionButtonView';
 import type { OpticalPuzzleBoardView } from './OpticalPuzzleBoardView';
 import { ensureDirButtonViews, OpticalPuzzleDirButtonView } from './OpticalPuzzleDirButtonView';
@@ -292,6 +293,18 @@ export class OpticalPuzzleInputHud extends Component {
             return;
         }
         this._playUiClick();
+        openAnswerPanel(this._resolveAnswerPanelNode());
+    }
+
+    private _resolveAnswerPanelNode(): Node | null {
+        let cursor: Node | null = this.node;
+        while (cursor) {
+            if (cursor.name === 'GameRoot') {
+                return resolveAnswerPanelNode(cursor);
+            }
+            cursor = cursor.parent;
+        }
+        return null;
     }
 
     /** 同步操作键图标（如撤回键横向填充阶段） */

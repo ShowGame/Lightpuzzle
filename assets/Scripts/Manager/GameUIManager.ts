@@ -3,6 +3,11 @@ import type { OpticalSnapshotNotify } from '../Games/OpticalPuzzle/Application/O
 import { ensureBackButtonView } from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleBackButtonView';
 import { ensureLevelSelectButtonView } from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleLevelSelectButtonView';
 import {
+    ensureAnswerPanel,
+    openAnswerPanel,
+    resolveAnswerPanelNode,
+} from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleAnswerPanel';
+import {
     ensureLevelSelectPanel,
     openLevelSelectPanel,
     prewarmLevelSelectPanel,
@@ -38,6 +43,10 @@ export class GameUIManager extends Component {
     @property(Node)
     levelSelectPanel: Node = null;
 
+    /** 参考解弹层（layerOverlay/answerPanel） */
+    @property(Node)
+    answerPanel: Node = null;
+
     /** 当前关卡标题（TopBar/LabelLevel 的 cc.Label） */
     @property(Label)
     labelLevel: Label | null = null;
@@ -53,8 +62,11 @@ export class GameUIManager extends Component {
         ensureWinPanelStarsView(this.node);
         ensureWinPanelStepViews(this.node);
         ensureWinPanelNextLevelButtonView(this.node);
+        this._resolveAnswerPanel();
         ensureLevelSelectPanel(this.levelSelectPanel);
+        ensureAnswerPanel(this.answerPanel);
         this.closeLevelSelect();
+        this.closeAnswerPanel();
         prewarmLevelSelectPanel(this.levelSelectPanel);
         this.bindBackMenuButton();
         this.bindLevelSelectButton();
@@ -101,6 +113,19 @@ export class GameUIManager extends Component {
             return;
         }
         this.levelSelectPanel.active = false;
+    }
+
+    /** 显示参考解面板 */
+    openAnswerPanel(): void {
+        openAnswerPanel(this.answerPanel);
+    }
+
+    /** 隐藏参考解面板 */
+    closeAnswerPanel(): void {
+        if (!this.answerPanel?.isValid) {
+            return;
+        }
+        this.answerPanel.active = false;
     }
 
     private bindBackMenuButton(): void {
@@ -167,6 +192,14 @@ export class GameUIManager extends Component {
         ensureBackButtonView(this.btnBackMenu);
         ensureLevelSelectButtonView(this.btnLevelSelect);
         ensureStepViews(topBar);
+    }
+
+    /** 未在检查器绑定时，按 layerOverlay/answerPanel 解析 */
+    private _resolveAnswerPanel(): void {
+        if (this.answerPanel?.isValid) {
+            return;
+        }
+        this.answerPanel = resolveAnswerPanelNode(this.node);
     }
 
     /** 未在检查器绑定时，按 GameRoot/layHub/TopBar/LabelLevel 解析 */
