@@ -18,7 +18,7 @@ import { ensureWinPanelNextLevelButtonView } from '../Games/OpticalPuzzle/Presen
 import { ensureWinPanelStarsView } from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleWinPanelStarsView';
 import { ensureWinPanelStepViews } from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleWinPanelStepView';
 import { ensureWinPanelTitleView } from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleWinPanelTitleView';
-import { ensureWinPanelWindsView } from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleWinPanelWindsView';
+import { ensureWinPanelWindsView, resolvePreWinPanelNode } from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleWinPanelWindsView';
 import { DataManager } from './DataManager';
 import { AUDIO_EFFECT_ENUM, EVENT_ENUM, SCENE_ENUM } from '../Utils/Enum';
 import { OPTICAL_PUZZLE, PLAY_AUDIO } from '../Utils/Event';
@@ -63,6 +63,7 @@ export class GameUIManager extends Component {
         ensureWinPanelStepViews(this.node);
         ensureWinPanelNextLevelButtonView(this.node);
         this._resolveAnswerPanel();
+        this._hidePreWinPanel();
         ensureLevelSelectPanel(this.levelSelectPanel);
         ensureAnswerPanel(this.answerPanel);
         this.closeLevelSelect();
@@ -126,6 +127,13 @@ export class GameUIManager extends Component {
             return;
         }
         this.answerPanel.active = false;
+    }
+
+    private _hidePreWinPanel(): void {
+        const panel = resolvePreWinPanelNode(this.node);
+        if (panel?.isValid) {
+            panel.active = false;
+        }
     }
 
     private bindBackMenuButton(): void {

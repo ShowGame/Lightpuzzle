@@ -5,6 +5,13 @@ import type { OpticalSnapshotNotify } from '../Application/OpticalPuzzleSession'
 
 const { ccclass } = _decorator;
 
+/** 最近一次快照事件（供 inactive 节点 onEnable 时补刷） */
+let _lastSnapshotNotify: OpticalSnapshotNotify | null = null;
+
+export function getLastOpticalSnapshotNotify(): OpticalSnapshotNotify | null {
+    return _lastSnapshotNotify;
+}
+
 /** Step/StepCount：显示本局移动步数（TopBar 与 winPanel/winds/step 共用） */
 @ccclass('OpticalPuzzleStepCountView')
 export class OpticalPuzzleStepCountView extends Component {
@@ -12,8 +19,20 @@ export class OpticalPuzzleStepCountView extends Component {
 
     protected onLoad(): void {
         this._label = this.getComponent(Label) ?? this.getComponentInChildren(Label);
+    }
+
+    protected onEnable(): void {
         OPTICAL_PUZZLE.on(EVENT_ENUM.OPTICAL_SNAPSHOT_CHANGED, this._onSnapshotChanged, this);
-        this._refreshLabel(0);
+        const cached = _lastSnapshotNotify?.moveCount;
+        if (typeof cached === 'number') {
+            this._refreshLabel(cached);
+        } else {
+            this._refreshLabel(0);
+        }
+    }
+
+    protected onDisable(): void {
+        OPTICAL_PUZZLE.off(EVENT_ENUM.OPTICAL_SNAPSHOT_CHANGED, this._onSnapshotChanged, this);
     }
 
     protected onDestroy(): void {
@@ -29,6 +48,7 @@ export class OpticalPuzzleStepCountView extends Component {
         if (!payload || typeof payload.moveCount !== 'number') {
             return;
         }
+        _lastSnapshotNotify = payload;
         this._refreshLabel(payload.moveCount);
     }
 

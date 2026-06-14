@@ -79,6 +79,11 @@ export function resolveWinPanelNode(root: Node | null): Node | null {
     return root?.getChildByName('layerOverlay')?.getChildByName('winPanel') ?? null;
 }
 
+/** 自 GameRoot 子树解析 layerOverlay/preWinPanel（通关前全屏 BlockInputEvents 挡操作） */
+export function resolvePreWinPanelNode(root: Node | null): Node | null {
+    return root?.getChildByName('layerOverlay')?.getChildByName('preWinPanel') ?? null;
+}
+
 /** 自 GameRoot 子树解析 layerOverlay/winPanel/winds */
 export function resolveWinPanelWindsNode(root: Node | null): Node | null {
     return resolveWinPanelNode(root)?.getChildByName('winds') ?? null;

@@ -19,7 +19,11 @@ import {
     LEVEL_SELECT_CLOSE_DESIGN_SIZE,
 } from './OpticalPuzzleLevelSelectPanelGlyph';
 import { HudButtonPressController } from './OpticalPuzzleHudButtonCommon';
-import { ensureAnswerReplayView } from './OpticalPuzzleAnswerReplayView';
+import { ensureActionButtonView } from './OpticalPuzzleActionButtonView';
+import {
+    ensureAnswerReplayView,
+    OpticalPuzzleAnswerReplayView,
+} from './OpticalPuzzleAnswerReplayView';
 
 const { ccclass } = _decorator;
 
@@ -37,7 +41,7 @@ const CLOSE_OFFSET_Y = 370;
 const GFX_CHILD_NAME = 'gfx';
 
 /**
- * 参考解弹层：panel / titlebar / closebtn 绘制与关闭；answer 子节点自动回放 bestSolution。
+ * 参考解弹层：panel / titlebar / closebtn 绘制与关闭；answer 子节点自动回放 bestSolution；resetbtn 从头重播。
  * 挂到 layerOverlay/answerPanel。
  */
 @ccclass('OpticalPuzzleAnswerPanel')
@@ -46,6 +50,7 @@ export class OpticalPuzzleAnswerPanel extends Component {
     private _panelNode: Node | null = null;
     private _titleNode: Node | null = null;
     private _closeNode: Node | null = null;
+    private _resetNode: Node | null = null;
     private _panelGraphics: Graphics | null = null;
     private _titleGraphics: Graphics | null = null;
     private _closeGraphics: Graphics | null = null;
@@ -58,6 +63,7 @@ export class OpticalPuzzleAnswerPanel extends Component {
         this._ensureRootLayout();
         this._buildUiTree();
         this._bindCloseButton();
+        this._bindResetButton();
         this._redrawStaticChrome();
     }
 
@@ -74,6 +80,9 @@ export class OpticalPuzzleAnswerPanel extends Component {
         this._closePressCtrl?.unbind();
         if (this._closeNode?.isValid) {
             this._closeNode.off(Button.EventType.CLICK, this._onCloseClick, this);
+        }
+        if (this._resetNode?.isValid) {
+            this._resetNode.off(Button.EventType.CLICK, this._onResetClick, this);
         }
         if (this._backdropNode?.isValid) {
             this._backdropNode.off(Node.EventType.TOUCH_END, this._onBackdropTouchEnd, this);
@@ -115,6 +124,7 @@ export class OpticalPuzzleAnswerPanel extends Component {
         this._ensureCloseButton(this._closeNode);
 
         ensureAnswerReplayView(this._ensureNamedChild('answer'));
+        this._ensureResetButton(this._ensureNamedChild('resetbtn'));
     }
 
     private _ensureNamedChild(name: string): Node {
@@ -219,6 +229,25 @@ export class OpticalPuzzleAnswerPanel extends Component {
         );
     }
 
+    /** resetbtn：样式与 ActionPad BtnReset 一致（OpticalPuzzleActionButtonView） */
+    private _ensureResetButton(node: Node): void {
+        this._resetNode = node;
+        ensureActionButtonView(node);
+    }
+
+    private _bindResetButton(): void {
+        if (!this._resetNode?.isValid) {
+            return;
+        }
+        this._resetNode.off(Button.EventType.CLICK, this._onResetClick, this);
+        this._resetNode.on(Button.EventType.CLICK, this._onResetClick, this);
+    }
+
+    private _resolveAnswerReplayView(): OpticalPuzzleAnswerReplayView | null {
+        const answer = this.node.getChildByName('answer');
+        return answer?.getComponent(OpticalPuzzleAnswerReplayView) ?? null;
+    }
+
     private _bindCloseButton(): void {
         if (!this._closeNode?.isValid) {
             return;
@@ -288,6 +317,11 @@ export class OpticalPuzzleAnswerPanel extends Component {
     private _onCloseClick(): void {
         PLAY_AUDIO.emit(EVENT_ENUM.PLAY_AUDIO, AUDIO_EFFECT_ENUM.CLICK_BUTTON);
         this.close();
+    }
+
+    private _onResetClick(): void {
+        PLAY_AUDIO.emit(EVENT_ENUM.PLAY_AUDIO, AUDIO_EFFECT_ENUM.CLICK_BUTTON);
+        this._resolveAnswerReplayView()?.restartFromBeginning();
     }
 
     /** 仅点击 bg 空白遮罩时关闭 */

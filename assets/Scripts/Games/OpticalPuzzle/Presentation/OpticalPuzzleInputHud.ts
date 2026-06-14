@@ -52,6 +52,9 @@ export class OpticalPuzzleInputHud extends Component {
     private _boardView: OpticalPuzzleBoardView | null = null;
     /** 激励广告拉起中，避免重复点击 */
     private _undoRewardAdPending = false;
+    private _answerRewardAdPending = false;
+    private _btnUndoBadge: Button | null = null;
+    private _btnAnswerBadge: Button | null = null;
 
     protected onLoad(): void {
         this._autoBindButtons();
@@ -105,7 +108,46 @@ export class OpticalPuzzleInputHud extends Component {
         this.btnUndo?.node.on(Button.EventType.CLICK, this._onUndo, this);
         this.btnReset?.node.on(Button.EventType.CLICK, this._onReset, this);
         this.btnAnswer?.node.on(Button.EventType.CLICK, this._onAnswer, this);
+        this._bindUndoVideoBadgeHit();
+        this._bindAnswerVideoBadgeHit();
         input.on(Input.EventType.KEY_DOWN, this._onKeyDown, this);
+        this.refreshActionButtons();
+    }
+
+    private _bindUndoVideoBadgeHit(): void {
+        this._btnUndoBadge = this._resolveUndoVideoBadgeButton();
+        if (!this._btnUndoBadge?.node.isValid) {
+            return;
+        }
+        this._btnUndoBadge.node.on(Button.EventType.CLICK, this._onUndoBadgeClick, this);
+    }
+
+    /** 撤回 +3 角标：与主键相同逻辑；CLICK 时必播 UI 点击音 */
+    private _onUndoBadgeClick(): void {
+        this._onUndo();
+    }
+
+    private _resolveUndoVideoBadgeButton(): Button | null {
+        const view = this.btnUndo?.node.getComponent(OpticalPuzzleActionButtonView);
+        return view?.getVideoBadgeHitButton() ?? null;
+    }
+
+    private _bindAnswerVideoBadgeHit(): void {
+        this._btnAnswerBadge = this._resolveAnswerVideoBadgeButton();
+        if (!this._btnAnswerBadge?.node.isValid) {
+            return;
+        }
+        this._btnAnswerBadge.node.on(Button.EventType.CLICK, this._onAnswerBadgeClick, this);
+    }
+
+    /** 角标热区：与主键相同逻辑；CLICK 时必播 UI 点击音 */
+    private _onAnswerBadgeClick(): void {
+        this._onAnswer();
+    }
+
+    private _resolveAnswerVideoBadgeButton(): Button | null {
+        const view = this.btnAnswer?.node.getComponent(OpticalPuzzleActionButtonView);
+        return view?.getVideoBadgeHitButton() ?? null;
     }
 
     teardown(): void {
@@ -117,9 +159,14 @@ export class OpticalPuzzleInputHud extends Component {
         this._unbindBtnClick(this.btnUndo, this._onUndo);
         this._unbindBtnClick(this.btnReset, this._onReset);
         this._unbindBtnClick(this.btnAnswer, this._onAnswer);
+        this._unbindUndoBadgeClick();
+        this._unbindAnswerBadgeClick();
+        this._btnUndoBadge = null;
+        this._btnAnswerBadge = null;
         this._session = null;
         this._boardView = null;
         this._undoRewardAdPending = false;
+        this._answerRewardAdPending = false;
     }
 
     private _unbindBtnClick(btn: Button | null, handler: () => void): void {
@@ -128,6 +175,22 @@ export class OpticalPuzzleInputHud extends Component {
             return;
         }
         node.off(Button.EventType.CLICK, handler, this);
+    }
+
+    private _unbindUndoBadgeClick(): void {
+        const node = this._btnUndoBadge?.node;
+        if (!node?.isValid) {
+            return;
+        }
+        node.off(Button.EventType.CLICK, this._onUndoBadgeClick, this);
+    }
+
+    private _unbindAnswerBadgeClick(): void {
+        const node = this._btnAnswerBadge?.node;
+        if (!node?.isValid) {
+            return;
+        }
+        node.off(Button.EventType.CLICK, this._onAnswerBadgeClick, this);
     }
 
     /** 移动动画中或已进入结算等非 RUNNING 状态时，与遮罩挡按钮一致禁止局内输入 */
@@ -293,7 +356,46 @@ export class OpticalPuzzleInputHud extends Component {
             return;
         }
         this._playUiClick();
-        openAnswerPanel(this._resolveAnswerPanelNode());
+        const session = this._session;
+        if (!session) {
+            return;
+        }
+        if (session.isAnswerUnlocked()) {
+            openAnswerPanel(this._resolveAnswerPanelNode());
+            return;
+        }
+        this._requestAnswerRewardAd();
+    }
+
+    private _requestAnswerRewardAd(): void {
+        if (this._answerRewardAdPending) {
+            return;
+        }
+        this._answerRewardAdPending = true;
+        showWeChatRewardedVideo()
+            .then((watched) => {
+                if (!this.isValid) {
+                    return;
+                }
+                if (!watched || !this._session) {
+                    return;
+                }
+                this._session.unlockAnswerForCurrentLevel();
+                this.refreshActionButtons();
+                openAnswerPanel(this._resolveAnswerPanelNode());
+            })
+            .then(
+                () => {
+                    if (this.isValid) {
+                        this._answerRewardAdPending = false;
+                    }
+                },
+                () => {
+                    if (this.isValid) {
+                        this._answerRewardAdPending = false;
+                    }
+                },
+            );
     }
 
     private _resolveAnswerPanelNode(): Node | null {
@@ -307,9 +409,10 @@ export class OpticalPuzzleInputHud extends Component {
         return null;
     }
 
-    /** 同步操作键图标（如撤回键横向填充阶段） */
+    /** 同步操作键图标（撤回填充阶段、参考解看视频角标等） */
     refreshActionButtons(): void {
         const stage = this._session?.undoFillStage ?? 0;
+        const answerUnlocked = this._session?.isAnswerUnlocked() ?? false;
         const actionPad = this.node.getChildByName('ActionPad');
         if (!actionPad?.isValid) {
             return;
@@ -320,6 +423,35 @@ export class OpticalPuzzleInputHud extends Component {
                 continue;
             }
             view.setUndoFillStage(stage);
+            view.setAnswerVideoBadgeVisible(!answerUnlocked);
+        }
+        this._rebindUndoVideoBadgeHit();
+        this._rebindAnswerVideoBadgeHit();
+    }
+
+    /** 角标热区在 refresh 后可能才显示，需补绑 CLICK */
+    private _rebindUndoVideoBadgeHit(): void {
+        const badge = this._resolveUndoVideoBadgeButton();
+        if (badge === this._btnUndoBadge) {
+            return;
+        }
+        this._unbindUndoBadgeClick();
+        this._btnUndoBadge = badge;
+        if (this._btnUndoBadge?.node.isValid) {
+            this._btnUndoBadge.node.on(Button.EventType.CLICK, this._onUndoBadgeClick, this);
+        }
+    }
+
+    /** 角标热区在 refresh 后可能才创建，需补绑 CLICK */
+    private _rebindAnswerVideoBadgeHit(): void {
+        const badge = this._resolveAnswerVideoBadgeButton();
+        if (badge === this._btnAnswerBadge) {
+            return;
+        }
+        this._unbindAnswerBadgeClick();
+        this._btnAnswerBadge = badge;
+        if (this._btnAnswerBadge?.node.isValid) {
+            this._btnAnswerBadge.node.on(Button.EventType.CLICK, this._onAnswerBadgeClick, this);
         }
     }
 

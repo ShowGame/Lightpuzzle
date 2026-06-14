@@ -8,10 +8,9 @@ import {
     Node,
     UITransform,
 } from 'cc';
-import { DataManager } from '../../../Manager/DataManager';
 import { AUDIO_EFFECT_ENUM, EVENT_ENUM, SCENE_ENUM } from '../../../Utils/Enum';
 import { PLAY_AUDIO } from '../../../Utils/Event';
-import { getFirstOpticalLevelId, getNextOpticalLevelId } from '../Config/OpticalPuzzleLevels';
+import { getNextOpticalLevelId } from '../Config/OpticalPuzzleLevels';
 import { HudButtonPressController } from './OpticalPuzzleHudButtonCommon';
 import { drawWinPanelNextLevelButtonGlyph } from './OpticalPuzzleWinPanelNextLevelButtonGlyph';
 import {
@@ -118,12 +117,12 @@ export class OpticalPuzzleWinPanelNextLevelButtonView extends Component {
         const currentId = puzzleRoot?.getCurrentLevelId() ?? 0;
         const nextId = getNextOpticalLevelId(currentId);
         if (nextId != null) {
-            DataManager.instance.opticalCurrentLevelId = nextId;
+            // opticalCurrentLevelId 已在通关瞬间写入下一关 id
             puzzleRoot?.reloadCurrentLevel();
             return;
         }
 
-        DataManager.instance.opticalCurrentLevelId = getFirstOpticalLevelId();
+        // 最后一关：opticalCurrentLevelId 已在通关瞬间写回首关 id
         director.loadScene(SCENE_ENUM.MENU);
     }
 

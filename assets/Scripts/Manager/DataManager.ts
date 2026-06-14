@@ -1,10 +1,18 @@
 import { sys } from 'cc';
 import { MOCK_PLAYER_DATA, USE_DEBUG_MOCK_SAVE } from '../Config/DebugMockSave';
 import {
+    getFirstOpticalLevelId,
+    getNextOpticalLevelId,
+} from '../Games/OpticalPuzzle/Config/OpticalPuzzleLevels';
+import {
+    ensureDefaultFirstLevelUnlock,
     getOpticalLevelBestStepsFromFlat,
     isOpticalLevelClearedInFlat,
+    isOpticalLevelUnlockedInFlat,
+    markNextOpticalLevelUnlockedIfAbsent,
     mergeOpticalLevelClears,
     mergeOpticalLevelClearsFromPlayerJsonText,
+    OPTICAL_LEVEL_UNLOCK_PLACEHOLDER_STEPS,
     OpticalLevelClearsFlat,
     resolveOpticalMaxUnlockedLevelId,
     upsertOpticalLevelBestSteps,
@@ -29,12 +37,14 @@ const LEGACY_OPTICAL_LEVEL_ID: Readonly<Record<string, number>> = {
 /** 持久化数据结构（可按玩法扩展字段） */
 export interface IPlayerPersistData {
     /**
-     * 继续游戏 / 上次退出时的关卡 id（菜单「开始游戏」、选关选中的关卡）。
-     * 与解锁无关；解锁见 opticalLevelClears + getOpticalMaxUnlockedLevelId()。
+     * 继续游戏 / 上次进度关卡 id。
+     * 写入时机：选关选中、关卡通关瞬间（有下一关→下一关 id，最后一关→首关 id）。
+     * 与解锁无关；解锁见 opticalLevelClears 中是否出现该 levelId。
      */
     opticalCurrentLevelId: number;
     /**
-     * 已通关关卡最少步数：`[levelId, bestSteps, …]` 扁平 number 数组（紧凑 JSON）。
+     * 关卡记录：`[levelId, steps, …]` 扁平 number 数组。
+     * steps 为真实最少步数；仅解锁未通时为 OPTICAL_LEVEL_UNLOCK_PLACEHOLDER_STEPS。
      */
     opticalLevelClears: OpticalLevelClearsFlat;
     bgmOn: boolean;
@@ -45,7 +55,7 @@ export interface IPlayerPersistData {
 function cloneDefaultData(): IPlayerPersistData {
     return {
         opticalCurrentLevelId: DEFAULT_DATA.opticalCurrentLevelId,
-        opticalLevelClears: [],
+        opticalLevelClears: [...DEFAULT_DATA.opticalLevelClears],
         bgmOn: DEFAULT_DATA.bgmOn,
         sfxOn: DEFAULT_DATA.sfxOn,
     };
@@ -186,7 +196,7 @@ function readStoragePayload(key: string): Record<string, unknown> | null {
 /** 新玩家默认存档字段（无本地档时使用） */
 const DEFAULT_DATA: IPlayerPersistData = {
     opticalCurrentLevelId: 1,
-    opticalLevelClears: [],
+    opticalLevelClears: [1, OPTICAL_LEVEL_UNLOCK_PLACEHOLDER_STEPS],
     bgmOn: true,
     sfxOn: true,
 };
@@ -254,7 +264,7 @@ function mergePlayerData(raw: unknown, storageJsonText?: string | null): IPlayer
     }
     const merged: IPlayerPersistData = {
         opticalCurrentLevelId,
-        opticalLevelClears,
+        opticalLevelClears: ensureDefaultFirstLevelUnlock(opticalLevelClears),
         bgmOn: typeof o.bgmOn === 'boolean' ? o.bgmOn : DEFAULT_DATA.bgmOn,
         sfxOn: typeof o.sfxOn === 'boolean' ? o.sfxOn : DEFAULT_DATA.sfxOn,
     };
@@ -337,12 +347,17 @@ export class DataManager {
         this.save();
     }
 
-    /** 解锁前沿（由通关记录推算；无 clears 时回退 opticalCurrentLevelId 以兼容旧档） */
+    /** @deprecated 诊断用：clears 中最大 levelId；选关请用 isOpticalLevelUnlocked */
     getOpticalMaxUnlockedLevelId(): number {
         return resolveOpticalMaxUnlockedLevelId(
             this._data.opticalCurrentLevelId,
             this._data.opticalLevelClears,
         );
+    }
+
+    /** 该关是否在 clears 中有记录（含仅解锁占位 999999） */
+    isOpticalLevelUnlocked(levelId: number): boolean {
+        return isOpticalLevelUnlockedInFlat(this._data.opticalLevelClears, levelId);
     }
 
     isOpticalLevelCleared(levelId: number): boolean {
@@ -353,18 +368,32 @@ export class DataManager {
         return getOpticalLevelBestStepsFromFlat(this._data.opticalLevelClears, levelId);
     }
 
-    /** 关卡通关：仅写入/刷新最少步数；不修改 opticalCurrentLevelId（继续关卡由选关/下一关按钮等单独设置） */
+    /** 关卡通关：写入/刷新最少步数、解锁下一关占位、立即推进 opticalCurrentLevelId */
     recordOpticalLevelClear(levelId: number, steps: number): void {
         const id = Math.trunc(levelId);
         if (id <= 0) {
             return;
         }
-        const { changed, clears } = upsertOpticalLevelBestSteps(this._data.opticalLevelClears, id, steps);
+        let { changed, clears } = upsertOpticalLevelBestSteps(this._data.opticalLevelClears, id, steps);
+        const unlock = markNextOpticalLevelUnlockedIfAbsent(clears, id);
+        if (unlock.changed) {
+            changed = true;
+            clears = unlock.clears;
+        }
         this._data.opticalLevelClears = clears;
+
+        const continueLevelId = getNextOpticalLevelId(id) ?? getFirstOpticalLevelId();
+        const currentLevelChanged = this._data.opticalCurrentLevelId !== continueLevelId;
+        if (currentLevelChanged) {
+            this._data.opticalCurrentLevelId = continueLevelId;
+            changed = true;
+        }
+
         logSaveDebug('recordOpticalLevelClear', {
             levelId: id,
             steps,
             changed,
+            opticalCurrentLevelId: this._data.opticalCurrentLevelId,
             clears: summarizeClears(this._data.opticalLevelClears),
         });
         this.save();

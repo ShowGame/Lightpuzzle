@@ -9,13 +9,13 @@ export const USE_DEBUG_MOCK_SAVE = true;
 export const MOCK_PLAYER_DATA: {
     /** 菜单「开始游戏」进入的关卡 / 上次退出关卡（与解锁无关，可任意已解锁关） */
     opticalCurrentLevelId?: number;
-    /** 已通关最少步数：[levelId, bestSteps, …]；解锁由本字段推算 */
+    /** 已解锁 / 通关记录：[levelId, steps, …]；steps=999999 表示仅解锁未通；解锁以出现过的 levelId 为准（支持跳关） */
     opticalLevelClears?: number[];
     bgmOn?: boolean;
     sfxOn?: boolean;
 } = {
-    /** 已通前三关，继续游戏从第 4 关开始 */
+    /** 继续游戏目标关（须在 clears 已解锁的 id 中） */
     opticalCurrentLevelId: 8,
-    /** [levelId, bestSteps, …]：1 关三星线、2 关二星线、3 关一星线 → 解锁第 4 关 */
-    opticalLevelClears: [1, 1, 2, 7, 3, 20],
+    /** 1/2/3/5 已通；4/6 未在表中 → 选关锁定；无 999999 占位也可，有真实步数即视为已解锁 */
+    opticalLevelClears: [1, 1, 2, 7, 3, 20, 5, 0],
 };

@@ -1,11 +1,20 @@
 import { getNextOpticalLevelId } from '../Config/OpticalPuzzleLevels';
 
 /**
- * 已通关关卡最少步数表（紧凑存储）。
- * 扁平数组 `[levelId, bestSteps, levelId, bestSteps, …]`，JSON 里全是 number，无重复字段名。
- * 缺某 levelId = 未通关；后续新增关卡 id 无需迁移旧档。
+ * 已解锁 / 已通关关卡记录（紧凑存储）。
+ * 扁平数组 `[levelId, steps, levelId, steps, …]`，JSON 里全是 number，无重复字段名。
+ * - 真实通关：`steps` 为本关最少步数。
+ * - 仅解锁未通：`steps === OPTICAL_LEVEL_UNLOCK_PLACEHOLDER_STEPS`（通关上一关时写入下一关，支持跳关）。
+ * 某 levelId 未出现在数组中 = 未解锁；后续新增关卡 id 无需迁移旧档。
  */
 export type OpticalLevelClearsFlat = number[];
+
+/** 仅解锁、尚未真实通关时的占位步数（不参与评星与最佳步数展示） */
+export const OPTICAL_LEVEL_UNLOCK_PLACEHOLDER_STEPS = 999999;
+
+export function isOpticalUnlockPlaceholderSteps(steps: number): boolean {
+    return steps >= OPTICAL_LEVEL_UNLOCK_PLACEHOLDER_STEPS;
+}
 
 function toFiniteNumber(raw: unknown): number | null {
     if (typeof raw === 'number' && Number.isFinite(raw)) {
@@ -240,7 +249,7 @@ export function mergeOpticalLevelClearsFromPlayerJsonText(jsonText: string): Opt
     }
 }
 
-export function getOpticalLevelBestStepsFromFlat(
+export function getOpticalLevelRawStepsFromFlat(
     clears: OpticalLevelClearsFlat,
     levelId: number,
 ): number | null {
@@ -252,6 +261,27 @@ export function getOpticalLevelBestStepsFromFlat(
         }
     }
     return null;
+}
+
+/** 是否在 clears 中有该关记录（含仅解锁占位） */
+export function hasOpticalLevelRecordInFlat(clears: OpticalLevelClearsFlat, levelId: number): boolean {
+    return getOpticalLevelRawStepsFromFlat(clears, levelId) != null;
+}
+
+export function isOpticalLevelUnlockedInFlat(clears: OpticalLevelClearsFlat, levelId: number): boolean {
+    return hasOpticalLevelRecordInFlat(clears, levelId);
+}
+
+/** 真实通关最少步数；仅解锁占位返回 null */
+export function getOpticalLevelBestStepsFromFlat(
+    clears: OpticalLevelClearsFlat,
+    levelId: number,
+): number | null {
+    const raw = getOpticalLevelRawStepsFromFlat(clears, levelId);
+    if (raw == null || isOpticalUnlockPlaceholderSteps(raw)) {
+        return null;
+    }
+    return raw;
 }
 
 export function isOpticalLevelClearedInFlat(clears: OpticalLevelClearsFlat, levelId: number): boolean {
@@ -286,27 +316,53 @@ export function upsertOpticalLevelBestSteps(
     return { changed: true, clears: next };
 }
 
-/** 由通关表推算解锁前沿；无 clears 时用 opticalCurrentLevelId 兼容旧档（旧版曾混用该字段表示解锁） */
+/** 该关尚无记录时写入解锁占位；已有记录（含真实步数）则不覆盖 */
+export function ensureOpticalLevelUnlockInFlat(
+    clears: OpticalLevelClearsFlat,
+    levelId: number,
+): { changed: boolean; clears: OpticalLevelClearsFlat } {
+    const id = Math.trunc(levelId);
+    if (id <= 0) {
+        return { changed: false, clears: mergeOpticalLevelClears(clears) };
+    }
+    if (hasOpticalLevelRecordInFlat(clears, id)) {
+        return { changed: false, clears: mergeOpticalLevelClears(clears) };
+    }
+    const next = mergeOpticalLevelClears(clears);
+    next.push(id, OPTICAL_LEVEL_UNLOCK_PLACEHOLDER_STEPS);
+    return { changed: true, clears: next };
+}
+
+/** 通关后：若存在下一关且下一关尚无记录，则写入 (nextId, 999999) */
+export function markNextOpticalLevelUnlockedIfAbsent(
+    clears: OpticalLevelClearsFlat,
+    clearedLevelId: number,
+): { changed: boolean; clears: OpticalLevelClearsFlat } {
+    const nextId = getNextOpticalLevelId(Math.trunc(clearedLevelId));
+    if (nextId == null) {
+        return { changed: false, clears: mergeOpticalLevelClears(clears) };
+    }
+    return ensureOpticalLevelUnlockInFlat(clears, nextId);
+}
+
+/** 新档 / 旧档无第 1 关记录时，保证第 1 关可玩 */
+export function ensureDefaultFirstLevelUnlock(clears: OpticalLevelClearsFlat): OpticalLevelClearsFlat {
+    const { changed, clears: next } = ensureOpticalLevelUnlockInFlat(clears, 1);
+    return changed ? next : mergeOpticalLevelClears(clears);
+}
+
+/** @deprecated 仅诊断用：clears 中出现过的最大 levelId；选关解锁请用 isOpticalLevelUnlockedInFlat */
 export function resolveOpticalMaxUnlockedLevelId(
     opticalCurrentLevelId: number,
     clears: OpticalLevelClearsFlat,
 ): number {
     const normalized = mergeOpticalLevelClears(clears);
-    let frontier = 1;
-    if (normalized.length === 0) {
-        frontier = Math.max(1, Math.trunc(opticalCurrentLevelId));
-    }
+    let maxId = normalized.length === 0 ? Math.max(1, Math.trunc(opticalCurrentLevelId)) : 1;
     for (let i = 0; i + 1 < normalized.length; i += 2) {
-        const clearedId = normalized[i];
-        if (!Number.isFinite(clearedId) || clearedId <= 0) {
-            continue;
-        }
-        const nextId = getNextOpticalLevelId(clearedId);
-        if (nextId != null) {
-            frontier = Math.max(frontier, nextId);
-        } else {
-            frontier = Math.max(frontier, clearedId);
+        const id = normalized[i];
+        if (Number.isFinite(id) && id > 0) {
+            maxId = Math.max(maxId, id);
         }
     }
-    return frontier;
+    return maxId;
 }

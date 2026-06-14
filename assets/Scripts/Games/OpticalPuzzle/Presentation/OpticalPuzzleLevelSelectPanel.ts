@@ -185,9 +185,8 @@ export class OpticalPuzzleLevelSelectPanel extends Component {
         this._scrollToCurrentLevelRowCenter();
         if (sys.platform === sys.Platform.WECHAT_GAME) {
             console.log('[LevelSelect] open', {
-                maxUnlocked: this._resolveMaxUnlockedLevelId(),
-                currentId: this._resolveCurrentPlayingLevelId(),
                 clearPairs: DataManager.instance.getOpticalLevelClearPairCount(),
+                currentId: this._resolveCurrentPlayingLevelId(),
                 level1Steps: DataManager.instance.getOpticalLevelBestSteps(1),
             });
         }
@@ -616,7 +615,6 @@ export class OpticalPuzzleLevelSelectPanel extends Component {
             return;
         }
 
-        const maxUnlocked = this._resolveMaxUnlockedLevelId();
         const currentId = this._resolveCurrentPlayingLevelId();
         const batch = this.node.activeInHierarchy
             ? LEVEL_LIST_BUILD_BATCH
@@ -630,7 +628,7 @@ export class OpticalPuzzleLevelSelectPanel extends Component {
             this._layoutSingleLevelItem(itemNode, i);
 
             let visualState = LevelSelectItemVisualState.Normal;
-            if (level.levelId > maxUnlocked) {
+            if (!this._isLevelUnlocked(level.levelId)) {
                 visualState = LevelSelectItemVisualState.Locked;
             } else if (level.levelId === currentId) {
                 visualState = LevelSelectItemVisualState.Current;
@@ -698,7 +696,6 @@ export class OpticalPuzzleLevelSelectPanel extends Component {
     }
 
     private _applyLevelItemVisualStates(): void {
-        const maxUnlocked = this._resolveMaxUnlockedLevelId();
         const currentId = this._resolveCurrentPlayingLevelId();
         for (const itemNode of this._itemNodes) {
             if (!itemNode?.isValid) {
@@ -710,7 +707,7 @@ export class OpticalPuzzleLevelSelectPanel extends Component {
                 continue;
             }
             let visualState = LevelSelectItemVisualState.Normal;
-            if (levelId > maxUnlocked) {
+            if (!this._isLevelUnlocked(levelId)) {
                 visualState = LevelSelectItemVisualState.Locked;
             } else if (levelId === currentId) {
                 visualState = LevelSelectItemVisualState.Current;
@@ -771,9 +768,9 @@ export class OpticalPuzzleLevelSelectPanel extends Component {
         return DataManager.instance.opticalCurrentLevelId;
     }
 
-    /** 解锁前沿：仅由通关记录推算（无 clears 时 DataManager 回退 currentLevelId 兼容旧档） */
-    private _resolveMaxUnlockedLevelId(): number {
-        return DataManager.instance.getOpticalMaxUnlockedLevelId();
+    /** 是否在 opticalLevelClears 中有记录（含 999999 仅解锁占位） */
+    private _isLevelUnlocked(levelId: number): boolean {
+        return DataManager.instance.isOpticalLevelUnlocked(levelId);
     }
 
     //#endregion
@@ -795,8 +792,7 @@ export class OpticalPuzzleLevelSelectPanel extends Component {
     }
 
     private _onLevelItemSelected(levelId: number): void {
-        const maxUnlocked = this._resolveMaxUnlockedLevelId();
-        if (levelId > maxUnlocked) {
+        if (!this._isLevelUnlocked(levelId)) {
             SHOW_TOAST.emit(EVENT_ENUM.SHOW_TOAST, {
                 message: '关卡尚未解锁',
                 bgWidth: 320,

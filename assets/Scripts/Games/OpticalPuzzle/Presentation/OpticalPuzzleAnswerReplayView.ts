@@ -25,9 +25,8 @@ const BOARD_LAYER_NAME = 'BoardLayer';
 const BEAM_LAYER_NAME = 'BeamLayer';
 const ANSWER_BOARD_PADDING = 16;
 const STEP_INTERVAL_SEC = 0.5;
-const COMPLETE_PAUSE_SEC = 1;
 
-/** 参考解回放：按 bestSolution 逐步演示，完成后停顿再循环 */
+/** 参考解回放：按 bestSolution 逐步演示，结束后停留在通关解法 */
 @ccclass('OpticalPuzzleAnswerReplayView')
 export class OpticalPuzzleAnswerReplayView extends Component {
     private readonly _core = new OpticalPuzzleCore();
@@ -38,8 +37,17 @@ export class OpticalPuzzleAnswerReplayView extends Component {
     private _solution: readonly string[] = [];
     private _stepIndex = 0;
     private _elapsed = 0;
-    private _phase: 'steps' | 'complete' = 'steps';
     private _running = false;
+
+    /** 从初始局面重新播放参考解（answerPanel resetbtn） */
+    restartFromBeginning(): void {
+        if (!this._level) {
+            this._startReplay();
+            return;
+        }
+        this._restartFromInitial();
+        this._running = this._solution.length > 0;
+    }
 
     protected onLoad(): void {
         this._hidePlaceholderSplash();
@@ -59,23 +67,19 @@ export class OpticalPuzzleAnswerReplayView extends Component {
             return;
         }
         this._elapsed += dt;
-        if (this._phase === 'steps') {
-            if (this._elapsed < STEP_INTERVAL_SEC) {
-                return;
-            }
-            this._elapsed = 0;
-            if (this._stepIndex < this._solution.length) {
-                const result = this._applySolutionStep(this._solution[this._stepIndex]);
-                this._stepIndex += 1;
-                this._renderSnapshot(this._notifyReasonForMove(result));
-            }
-            if (this._stepIndex >= this._solution.length) {
-                this._phase = 'complete';
-            }
+        if (this._elapsed < STEP_INTERVAL_SEC) {
             return;
         }
-        if (this._elapsed >= COMPLETE_PAUSE_SEC) {
-            this._restartFromInitial();
+        this._elapsed = 0;
+        if (this._stepIndex >= this._solution.length) {
+            this._running = false;
+            return;
+        }
+        const result = this._applySolutionStep(this._solution[this._stepIndex]);
+        this._stepIndex += 1;
+        this._renderSnapshot(this._notifyReasonForMove(result));
+        if (this._stepIndex >= this._solution.length) {
+            this._running = false;
         }
     }
 
@@ -159,7 +163,6 @@ export class OpticalPuzzleAnswerReplayView extends Component {
         this._running = false;
         this._elapsed = 0;
         this._stepIndex = 0;
-        this._phase = 'steps';
     }
 
     private _restartFromInitial(): void {
@@ -170,7 +173,6 @@ export class OpticalPuzzleAnswerReplayView extends Component {
         this._boardView?.resetPlayerEyeIdle();
         this._stepIndex = 0;
         this._elapsed = 0;
-        this._phase = 'steps';
         this._renderSnapshot('reset');
     }
 

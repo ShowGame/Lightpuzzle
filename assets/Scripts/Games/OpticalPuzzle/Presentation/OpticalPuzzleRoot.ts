@@ -3,6 +3,7 @@ import { DataManager } from '../../../Manager/DataManager';
 import { ToastManager } from '../../../Manager/ToastManager';
 import { AUDIO_EFFECT_ENUM, EVENT_ENUM } from '../../../Utils/Enum';
 import { OPTICAL_PUZZLE, PLAY_AUDIO, SHOW_TOAST } from '../../../Utils/Event';
+import { OpticalGameFlowState } from '../Application/OpticalPuzzleStateMachine';
 import {
     OpticalPuzzleSession,
     type OpticalSessionNotifyReason,
@@ -20,11 +21,15 @@ import {
     resolveWinPanelNextLevelNode,
 } from './OpticalPuzzleWinPanelNextLevelButtonView';
 import {
+    resolvePreWinPanelNode,
     resolveWinPanelNode,
     resolveWinPanelWindsNode,
 } from './OpticalPuzzleWinPanelWindsView';
 
 const { ccclass, property } = _decorator;
+
+/** 通关后先挡输入，再展示 winPanel 的等待时长（秒） */
+const PRE_WIN_PANEL_DELAY_SEC = 0.75;
 
 /** 阻挡点粒子视图（按 ccclass 名运行时解析，避免与 Root 强耦合） */
 interface IBeamImpactView {
@@ -134,11 +139,14 @@ export class OpticalPuzzleRoot extends Component {
         }
         this._session.loadLevel(level);
         this._applyPlayLayerLayout(level.width, level.height);
+        this._cancelWinRevealSchedule();
+        this._setPreWinPanelVisible(false);
         this._setWinPanelVisible(false);
     }
 
     protected onDestroy(): void {
         SHOW_TOAST.off(EVENT_ENUM.SHOW_TOAST, this._onShowToast, this);
+        this._cancelWinRevealSchedule();
         this._session.onStateChanged = null;
         this.inputHud?.teardown();
     }
@@ -161,14 +169,63 @@ export class OpticalPuzzleRoot extends Component {
         }
     }
 
+    private _setPreWinPanelVisible(visible: boolean): void {
+        const panel = resolvePreWinPanelNode(this._resolveGameRoot());
+        if (!panel?.isValid) {
+            if (visible) {
+                console.warn('[OpticalPuzzleRoot] layerOverlay/preWinPanel 未找到，无法挡通关前输入');
+            }
+            return;
+        }
+        if (visible) {
+            const overlay = panel.parent;
+            if (overlay?.isValid) {
+                panel.setSiblingIndex(overlay.children.length - 1);
+            }
+        }
+        panel.active = visible;
+    }
+
+    private _cancelWinRevealSchedule(): void {
+        this.unschedule(this._revealWinPanelAfterPreWin);
+    }
+
+    /** 通关：先 preWinPanel 挡输入 0.5s，再展示 winPanel */
+    private _beginWinRevealSequence(): void {
+        this._setWinPanelVisible(false);
+        this._setPreWinPanelVisible(true);
+        this._cancelWinRevealSchedule();
+        this.scheduleOnce(this._revealWinPanelAfterPreWin, PRE_WIN_PANEL_DELAY_SEC);
+    }
+
+    private _revealWinPanelAfterPreWin = (): void => {
+        this._setPreWinPanelVisible(false);
+        this._showWinPanel();
+    };
+
     private _showWinPanel(): void {
         const gameRoot = this._resolveGameRoot();
         this._setWinPanelVisible(true);
+        // winPanel 默认 inactive，子组件 onLoad 晚于 complete 事件；展示后补发一次同步步数/星级
+        this._replayWinPanelSnapshotNotify();
         const nextLevelBtn = resolveWinPanelNextLevelNode(gameRoot)?.getComponent(
             OpticalPuzzleWinPanelNextLevelButtonView,
         );
         nextLevelBtn?.setLabelForLevel(this.getCurrentLevelId());
         nextLevelBtn?.refresh();
+    }
+
+    /** winPanel 首次激活时其监听尚未注册，需用最近一次通关快照刷新 winds 内 UI */
+    private _replayWinPanelSnapshotNotify(): void {
+        if (this._session.flowState !== OpticalGameFlowState.SETTLEMENT) {
+            return;
+        }
+        const notify: OpticalSnapshotNotify = {
+            snapshot: this._session.getSnapshot(),
+            moveCount: this._session.moveCount,
+            notifyReason: 'complete',
+        };
+        OPTICAL_PUZZLE.emit(EVENT_ENUM.OPTICAL_SNAPSHOT_CHANGED, notify);
     }
 
     /** 转发到场景内 ToastManager，不修改 ToastManager 本身 */
@@ -196,7 +253,7 @@ export class OpticalPuzzleRoot extends Component {
                 this._session.moveCount,
             );
             PLAY_AUDIO.emit(EVENT_ENUM.PLAY_AUDIO, AUDIO_EFFECT_ENUM.OPTICAL_LEVEL_COMPLETE);
-            this._showWinPanel();
+            this._beginWinRevealSequence();
         }
         if (reason === 'face') {
             this.boardView?.notifyPlayerMoveBlocked();

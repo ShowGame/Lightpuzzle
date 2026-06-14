@@ -11,6 +11,8 @@ import {
     PRESSED_GLOW_LAYERS,
     unlitHudIconColor,
 } from './OpticalPuzzleHudButtonCommon';
+import { traceHudSvgDirectionArrow } from './OpticalPuzzleHudArrowGlyph';
+import { Direction } from '../Core/OpticalPuzzleTypes';
 
 import { UNDO_ICON_FILL_STAGES } from '../Application/OpticalPuzzleSession';
 export const ACTION_BUTTON_DESIGN_SIZE = HUD_BUTTON_DESIGN_SIZE;
@@ -63,6 +65,32 @@ const BADGE_DIGIT3_BOLD_SCALE = 1.25;
 const BADGE_PLUS3_GAP_DESIGN = 1.5;
 /** 角标内框中心 X（badge 归一化坐标，iconR=8） */
 const BADGE_INNER_CENTER_NX = (-5.595 + 2.976) * 0.5;
+/** 参考解角标内右向三角占键帽比例（较四向键略小） */
+const ANSWER_VIDEO_BADGE_ARROW_RATIO = 0.15;
+
+/** 激励视频角标布局（与键帽本地坐标一致：锚点 0.5 时 left=-w/2） */
+export interface VideoRewardBadgeLayout {
+    centerX: number;
+    centerY: number;
+    diameter: number;
+}
+
+/** 右上角胶片角标中心与热区直径（含溢出区） */
+export function computeVideoRewardBadgeLayout(
+    left: number,
+    bottom: number,
+    width: number,
+    height: number,
+): VideoRewardBadgeLayout {
+    const size = Math.min(width, height);
+    const badgeHalf = size * UNDO_DISABLED_BADGE_SIZE_RATIO * 0.5;
+    const inset = scaleHudDesign(size, UNDO_DISABLED_BADGE_INSET_DESIGN);
+    const overflow = scaleHudDesign(size, UNDO_DISABLED_BADGE_OVERFLOW_DESIGN);
+    const cx = left + width - inset + overflow;
+    const cy = bottom + height - inset + overflow;
+    const diameter = badgeHalf * 2 + overflow * 2;
+    return { centerX: cx, centerY: cy, diameter };
+}
 /** 数字 3 路径归一化半高（viewBox 1024，iconR=10） */
 const BADGE_DIGIT3_PATH_HALF_H = 6.322;
 /** 数字 3 路径归一化宽（iconR=10） */
@@ -655,22 +683,22 @@ function drawUndoDisabledBadgePlus3(
     g.fill();
 }
 
-/** stage=3 时在键帽右上角叠「不可用」胶片角标 */
-function drawUndoDisabledBadge(
+/** stage=3 时在键帽右上角叠激励视频角标（胶片框 + 中心内容） */
+function drawVideoRewardBadgeFrame(
     g: Graphics,
     left: number,
     bottom: number,
     width: number,
     height: number,
     pressed: boolean,
+    drawCenter: (badgeCx: number, badgeCy: number, badgeScale: number, keySize: number) => void,
 ): void {
     const size = Math.min(width, height);
+    const layout = computeVideoRewardBadgeLayout(left, bottom, width, height);
+    const cx = layout.centerX;
+    const cy = layout.centerY;
     const badgeHalf = size * UNDO_DISABLED_BADGE_SIZE_RATIO * 0.5;
     const scale = badgeHalf / UNDO_DISABLED_BADGE_PATH_UNIT;
-    const inset = scaleHudDesign(size, UNDO_DISABLED_BADGE_INSET_DESIGN);
-    const overflow = scaleHudDesign(size, UNDO_DISABLED_BADGE_OVERFLOW_DESIGN);
-    const cx = left + width - inset + overflow;
-    const cy = bottom + height - inset + overflow;
     const borderW = Math.max(1, scaleHudDesign(size, UNDO_DISABLED_BADGE_BORDER_DESIGN));
     const traceFill = (): void => {
         traceIconSegs(g, UNDO_DISABLED_BADGE_FILL_SEGS, cx, cy, scale);
@@ -679,7 +707,6 @@ function drawUndoDisabledBadge(
         traceIconSegs(g, UNDO_DISABLED_BADGE_STROKE_SEGS, cx, cy, scale);
     };
 
-    //g.fillColor = HUD_KEY_FILL;
     g.fillColor = unlitHudIconColor();
     traceFill();
     g.fill();
@@ -695,7 +722,64 @@ function drawUndoDisabledBadge(
     traceStroke();
     g.stroke();
 
-    drawUndoDisabledBadgePlus3(g, cx, cy, scale, size);
+    drawCenter(cx, cy, scale, size);
+}
+
+/** 角标内右向三角：对齐左侧内矩形居中，纯白；按下时三角光晕 */
+function drawAnswerVideoBadgeTriangle(
+    g: Graphics,
+    badgeCx: number,
+    badgeCy: number,
+    badgeScale: number,
+    keySize: number,
+    pressed: boolean,
+): void {
+    const triCx = badgeCx + BADGE_INNER_CENTER_NX * badgeScale;
+    const triCy = badgeCy;
+    const traceTri = (): void => {
+        traceHudSvgDirectionArrow(
+            g,
+            triCx,
+            triCy,
+            keySize,
+            Direction.Right,
+            ANSWER_VIDEO_BADGE_ARROW_RATIO,
+        );
+    };
+    if (pressed) {
+        strokeGlowLayers(g, keySize, PRESSED_GLOW_LAYERS, traceTri, true);
+    }
+    g.fillColor = ICON_STROKE;
+    traceTri();
+    g.fill();
+}
+
+/** stage=3 时在键帽右上角叠「不可用」胶片角标 */
+function drawUndoDisabledBadge(
+    g: Graphics,
+    left: number,
+    bottom: number,
+    width: number,
+    height: number,
+    pressed: boolean,
+): void {
+    drawVideoRewardBadgeFrame(g, left, bottom, width, height, pressed, (cx, cy, scale, size) => {
+        drawUndoDisabledBadgePlus3(g, cx, cy, scale, size);
+    });
+}
+
+/** Answer 键：右上角「看视频」角标（右向三角替代 +3） */
+function drawAnswerVideoBadge(
+    g: Graphics,
+    left: number,
+    bottom: number,
+    width: number,
+    height: number,
+    pressed: boolean,
+): void {
+    drawVideoRewardBadgeFrame(g, left, bottom, width, height, pressed, (cx, cy, scale, size) => {
+        drawAnswerVideoBadgeTriangle(g, cx, cy, scale, size, pressed);
+    });
 }
 
 /** 绘制撤回 / 重置键：80×80 圆角底 + 内部符号 */
@@ -708,6 +792,7 @@ export function drawActionButtonGlyph(
     kind: ActionButtonKind,
     pressed = false,
     undoFillStage = 0,
+    showAnswerVideoBadge = false,
 ): void {
     drawHudButtonChrome(g, left, bottom, width, height, pressed);
 
@@ -722,6 +807,9 @@ export function drawActionButtonGlyph(
 
     if (kind === ActionButtonKind.Answer) {
         drawAnswerIcon(g, cx, cy, size, pressed);
+        if (showAnswerVideoBadge) {
+            drawAnswerVideoBadge(g, left, bottom, width, height, pressed);
+        }
         return;
     }
 

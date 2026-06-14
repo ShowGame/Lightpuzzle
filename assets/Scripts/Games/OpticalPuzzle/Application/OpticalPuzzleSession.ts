@@ -40,6 +40,8 @@ export class OpticalPuzzleSession {
     private _undoFillStage = 0;
     /** 本局有效移动步数（成功移动/推箱 +1，撤回 -1，重开/开局 0） */
     private _moveCount = 0;
+    /** 本局已观看激励视频解锁参考解的关卡 id（换关清零；重开本关不清） */
+    private _answerUnlockedLevelId = -1;
 
     /** Presentation 订阅；参数用于区分移动 / 撤回 / 重置等（音效与埋点） */
     onStateChanged: ((reason: OpticalSessionNotifyReason) => void) | null = null;
@@ -99,7 +101,11 @@ export class OpticalPuzzleSession {
     }
 
     loadLevel(level: IOpticalLevelConfig): void {
+        const prevLevelId = this._level?.levelId ?? -1;
         this._level = level;
+        if (prevLevelId !== level.levelId) {
+            this._answerUnlockedLevelId = -1;
+        }
         this.core.reset(level);
         this._history.length = 0;
         this._resetUndoFillStage();
@@ -115,6 +121,16 @@ export class OpticalPuzzleSession {
 
     getBeamSnapshot(): OpticalBeamSnapshot {
         return this.core.getBeamSnapshot();
+    }
+
+    /** 本关参考解是否已在本局通过激励视频解锁 */
+    isAnswerUnlocked(): boolean {
+        return this._level != null && this._answerUnlockedLevelId === this._level.levelId;
+    }
+
+    /** 激励视频完整观看后解锁本关参考解（仅本局有效） */
+    unlockAnswerForCurrentLevel(): void {
+        this._answerUnlockedLevelId = this._level?.levelId ?? -1;
     }
 
     /** 四向按钮 / 键盘入口；非 RUNNING 时返回 null */
