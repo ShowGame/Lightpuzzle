@@ -30,6 +30,32 @@ export const PRESSED_GLOW_LAYERS: ReadonlyArray<{ width: number; alpha: number }
     { width: 3, alpha: 255 },
 ];
 
+/** 第 1 关步数 0 时上方向键教程提示：黄框 + 黄呼吸光晕 */
+export const TUTORIAL_HINT_GLOW_RGB = { r: 255, g: 220, b: 80 } as const;
+export const TUTORIAL_HINT_BORDER = new Color(255, 220, 80, 255);
+
+const TUTORIAL_BREATH_GLOW_TEMPLATE: ReadonlyArray<{
+    width: number;
+    alphaMin: number;
+    alphaMax: number;
+    widthBreath: number;
+}> = [
+    { width: 2.5, alphaMin: 36, alphaMax: 120, widthBreath: 3.5 },
+    { width: 4.5, alphaMin: 22, alphaMax: 80, widthBreath: 5.5 },
+    { width: 7.5, alphaMin: 10, alphaMax: 40, widthBreath: 7.5 },
+];
+
+/** breathT ∈ [0,1]：光晕线宽与 alpha 随呼吸扩散 */
+export function buildTutorialBreathGlowLayers(
+    breathT: number,
+): ReadonlyArray<{ width: number; alpha: number }> {
+    const t = Math.max(0, Math.min(1, breathT));
+    return TUTORIAL_BREATH_GLOW_TEMPLATE.map((layer) => ({
+        width: layer.width + layer.widthBreath * t,
+        alpha: Math.round(layer.alphaMin + (layer.alphaMax - layer.alphaMin) * t),
+    }));
+}
+
 export function scaleHudDesign(size: number, design: number): number {
     return design * (size / HUD_BUTTON_DESIGN_SIZE);
 }
@@ -132,6 +158,41 @@ export function drawHudButtonChrome(
         g.roundRect(left, bottom, width, height, corner);
         g.stroke();
     }
+}
+
+/** 教程提示态键帽：浅黑底 + 黄色呼吸扩散光晕 + 黄描边（非按下） */
+export function drawHudButtonChromeTutorialHint(
+    g: Graphics,
+    left: number,
+    bottom: number,
+    width: number,
+    height: number,
+    breathT: number,
+    chromeScaleSize?: number,
+): void {
+    const size = chromeScaleSize ?? Math.min(width, height);
+    const corner = scaleHudDesign(size, HUD_KEY_CORNER_DESIGN);
+    const borderW = Math.max(1, scaleHudDesign(size, HUD_KEY_BORDER_DESIGN));
+
+    g.fillColor = KEY_FILL;
+    g.roundRect(left, bottom, width, height, corner);
+    g.fill();
+
+    strokeGlowLayers(
+        g,
+        size,
+        buildTutorialBreathGlowLayers(breathT),
+        () => {
+            g.roundRect(left, bottom, width, height, corner);
+        },
+        false,
+        TUTORIAL_HINT_GLOW_RGB,
+    );
+
+    g.strokeColor = TUTORIAL_HINT_BORDER;
+    g.lineWidth = borderW;
+    g.roundRect(left, bottom, width, height, corner);
+    g.stroke();
 }
 
 /** 线型图标：未按浅白体 + 白描边；按下全白 + 内外缘光晕（各缘半内半外扩散） */

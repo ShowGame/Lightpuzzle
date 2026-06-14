@@ -2,6 +2,7 @@ import { Color, Graphics } from 'cc';
 import { Direction } from '../Core/OpticalPuzzleTypes';
 import {
     drawHudButtonChrome,
+    drawHudButtonChromeTutorialHint,
     drawHudShapeIcon,
     HUD_BUTTON_DESIGN_SIZE,
     HUD_ICON_BORDER_DESIGN,
@@ -28,11 +29,18 @@ export function drawDirButtonGlyph(
     height: number,
     direction: Direction,
     pressed = false,
+    tutorialBreathT: number | null = null,
 ): void {
     const size = Math.min(width, height);
     const arrowBorderW = Math.max(1, scaleHudDesign(size, HUD_ICON_BORDER_DESIGN));
 
-    drawHudButtonChrome(g, left, bottom, width, height, pressed);
+    if (pressed) {
+        drawHudButtonChrome(g, left, bottom, width, height, true);
+    } else if (tutorialBreathT != null) {
+        drawHudButtonChromeTutorialHint(g, left, bottom, width, height, tutorialBreathT);
+    } else {
+        drawHudButtonChrome(g, left, bottom, width, height, false);
+    }
 
     const cx = left + width * 0.5;
     const cy = bottom + height * 0.5;

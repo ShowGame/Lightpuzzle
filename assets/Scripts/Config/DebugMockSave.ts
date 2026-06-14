@@ -15,7 +15,7 @@ export const MOCK_PLAYER_DATA: {
     sfxOn?: boolean;
 } = {
     /** 继续游戏目标关（须在 clears 已解锁的 id 中） */
-    opticalCurrentLevelId: 8,
+    opticalCurrentLevelId: 1,
     /** 1/2/3/5 已通；4/6 未在表中 → 选关锁定；无 999999 占位也可，有真实步数即视为已解锁 */
-    opticalLevelClears: [1, 1, 2, 7, 3, 20, 5, 0],
+    opticalLevelClears: [1, 1, 2, 7, 3, 20, 4, 999999, 5, 999999, 6, 999999, 7, 999999, 8, 999999],
 };

@@ -409,24 +409,43 @@ export class OpticalPuzzleInputHud extends Component {
         return null;
     }
 
-    /** 同步操作键图标（撤回填充阶段、参考解看视频角标等） */
+    /** 同步操作键图标（撤回填充阶段、参考解看视频角标、方向键教程提示等） */
     refreshActionButtons(): void {
         const stage = this._session?.undoFillStage ?? 0;
         const answerUnlocked = this._session?.isAnswerUnlocked() ?? false;
         const actionPad = this.node.getChildByName('ActionPad');
-        if (!actionPad?.isValid) {
+        if (actionPad?.isValid) {
+            for (const child of actionPad.children) {
+                const view = child.getComponent(OpticalPuzzleActionButtonView);
+                if (!view) {
+                    continue;
+                }
+                view.setUndoFillStage(stage);
+                view.setAnswerVideoBadgeVisible(!answerUnlocked);
+            }
+        }
+        this._refreshDirTutorialHints();
+        this._rebindUndoVideoBadgeHit();
+        this._rebindAnswerVideoBadgeHit();
+    }
+
+    /** 第 1 关且步数为 0：上方向键黄呼吸提示 */
+    private _refreshDirTutorialHints(): void {
+        const levelId = this._session?.getSnapshot().levelId ?? 0;
+        const moveCount = this._session?.moveCount ?? 0;
+        const showUpHint = levelId === 1 && moveCount === 0;
+        const dirPad = this.node.getChildByName('DirPad');
+        if (!dirPad?.isValid) {
             return;
         }
-        for (const child of actionPad.children) {
-            const view = child.getComponent(OpticalPuzzleActionButtonView);
+        for (const child of dirPad.children) {
+            const view = child.getComponent(OpticalPuzzleDirButtonView);
             if (!view) {
                 continue;
             }
-            view.setUndoFillStage(stage);
-            view.setAnswerVideoBadgeVisible(!answerUnlocked);
+            const isUp = view.direction === Direction.Up;
+            view.setTutorialHint(isUp && showUpHint);
         }
-        this._rebindUndoVideoBadgeHit();
-        this._rebindAnswerVideoBadgeHit();
     }
 
     /** 角标热区在 refresh 后可能才显示，需补绑 CLICK */
