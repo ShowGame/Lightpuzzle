@@ -46,7 +46,7 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         ],
     },*/
     {
-        levelId: 1,
+        levelId: 1,//第1关
         levelName: '折光',
         perfectSteps: 1,
         threeStarSteps: 1,
@@ -93,7 +93,93 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         ],
     },
     {
-        levelId: 2,
+        levelId: 2,//第2关
+        levelName: '折光',
+        perfectSteps: 1,
+        threeStarSteps: 1,
+        twoStarSteps: 3,
+        oneStarSteps: 5,
+        bestSolution: ['a'],
+        height: 6,
+        width: 9,
+        staticLayout: [
+            '#########',
+            '#.......#',
+            '##.....##',
+            '##.....##',
+            '#.......#',
+            '#########',
+        ],
+        objects: [
+            '#########',
+            '#E....1@#',
+            '##.....##',
+            '##.....##',
+            '#S...1..#',
+            '#########',
+        ],
+        colors: [
+            '#########',
+            '#W....W.#',
+            '##.....##',
+            '##.....##',
+            '#W...W..#',
+            '#########',
+        ],
+        directions: [
+            '#########',
+            '#.....s.#',
+            '##.....##',
+            '##.....##',
+            '#d...a..#',
+            '#########',
+        ],
+    },
+    {
+        levelId: 3,//第3关
+        levelName: '折光',
+        perfectSteps: 7,
+        threeStarSteps: 9,
+        twoStarSteps: 15,
+        oneStarSteps: 30,
+        bestSolution: ['s', 'd', 'd', 'd', 's', 's', 'a'],
+        height: 6,
+        width: 9,
+        staticLayout: [
+            '#########',
+            '#.......#',
+            '#.......#',
+            '#.......#',
+            '#.......#',
+            '#########',
+        ],
+        objects: [
+            '#########',
+            '#..S@E..#',
+            '#.......#',
+            '#.......#',
+            '#..1..1.#',
+            '#########',
+        ],
+        colors: [
+            '#########',
+            '#..W.W..#',
+            '#.......#',
+            '#.......#',
+            '#..W..W.#',
+            '#########',
+        ],
+        directions: [
+            '#########',
+            '#..s....#',
+            '#.......#',
+            '#.......#',
+            '#..w..a.#',
+            '#########',
+        ],
+    },
+    {
+        levelId: 4,//第4关
         levelName: '四折光',
         perfectSteps: 6,
         threeStarSteps: 7,
@@ -136,7 +222,7 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         ],
     },
     {
-        levelId: 3,
+        levelId: 5,//第5关
         levelName: '腾挪',
         perfectSteps: 20,
         threeStarSteps: 23,
@@ -185,7 +271,7 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         ],
     },
     {
-        levelId: 4,
+        levelId: 6,//第6关
         levelName: '绕十字',
         perfectSteps: 18,
         threeStarSteps: 20,
@@ -242,7 +328,7 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         ],
     },
     {
-        levelId: 5,
+        levelId: 7,//第7关
         levelName: '染红',
         perfectSteps: 19,
         threeStarSteps: 21,
@@ -287,7 +373,7 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         ],
     },
     {
-        levelId: 6,
+        levelId: 8,//第8关
         levelName: '一光两用',
         perfectSteps: 14,
         threeStarSteps: 16,
@@ -344,7 +430,7 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         ],
     },
     {
-        levelId: 7,
+        levelId: 9,//第9关
         levelName: '绕十字',
         perfectSteps: 38,
         threeStarSteps: 44,
@@ -402,8 +488,8 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         ],
     },
     {
-        levelId: 8,
-        levelName: '关卡8（难度71）',
+        levelId: 10,//第10关
+        levelName: '关卡10（难度71）',
         perfectSteps: 44,
         threeStarSteps: 48,
         twoStarSteps: 60,

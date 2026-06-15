@@ -10,6 +10,9 @@ import {
     resolveLevelSelectPanelNode,
 } from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleLevelSelectPanel';
 import { ensureMenuGameTitleView } from '../MenuGameTitleView';
+import { ensureMenuGameTitle2View } from '../MenuGameTitle2View';
+import { ensureMenuGameTitleIconView } from '../MenuGameTitleIconView';
+import { ensureMenuGameTitleIcon2View } from '../MenuGameTitleIcon2View';
 import { ensureMenuAboutButtonView } from '../MenuAboutButtonView';
 import { ensureMenuLevelSelectButtonView } from '../MenuLevelSelectButtonView';
 import { ensureMenuShareButtonView } from '../MenuShareButtonView';
@@ -55,6 +58,18 @@ export class MenuManager extends Component {
     @property(Node)
     gameTitle: Node = null;
 
+    /** 副标题（MainPanel/GameTitle2，矢量描边） */
+    @property(Node)
+    gameTitle2: Node = null;
+
+    /** 标题主角图标（MainPanel/GameTitleIcon，睁眼朝左看） */
+    @property(Node)
+    gameTitleIcon: Node = null;
+
+    /** 标题白色光源（MainPanel/GameTitleIcon2，朝右 1000px 光束） */
+    @property(Node)
+    gameTitleIcon2: Node = null;
+
     protected onLoad(): void {
         DataManager.instance.init();
         director.preloadScene(SCENE_ENUM.GAME);
@@ -66,6 +81,9 @@ export class MenuManager extends Component {
         ensureLevelSelectPanel(this.levelSelectPanel);
         ensureAboutMePanel(this.aboutMePanel);
         ensureMenuGameTitleView(this.gameTitle);
+        ensureMenuGameTitle2View(this.gameTitle2);
+        ensureMenuGameTitleIconView(this.gameTitleIcon);
+        ensureMenuGameTitleIcon2View(this.gameTitleIcon2);
         this.closeLevelSelect();
         this.closeAbout();
         prewarmLevelSelectPanel(this.levelSelectPanel);
@@ -139,6 +157,15 @@ export class MenuManager extends Component {
         }
         if (!this.gameTitle?.isValid) {
             this.gameTitle = this._findMainPanel()?.getChildByName('GameTitle') ?? null;
+        }
+        if (!this.gameTitle2?.isValid) {
+            this.gameTitle2 = this._findMainPanel()?.getChildByName('GameTitle2') ?? null;
+        }
+        if (!this.gameTitleIcon?.isValid) {
+            this.gameTitleIcon = this._findMainPanel()?.getChildByName('GameTitleIcon') ?? null;
+        }
+        if (!this.gameTitleIcon2?.isValid) {
+            this.gameTitleIcon2 = this._findMainPanel()?.getChildByName('GameTitleIcon2') ?? null;
         }
     }
 

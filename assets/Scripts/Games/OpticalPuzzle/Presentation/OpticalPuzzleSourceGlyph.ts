@@ -383,3 +383,23 @@ export function drawSourceEmitter(
     // 与光路相同的白芯→本色渐变截面（叠在光晕之上，与光束衔接）
     fillBeamCrossSection(g, muzzle.x, muzzle.y, colors.beam, size);
 }
+
+/** 炮口中心（屏幕坐标，与 drawSourceEmitter 内计算一致） */
+export function sourceMuzzleScreenPoint(
+    left: number,
+    bottom: number,
+    size: number,
+    direction: Direction,
+): { x: number; y: number } {
+    const cx = left + size * 0.5;
+    const cy = bottom + size * 0.5;
+    const dx = SCREEN_DIR_DX[direction];
+    const dy = SCREEN_DIR_DY[direction];
+    const px = -dy;
+    const py = dx;
+    const half = size * 0.5;
+    const muzzleLy = half + size * 0.045;
+    const bodyCx = cx - dx * size * 0.05;
+    const bodyCy = cy - dy * size * 0.05;
+    return emitLocalToWorld(bodyCx, bodyCy, 0, muzzleLy, dx, dy, px, py);
+}

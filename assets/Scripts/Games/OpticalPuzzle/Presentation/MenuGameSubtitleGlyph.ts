@@ -1,19 +1,19 @@
 import { Color, Graphics } from 'cc';
 import {
-    GAME_TITLE_FILL_TRI_FLAT,
-    GAME_TITLE_NORM_H,
-    GAME_TITLE_NORM_W,
-    GAME_TITLE_OUTLINE_PATHS,
-} from './GameTitlePathSegs.generated';
+    GAME_SUBTITLE_FILL_TRI_FLAT,
+    GAME_SUBTITLE_NORM_H,
+    GAME_SUBTITLE_NORM_W,
+    GAME_SUBTITLE_OUTLINE_PATHS,
+} from './GameSubtitlePathSegs.generated';
 
-/** 标题外轮廓线宽（设计 px，不随节点缩放） */
-export const GAME_TITLE_STROKE_PX = 1;
+/** 副标题外轮廓线宽（设计 px，不随节点缩放） */
+export const GAME_SUBTITLE_STROKE_PX = 1;
 
-const TITLE_FILL = new Color(255, 255, 255, 255);
-const TITLE_STROKE = new Color(255, 255, 255, 255);
+const SUBTITLE_FILL = new Color(255, 255, 255, 255);
+const SUBTITLE_STROKE = new Color(255, 255, 255, 255);
 
-/** 外轮廓 + 内孔边缘发光 */
-const TITLE_GLOW_LAYERS: ReadonlyArray<{ width: number; alpha: number }> = [
+/** 外轮廓 + 内孔边缘发光（与主标题一致） */
+const SUBTITLE_GLOW_LAYERS: ReadonlyArray<{ width: number; alpha: number }> = [
     { width: 15, alpha: 36 },
     { width: 10, alpha: 72 },
     { width: 6, alpha: 108 },
@@ -65,11 +65,11 @@ function strokePaths(
     }
 }
 
-function strokeTitleGlow(g: Graphics, cx: number, cy: number, drawScale: number): void {
-    for (const layer of TITLE_GLOW_LAYERS) {
+function strokeSubtitleGlow(g: Graphics, cx: number, cy: number, drawScale: number): void {
+    for (const layer of SUBTITLE_GLOW_LAYERS) {
         strokePaths(
             g,
-            GAME_TITLE_OUTLINE_PATHS,
+            GAME_SUBTITLE_OUTLINE_PATHS,
             cx,
             cy,
             drawScale,
@@ -80,14 +80,14 @@ function strokeTitleGlow(g: Graphics, cx: number, cy: number, drawScale: number)
     }
 }
 
-function fillTriangulatedTitle(
+function fillTriangulatedSubtitle(
     g: Graphics,
     cx: number,
     cy: number,
     drawScale: number,
 ): void {
-    const flat = GAME_TITLE_FILL_TRI_FLAT;
-    g.fillColor = TITLE_FILL;
+    const flat = GAME_SUBTITLE_FILL_TRI_FLAT;
+    g.fillColor = SUBTITLE_FILL;
     for (let i = 0; i < flat.length; i += 6) {
         g.moveTo(cx + flat[i] * drawScale, cy + flat[i + 1] * drawScale);
         g.lineTo(cx + flat[i + 2] * drawScale, cy + flat[i + 3] * drawScale);
@@ -98,7 +98,7 @@ function fillTriangulatedTitle(
 }
 
 /** 纯白填充 + 外轮廓/内孔发光 + 1px 描边 */
-export function drawGameTitleOutline(
+export function drawGameSubtitleOutline(
     g: Graphics,
     left: number,
     bottom: number,
@@ -107,18 +107,18 @@ export function drawGameTitleOutline(
 ): void {
     const cx = left + width * 0.5;
     const cy = bottom + height * 0.5;
-    const drawScale = Math.min(width / GAME_TITLE_NORM_W, height / GAME_TITLE_NORM_H);
+    const drawScale = Math.min(width / GAME_SUBTITLE_NORM_W, height / GAME_SUBTITLE_NORM_H);
 
-    strokeTitleGlow(g, cx, cy, drawScale);
-    fillTriangulatedTitle(g, cx, cy, drawScale);
+    strokeSubtitleGlow(g, cx, cy, drawScale);
+    fillTriangulatedSubtitle(g, cx, cy, drawScale);
     strokePaths(
         g,
-        GAME_TITLE_OUTLINE_PATHS,
+        GAME_SUBTITLE_OUTLINE_PATHS,
         cx,
         cy,
         drawScale,
-        GAME_TITLE_STROKE_PX,
-        TITLE_STROKE,
+        GAME_SUBTITLE_STROKE_PX,
+        SUBTITLE_STROKE,
         true,
     );
 }
