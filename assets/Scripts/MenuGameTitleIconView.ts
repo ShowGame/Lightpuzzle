@@ -4,10 +4,16 @@ import { drawPlayerEyes } from './Games/OpticalPuzzle/Presentation/OpticalPuzzle
 
 const { ccclass } = _decorator;
 
-/** Menu/MainPanel/GameTitleIcon：主角图标（睁眼、朝左看） */
+/** 与 OpticalPuzzleBoardView 主角闲置眨眼一致 */
+const MENU_PLAYER_BLINK_INTERVAL = 4;
+const MENU_PLAYER_BLINK_DURATION = 0.25;
+
+/** Menu/MainPanel/GameTitleIcon：主角图标（睁眼、朝左看，每 4s 眨一次） */
 @ccclass('MenuGameTitleIconView')
 export class MenuGameTitleIconView extends Component {
     private _graphics: Graphics | null = null;
+    /** 眨眼周期计时（秒） */
+    private _blinkClock = 0;
 
     protected onLoad(): void {
         this._disableRasterPlaceholder();
@@ -16,7 +22,23 @@ export class MenuGameTitleIconView extends Component {
     }
 
     protected onEnable(): void {
+        this._blinkClock = 0;
         this._redraw();
+    }
+
+    protected update(dt: number): void {
+        this._blinkClock += dt;
+        this._redraw();
+    }
+
+    private _currentBlinkAmount(): number {
+        const cycle = MENU_PLAYER_BLINK_INTERVAL + MENU_PLAYER_BLINK_DURATION;
+        const t = this._blinkClock % cycle;
+        if (t < MENU_PLAYER_BLINK_INTERVAL) {
+            return 0;
+        }
+        const p = (t - MENU_PLAYER_BLINK_INTERVAL) / MENU_PLAYER_BLINK_DURATION;
+        return Math.sin(Math.min(1, p) * Math.PI);
     }
 
     private _disableRasterPlaceholder(): void {
@@ -49,7 +71,15 @@ export class MenuGameTitleIconView extends Component {
         const size = Math.min(w, h);
         const left = -ut.anchorX * w + (w - size) * 0.5;
         const bottom = -ut.anchorY * h + (h - size) * 0.5;
-        drawPlayerEyes(g, left, bottom, size, Direction.Left, 0, false);
+        drawPlayerEyes(
+            g,
+            left,
+            bottom,
+            size,
+            Direction.Left,
+            this._currentBlinkAmount(),
+            false,
+        );
     }
 }
 

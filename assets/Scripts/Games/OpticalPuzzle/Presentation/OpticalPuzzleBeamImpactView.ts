@@ -453,3 +453,22 @@ export class OpticalPuzzleBeamImpactView extends Component {
         this._emitters.clear();
     }
 }
+
+/** 菜单等场景复用 beam_spark 粒子配置 */
+export function ensureBeamSparkSpritesLoaded(onReady?: () => void): void {
+    ensureSparkSpriteFramesLoaded(onReady);
+}
+
+export function registerBeamSparkSpriteFrames(
+    frames: ReadonlyArray<SpriteFrame | null | undefined>,
+): boolean {
+    return registerSparkSpriteFrames(frames);
+}
+
+export function configureBeamSparkParticle(
+    ps: ParticleSystem2D,
+    dir: Direction,
+    colorKey: string,
+): void {
+    configureImpactParticle(ps, dir, colorKey);
+}

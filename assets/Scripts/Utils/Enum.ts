@@ -29,10 +29,9 @@ export enum AUDIO_EFFECT_ENUM {
     OPTICAL_PLAYER_MOVE = 'OPTICAL_PLAYER_MOVE',
 }
 
-/** 背景音乐种类（PLAY_BGM 载荷；亦可根据 SCENE_ENUM 自动切换） */
+/** 背景音乐种类（PLAY_BGM 刷新用；全局单曲 Bg.mp3，不再区分 Menu/Game） */
 export enum BGM_KIND_ENUM {
-    MENU = 'MENU',
-    GAME = 'GAME',
+    GLOBAL = 'GLOBAL',
 }
 
 /** 场景名与 build 设置中场景文件名一致 */

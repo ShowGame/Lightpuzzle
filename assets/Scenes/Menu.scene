@@ -6864,12 +6864,8 @@
     },
     "_enabled": true,
     "__prefab": null,
-    "bgmMenu": {
-      "__uuid__": "ba05cc2b-b92d-4386-9d74-e75ec48d1377",
-      "__expectedType__": "cc.AudioClip"
-    },
-    "bgmGame": {
-      "__uuid__": "08367feb-e3c4-4993-95ba-3546fe8f0f95",
+    "bgm": {
+      "__uuid__": "c5535a8a-2db9-4018-af9e-2043966094be",
       "__expectedType__": "cc.AudioClip"
     },
     "clickButton": {
@@ -6904,12 +6900,12 @@
     "_enabled": true,
     "__prefab": null,
     "_clip": {
-      "__uuid__": "ba05cc2b-b92d-4386-9d74-e75ec48d1377",
+      "__uuid__": "c5535a8a-2db9-4018-af9e-2043966094be",
       "__expectedType__": "cc.AudioClip"
     },
     "_loop": true,
     "_playOnAwake": true,
-    "_volume": 0,
+    "_volume": 0.7,
     "_id": "7f+mSIQWVH36qsh6xpmYcf"
   },
   {

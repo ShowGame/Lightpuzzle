@@ -8,7 +8,7 @@ import {
     Node,
 } from 'cc';
 import { DataManager } from './DataManager';
-import { AUDIO_EFFECT_ENUM, BGM_KIND_ENUM, EVENT_ENUM, SCENE_ENUM } from '../Utils/Enum';
+import { AUDIO_EFFECT_ENUM, EVENT_ENUM, SCENE_ENUM } from '../Utils/Enum';
 import { PLAY_AUDIO, PLAY_BGM } from '../Utils/Event';
 import {
     cancelWeChatRewardedVideoPreloadSchedule,
@@ -20,20 +20,16 @@ const { ccclass, property } = _decorator;
 
 /**
  * 音频管理：PersistRoot + 事件驱动（project-rules）。
- * BGM 随场景 Menu / Game 切换；音效经 PLAY_AUDIO 播放。
+ * 全局 BGM（如 Bg.mp3）在 Menu / Game 场景循环播放；音效经 PLAY_AUDIO 播放。
  * 未绑定 AudioClip 或 AudioSource 时跳过，避免空引用。
  */
 @ccclass('MusicManager')
 export class MusicManager extends Component {
     //#region 编辑器绑定
 
-    /** 菜单场景背景音乐（循环） */
-    @property({ type: AudioClip, tooltip: '菜单场景 BGM' })
-    bgmMenu: AudioClip | null = null;
-
-    /** 局内关卡背景音乐（循环） */
-    @property({ type: AudioClip, tooltip: 'Game 场景 BGM' })
-    bgmGame: AudioClip | null = null;
+    /** 全局背景音乐（如 assets/Audio/Bg.mp3，Menu / Game 共用） */
+    @property({ type: AudioClip, tooltip: '全局 BGM（Bg.mp3）' })
+    bgm: AudioClip | null = null;
 
     /** UI 通用按钮点击 */
     @property({ type: AudioClip, tooltip: '通用按钮点击音效' })
@@ -94,32 +90,26 @@ export class MusicManager extends Component {
         }
     }
 
-    /** 设置页切换 BGM 开关后可 emit PLAY_BGM 刷新当前场景 BGM */
-    onPlayBgmEvent(kind?: BGM_KIND_ENUM): void {
-        if (kind === BGM_KIND_ENUM.MENU || kind === BGM_KIND_ENUM.GAME) {
-            this.playBgmKind(kind);
-            return;
-        }
-        this.onAfterSceneLaunch();
+    /** 设置页切换 BGM 开关后可 emit PLAY_BGM 刷新当前 BGM */
+    onPlayBgmEvent(): void {
+        const sceneName = director.getScene()?.name ?? '';
+        this.switchBgmBySceneName(sceneName);
     }
 
     switchBgmBySceneName(sceneName: string): void {
-        if (sceneName === SCENE_ENUM.MENU) {
-            this.playBgmKind(BGM_KIND_ENUM.MENU);
-        } else if (sceneName === SCENE_ENUM.GAME) {
-            this.playBgmKind(BGM_KIND_ENUM.GAME);
+        if (sceneName === SCENE_ENUM.MENU || sceneName === SCENE_ENUM.GAME) {
+            this.playGlobalBgm();
         } else {
             this.stopBgm();
         }
     }
 
-    playBgmKind(kind: BGM_KIND_ENUM): void {
+    playGlobalBgm(): void {
         if (!DataManager.instance.bgmOn) {
             this.stopBgm();
             return;
         }
-        const clip = kind === BGM_KIND_ENUM.MENU ? this.bgmMenu : this.bgmGame;
-        this.playBgmClip(clip);
+        this.playBgmClip(this.bgm);
     }
 
     private playBgmClip(clip: AudioClip | null): void {
