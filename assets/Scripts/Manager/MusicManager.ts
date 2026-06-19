@@ -31,21 +31,25 @@ export class MusicManager extends Component {
     @property({ type: AudioClip, tooltip: '全局 BGM（Bg.mp3）' })
     bgm: AudioClip | null = null;
 
-    /** UI 通用按钮点击 */
-    @property({ type: AudioClip, tooltip: '通用按钮点击音效' })
+    /** UI 通用按钮点击（建议 assets/Audio/Click.mp3） */
+    @property({ type: AudioClip, tooltip: '通用按钮点击（Click.mp3）' })
     clickButton: AudioClip | null = null;
 
-    /** 关卡通关成功 */
-    @property({ type: AudioClip, tooltip: '关卡通关成功音效' })
+    /** 四向键移动成功：主角走一格或推动元件（建议 Right.mp3） */
+    @property({ type: AudioClip, tooltip: '四向键移动成功（Right.mp3）' })
+    opticalMoveSuccess: AudioClip | null = null;
+
+    /** 四向键移动失败：与主角阻拦脸同级（建议 Failed.mp3） */
+    @property({ type: AudioClip, tooltip: '四向键移动失败（Failed.mp3）' })
+    opticalMoveFail: AudioClip | null = null;
+
+    /** 单个目标灯被点亮（待加资源，如 Light.mp3） */
+    @property({ type: AudioClip, tooltip: '单个目标灯点亮（待加 Light.mp3 等）' })
+    opticalTargetLit: AudioClip | null = null;
+
+    /** 关卡通关成功（建议 Pass.mp3；winPanel 展示时播放，前有 PRE_WIN_PANEL_DELAY_SEC） */
+    @property({ type: AudioClip, tooltip: '关卡通关（Pass.mp3；结算 winPanel 弹出时播放）' })
     opticalLevelComplete: AudioClip | null = null;
-
-    /** 成功推动光学元件 */
-    @property({ type: AudioClip, tooltip: '成功推动光学元件' })
-    opticalPiecePushSuccess: AudioClip | null = null;
-
-    /** 推动失败 */
-    @property({ type: AudioClip, tooltip: '推动失败（不可推/被挡）' })
-    opticalPiecePushFail: AudioClip | null = null;
 
     /** 用于循环 BGM；音效使用 playOneShot 播在同一 AudioSource 上 */
     @property(AudioSource)
@@ -142,13 +146,16 @@ export class MusicManager extends Component {
 
     //#region 音效
 
-    onAudioPlay(type: AUDIO_EFFECT_ENUM): void {
+    onAudioPlay(type: AUDIO_EFFECT_ENUM | AUDIO_EFFECT_ENUM[]): void {
         if (!DataManager.instance.sfxOn || !this.audioSource) {
             return;
         }
-        const clip = this.resolveSfxClip(type);
-        if (clip) {
-            this.audioSource.playOneShot(clip);
+        const types = Array.isArray(type) ? type : [type];
+        for (const sfxType of types) {
+            const clip = this.resolveSfxClip(sfxType);
+            if (clip) {
+                this.audioSource.playOneShot(clip);
+            }
         }
     }
 
@@ -156,12 +163,14 @@ export class MusicManager extends Component {
         switch (type) {
             case AUDIO_EFFECT_ENUM.CLICK_BUTTON:
                 return this.clickButton;
+            case AUDIO_EFFECT_ENUM.OPTICAL_MOVE_SUCCESS:
+                return this.opticalMoveSuccess;
+            case AUDIO_EFFECT_ENUM.OPTICAL_MOVE_FAIL:
+                return this.opticalMoveFail;
+            case AUDIO_EFFECT_ENUM.OPTICAL_TARGET_LIT:
+                return this.opticalTargetLit;
             case AUDIO_EFFECT_ENUM.OPTICAL_LEVEL_COMPLETE:
                 return this.opticalLevelComplete;
-            case AUDIO_EFFECT_ENUM.OPTICAL_PIECE_PUSH_SUCCESS:
-                return this.opticalPiecePushSuccess;
-            case AUDIO_EFFECT_ENUM.OPTICAL_PIECE_PUSH_FAIL:
-                return this.opticalPiecePushFail;
             default:
                 return null;
         }

@@ -209,7 +209,7 @@ export class OpticalPuzzleInputHud extends Component {
         if (!playClickOnButton || result === null) {
             return;
         }
-        // 与推成功一致：先玩法反馈音（Session），再 CLICK_BUTTON
+        // 玩法音在 Session 内播；按钮仍叠加通用点击音
         this._playUiClick();
     }
 

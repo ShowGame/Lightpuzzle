@@ -190,7 +190,7 @@ export class OpticalPuzzleRoot extends Component {
         this.unschedule(this._revealWinPanelAfterPreWin);
     }
 
-    /** 通关：先 preWinPanel 挡输入 0.5s，再展示 winPanel */
+    /** 通关：先 preWinPanel 挡输入，延迟后再展示 winPanel 并播通关音 */
     private _beginWinRevealSequence(): void {
         this._setWinPanelVisible(false);
         this._setPreWinPanelVisible(true);
@@ -206,6 +206,7 @@ export class OpticalPuzzleRoot extends Component {
     private _showWinPanel(): void {
         const gameRoot = this._resolveGameRoot();
         this._setWinPanelVisible(true);
+        PLAY_AUDIO.emit(EVENT_ENUM.PLAY_AUDIO, AUDIO_EFFECT_ENUM.OPTICAL_LEVEL_COMPLETE);
         // winPanel 默认 inactive，子组件 onLoad 晚于 complete 事件；展示后补发一次同步步数/星级
         this._replayWinPanelSnapshotNotify();
         const nextLevelBtn = resolveWinPanelNextLevelNode(gameRoot)?.getComponent(
@@ -244,15 +245,11 @@ export class OpticalPuzzleRoot extends Component {
         const snap = this._session.getSnapshot();
         const beam = this._session.getBeamSnapshot();
 
-        if (reason === 'move') {
-            PLAY_AUDIO.emit(EVENT_ENUM.PLAY_AUDIO, AUDIO_EFFECT_ENUM.OPTICAL_PLAYER_MOVE);
-        }
         if (reason === 'complete') {
             DataManager.instance.recordOpticalLevelClear(
                 this.getCurrentLevelId(),
                 this._session.moveCount,
             );
-            PLAY_AUDIO.emit(EVENT_ENUM.PLAY_AUDIO, AUDIO_EFFECT_ENUM.OPTICAL_LEVEL_COMPLETE);
             this._beginWinRevealSequence();
         }
         if (reason === 'face') {

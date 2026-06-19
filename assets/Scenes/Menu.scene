@@ -6872,16 +6872,20 @@
       "__uuid__": "0b3e1ef0-6e66-47da-b348-97838ce372ba",
       "__expectedType__": "cc.AudioClip"
     },
-    "opticalLevelComplete": {
-      "__uuid__": "b00f19e8-7712-4275-a079-c2976eaecfb8",
-      "__expectedType__": "cc.AudioClip"
-    },
-    "opticalPiecePushSuccess": {
+    "opticalMoveSuccess": {
       "__uuid__": "6f0ab4f2-2ebe-4a5e-bd4d-ab4a292c91a8",
       "__expectedType__": "cc.AudioClip"
     },
-    "opticalPiecePushFail": {
+    "opticalMoveFail": {
       "__uuid__": "1477a28c-2a8d-4a05-9dc1-e236e70ee614",
+      "__expectedType__": "cc.AudioClip"
+    },
+    "opticalTargetLit": {
+      "__uuid__": "7a3d33bc-3649-467c-bfd9-4463873bf1b1",
+      "__expectedType__": "cc.AudioClip"
+    },
+    "opticalLevelComplete": {
+      "__uuid__": "b00f19e8-7712-4275-a079-c2976eaecfb8",
       "__expectedType__": "cc.AudioClip"
     },
     "audioSource": {

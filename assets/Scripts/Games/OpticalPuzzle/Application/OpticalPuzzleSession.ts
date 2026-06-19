@@ -139,27 +139,47 @@ export class OpticalPuzzleSession {
             return null;
         }
         this.core.setPlayerFacing(dir);
+        const prevTargetLit = this.core.getSnapshot().targets.map((t) => t.lit);
         const r = this.core.tryMove(dir);
         if (r === MoveAttemptResult.Blocked) {
             // 与 BoardView「><」阻拦表情（reason=face）同一条件：凡 Blocked 即失败反馈
-            PLAY_AUDIO.emit(EVENT_ENUM.PLAY_AUDIO, AUDIO_EFFECT_ENUM.OPTICAL_PIECE_PUSH_FAIL);
+            PLAY_AUDIO.emit(EVENT_ENUM.PLAY_AUDIO, AUDIO_EFFECT_ENUM.OPTICAL_MOVE_FAIL);
             this._emit('face');
             return r;
         }
         if (r === MoveAttemptResult.PlayerMoved || r === MoveAttemptResult.PiecePushed) {
             this._moveCount += 1;
             this._pushHistory();
+            this._emitMoveSuccessSounds(prevTargetLit);
             if (this.core.isAllTargetsLit()) {
                 this._flow = OpticalGameFlowState.SETTLEMENT;
                 this._emit('complete');
             } else if (r === MoveAttemptResult.PiecePushed) {
-                PLAY_AUDIO.emit(EVENT_ENUM.PLAY_AUDIO, AUDIO_EFFECT_ENUM.OPTICAL_PIECE_PUSH_SUCCESS);
                 this._emit('push');
             } else {
                 this._emit('move');
             }
         }
         return r;
+    }
+
+    /** 移动成功音；若本步有新亮灯则与点亮音同帧叠播（无先后顺序） */
+    private _emitMoveSuccessSounds(prevLit: boolean[]): void {
+        const sfx: AUDIO_EFFECT_ENUM[] = [AUDIO_EFFECT_ENUM.OPTICAL_MOVE_SUCCESS];
+        if (this._hasNewlyLitTarget(prevLit)) {
+            sfx.push(AUDIO_EFFECT_ENUM.OPTICAL_TARGET_LIT);
+        }
+        PLAY_AUDIO.emit(EVENT_ENUM.PLAY_AUDIO, sfx);
+    }
+
+    private _hasNewlyLitTarget(prevLit: boolean[]): boolean {
+        const targets = this.core.getSnapshot().targets;
+        for (let i = 0; i < targets.length; i++) {
+            if (targets[i].lit && !prevLit[i]) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** 撤回：撤销 UNDO_STEPS 步有效操作（当前为 1 步）；无可撤回步时弹 Toast 并返回 false */

@@ -19,14 +19,14 @@ export enum EVENT_ENUM {
 export enum AUDIO_EFFECT_ENUM {
     /** UI 通用按钮点击 */
     CLICK_BUTTON = 'CLICK_BUTTON',
+    /** 四向键：移动成功（走一格或推动元件） */
+    OPTICAL_MOVE_SUCCESS = 'OPTICAL_MOVE_SUCCESS',
+    /** 四向键：移动失败（与主角「><」阻拦脸同一时机） */
+    OPTICAL_MOVE_FAIL = 'OPTICAL_MOVE_FAIL',
+    /** 单个目标灯被点亮 */
+    OPTICAL_TARGET_LIT = 'OPTICAL_TARGET_LIT',
     /** 关卡通关成功 */
     OPTICAL_LEVEL_COMPLETE = 'OPTICAL_LEVEL_COMPLETE',
-    /** 成功推动光学元件 */
-    OPTICAL_PIECE_PUSH_SUCCESS = 'OPTICAL_PIECE_PUSH_SUCCESS',
-    /** 推动失败（不可推 / 被挡） */
-    OPTICAL_PIECE_PUSH_FAIL = 'OPTICAL_PIECE_PUSH_FAIL',
-    /** 主角成功移动一格（预留，暂未绑定默认 Clip） */
-    OPTICAL_PLAYER_MOVE = 'OPTICAL_PLAYER_MOVE',
 }
 
 /** 背景音乐种类（PLAY_BGM 刷新用；全局单曲 Bg.mp3，不再区分 Menu/Game） */
