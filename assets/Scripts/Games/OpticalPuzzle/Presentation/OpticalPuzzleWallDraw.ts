@@ -383,9 +383,31 @@ function fillBottomLeftCorner(
 }
 
 /**
+ * 外层右上角 upper/lower 着色。
+ * upper 深色：正上方为墙，或本格上外扩贴地板，或上邻墙右外扩贴地板。
+ */
+function resolveTopRightCornerColors(
+    snapshot: OpticalBoardSnapshot,
+    gx: number,
+    gy: number,
+): { upperColor: Color; lowerColor: Color } {
+    const upperDark =
+        isWall(snapshot, gx, gy - 1) ||
+        isOutwardExtDark(snapshot, gx, gy, 'top') ||
+        wallOutwardExtDark(snapshot, gx, gy - 1, 'right');
+    const lowerDark =
+        isOutwardExtDark(snapshot, gx, gy, 'right') ||
+        wallOutwardExtDark(snapshot, gx + 1, gy, 'top');
+    return {
+        upperColor: upperDark ? WALL_DARK_FILL : WALL_ARM_FILL,
+        lowerColor: lowerDark ? WALL_DARK_FILL : WALL_ARM_FILL,
+    };
+}
+
+/**
  * 右上角补块：沿外角对角线（45°）拆成两半着色（左下角镜像）。
  * 圆角：可见四分之一弧 0°–90° 在 45° 处分段；方角：沿对角线切三角。
- * 上半：本色上扩或上邻墙右扩为深色；下半：本色右扩或右邻墙上扩为深色。
+ * 上半：上邻为墙 / 本色上扩 / 上邻墙右扩为深色；下半：本色右扩或右邻墙上扩为深色。
  */
 function fillTopRightCorner(
     g: Graphics,
@@ -401,14 +423,7 @@ function fillTopRightCorner(
     p: number,
     trRound: boolean,
 ): void {
-    const upperDark =
-        isOutwardExtDark(snapshot, gx, gy, 'top') ||
-        wallOutwardExtDark(snapshot, gx, gy - 1, 'right');
-    const lowerDark =
-        isOutwardExtDark(snapshot, gx, gy, 'right') ||
-        wallOutwardExtDark(snapshot, gx + 1, gy, 'top');
-    const upperColor = upperDark ? WALL_DARK_FILL : WALL_ARM_FILL;
-    const lowerColor = lowerDark ? WALL_DARK_FILL : WALL_ARM_FILL;
+    const { upperColor, lowerColor } = resolveTopRightCornerColors(snapshot, gx, gy);
 
     if (trRound) {
         fillTrRoundSplit(g, cx, cy, p, upperColor, lowerColor);
