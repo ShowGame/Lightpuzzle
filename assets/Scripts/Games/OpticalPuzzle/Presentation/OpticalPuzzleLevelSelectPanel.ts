@@ -802,12 +802,13 @@ export class OpticalPuzzleLevelSelectPanel extends Component {
 
         PLAY_AUDIO.emit(EVENT_ENUM.PLAY_AUDIO, AUDIO_EFFECT_ENUM.CLICK_BUTTON);
         DataManager.instance.opticalCurrentLevelId = levelId;
-        this.close();
 
         if (director.getScene()?.name === SCENE_ENUM.GAME) {
+            this.close();
             this._resolveOpticalPuzzleRoot()?.loadLevelById(levelId);
             return;
         }
+        // Menu → Game：不切走选关层，避免先露出 Menu 再 loadScene 闪一下
         director.loadScene(SCENE_ENUM.GAME);
     }
 
@@ -856,6 +857,8 @@ export function openLevelSelectPanel(panelNode: Node | null): void {
     if (!panelNode?.isValid) {
         return;
     }
+    // 用户打开选关时再次预加载 Game，降低选关后进局等待（Menu onLoad 已预载一次）
+    director.preloadScene(SCENE_ENUM.GAME);
     panelNode.active = true;
     panelNode.getComponent(OpticalPuzzleLevelSelectPanel)?.ensureLevelListReadyForOpen();
 }
