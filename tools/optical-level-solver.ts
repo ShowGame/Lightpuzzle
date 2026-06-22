@@ -339,7 +339,7 @@ export function computeDifficulty(level: IOpticalLevelConfig, minSteps: number):
         minSteps * 1.2 +
         mapCells * 0.12;
 
-    const difficulty = clamp(Math.round(rawScore * 0.65), 1, 100);
+    const difficulty = Math.max(1, Math.round(rawScore * 0.65));
 
     return {
         pieceCount,

@@ -2,7 +2,7 @@
 name: optical-puzzle-level-design
 description: >-
   Generates and validates LightPuzzle / OpticalPuzzle level designs: four layered
-  char grids, star step thresholds, difficulty 1-100, BFS min-steps solvability.
+  char grids, star step thresholds, difficulty score (min 1, no cap), BFS min-steps solvability.
   Use when the user asks to design, generate, validate, or balance optical puzzle
   levels, 关卡设计, 最小步数, or star thresholds for 光学迷宫.
 ---
@@ -15,7 +15,7 @@ description: >-
 
 - 用户要求生成/设计/验证光学解谜关卡
 - 需要最小步数、三星/二星/一星步数阈值
-- 需要难度分 1～100 或按难度批量产关
+- 需要难度分或按难度批量产关（≥1，无上限）
 
 ## 硬性约束
 
@@ -23,7 +23,7 @@ description: >-
 - 高宽比 `height / width` ∈ **[0.5, 0.67]**
 - 四层同尺寸：`staticLayout`、`objects`、`colors`、`directions`
 - 输出含：`levelId`、`levelName`、`height`、`width`、四层数组、四档步数阈值
-- 难度分 1～100（见 reference 公式）
+- 难度分 ≥1（见 reference 公式，无上限）
 
 ## 工作流（必须按序执行）
 
@@ -81,7 +81,7 @@ npx --yes tsx tools/optical-level-solver.ts --stdin < path/to/level.json
 | `threeStarSteps` | `ceil(min × 1.25)` |
 | `twoStarSteps` | `ceil(min × 1.5)` |
 | `oneStarSteps` | `ceil(min × 2)` |
-| `difficulty` | `difficulty.difficulty`（1～100） |
+| `difficulty` | `difficulty.difficulty`（≥1，无上限） |
 
 向用户交付时附上 **难度分解**（`difficulty` 对象内各计数）便于调平衡。
 
