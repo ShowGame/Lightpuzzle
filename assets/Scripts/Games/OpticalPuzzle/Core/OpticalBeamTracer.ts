@@ -6,7 +6,22 @@ import {
 import { alignBlockContactsWithSegments } from './OpticalBeamContactResolve';
 import type { OpticalBeamBlockContact, OpticalBeamSegment } from './OpticalBeamTypes';
 export type { OpticalBeamBlockContact, OpticalBeamSegment } from './OpticalBeamTypes';
-import { mixLightColors, coerceBeamColorKey, collectColorKeyStrings } from './OpticalColorMix';
+import {
+    coerceBeamColorKey,
+    collectColorKeyStrings,
+    mixLightColors,
+    type MixedLightColorKey,
+} from './OpticalColorMix';
+import type { BeamCycleContext } from './OpticalBeamCycleResolve';
+import {
+    applyCycleUniformColors,
+    buildBeamCycleContext,
+    computeCycleUniformColors,
+    createCycleIncomingMap,
+    recordCycleIncomingBeam,
+    steadyColorAtCell,
+    steadyEmissionColorForSource,
+} from './OpticalBeamCycleResolve';
 import { colorModeToKey, lightMatchesTarget, resolveBeamColorKey } from './OpticalLightColor';
 import {
     entrySideToPropagation,
@@ -41,6 +56,18 @@ interface BeamRay {
     cy: number;
     dir: Direction;
     colorKey: string;
+    /** 该射线归属的光源下标（`sources` 数组索引） */
+    sourceIds: Set<number>;
+}
+
+function copySourceIds(sourceIds: ReadonlySet<number>): Set<number> {
+    return new Set(sourceIds);
+}
+
+function mergeSourceIds(target: Set<number>, from: ReadonlySet<number>): void {
+    for (const id of from) {
+        target.add(id);
+    }
 }
 
 function cellIndex(w: number, x: number, y: number): number {
@@ -156,54 +183,259 @@ function tryLightTarget(
     }
 }
 
-function traceOneSource(
-    src: IOpticalLightSource,
+function pieceCellKey(cx: number, cy: number): string {
+    return `${cx},${cy}`;
+}
+
+interface TraceAllBeamsOptions {
+    /** 为 false 时不记录环外入射（第二遍光追用） */
+    recordCycleIncoming?: boolean;
+    /** 已算出的环稳态色；环上元件出射强制使用该色 */
+    cycleUniformByGroup?: ReadonlyMap<number, MixedLightColorKey>;
+}
+
+function cycleGroupIdForPieceEmission(
+    w: number,
+    cx: number,
+    cy: number,
+    cycleCtx: BeamCycleContext,
+): number | undefined {
+    const idx = cellIndex(w, cx, cy);
+    const direct = cycleCtx.cellToGroupId.get(idx);
+    if (direct !== undefined) {
+        return direct;
+    }
+    /** 环外一格相连的支路元件（如底绿十字）与所属环同色出射 */
+    for (let d = 0; d < 4; d++) {
+        const nx = cx + DIR_DX[d];
+        const ny = cy + DIR_DY[d];
+        const neighborGid = cycleCtx.cellToGroupId.get(cellIndex(w, nx, ny));
+        if (neighborGid !== undefined) {
+            return neighborGid;
+        }
+    }
+    return undefined;
+}
+
+function pieceOutColor(
+    w: number,
+    cx: number,
+    cy: number,
+    piece: IOpticalPiece,
+    incomingColors: readonly string[],
+    sourceIds: ReadonlySet<number>,
+    cycleCtx: BeamCycleContext,
+    cycleUniformByGroup?: ReadonlyMap<number, MixedLightColorKey>,
+): MixedLightColorKey {
+    const gid = cycleGroupIdForPieceEmission(w, cx, cy, cycleCtx);
+    if (gid !== undefined && cycleUniformByGroup) {
+        const group = cycleCtx.groups.find((g) => g.id === gid);
+        if (group && group.sourceIndices.some((sid) => sourceIds.has(sid))) {
+            const uniform = cycleUniformByGroup.get(gid);
+            if (uniform !== undefined) {
+                return uniform;
+            }
+        }
+    }
+    const mergedIncoming = mixLightColors(incomingColors);
+    return mixLightColors([mergedIncoming, colorModeToKey(piece.colorMode)]);
+}
+
+function processOnePieceCell(
+    w: number,
+    pieceAt: ReadonlyMap<number, IOpticalPiece>,
+    cellKey: string,
+    pieceIncoming: Map<string, string[]>,
+    pieceEntryDirs: Map<string, Direction[]>,
+    pieceSourceIds: Map<string, Set<number>>,
+    outSegments: OpticalBeamSegment[],
+    queue: BeamRay[],
+    cycleCtx: BeamCycleContext,
+    cycleUniformByGroup?: ReadonlyMap<number, MixedLightColorKey>,
+): void {
+    const colors = pieceIncoming.get(cellKey);
+    const entryDirs = pieceEntryDirs.get(cellKey);
+    const sourceIds = pieceSourceIds.get(cellKey);
+    if (!colors || colors.length === 0 || !entryDirs || entryDirs.length === 0 || !sourceIds) {
+        return;
+    }
+
+    const parts = cellKey.split(',');
+    const cx = Number(parts[0]);
+    const cy = Number(parts[1]);
+    const piece = pieceAt.get(cellIndex(w, cx, cy));
+    if (!piece) {
+        return;
+    }
+
+    const openDirs = openDirectionsForPiece(piece.connectivity, piece.direction);
+    const outColor = pieceOutColor(w, cx, cy, piece, colors, sourceIds, cycleCtx, cycleUniformByGroup);
+
+    const outputSides = new Set<Direction>();
+    for (const entryDir of entryDirs) {
+        const entrySide = propagationToEntrySide(entryDir);
+        for (const side of openDirs) {
+            if (side !== entrySide) {
+                outputSides.add(side);
+            }
+        }
+    }
+
+    const mx = cx + 0.5;
+    const my = cy + 0.5;
+    for (const outSide of outputSides) {
+        const outDir = entrySideToPropagation(outSide);
+        const exitX = mx + DIR_DX[outDir] * 0.5;
+        const exitY = my + DIR_DY[outDir] * 0.5;
+        pushSegment(outSegments, mx, my, exitX, exitY, outColor);
+        queue.push({
+            ax: exitX,
+            ay: exitY,
+            cx: cx + DIR_DX[outDir],
+            cy: cy + DIR_DY[outDir],
+            dir: outDir,
+            colorKey: outColor,
+            sourceIds: copySourceIds(sourceIds),
+        });
+    }
+}
+
+function processWavePendingPieces(
+    w: number,
+    pieceAt: ReadonlyMap<number, IOpticalPiece>,
+    pendingPieceCells: Set<string>,
+    pieceIncoming: Map<string, string[]>,
+    pieceEntryDirs: Map<string, Direction[]>,
+    pieceSourceIds: Map<string, Set<number>>,
+    outSegments: OpticalBeamSegment[],
+    nextWave: BeamRay[],
+    cycleCtx: BeamCycleContext,
+    cycleUniformByGroup?: ReadonlyMap<number, MixedLightColorKey>,
+): void {
+    const cells = sortPieceCellKeys([...pendingPieceCells]);
+    pendingPieceCells.clear();
+
+    for (const cellKey of cells) {
+        processOnePieceCell(
+            w,
+            pieceAt,
+            cellKey,
+            pieceIncoming,
+            pieceEntryDirs,
+            pieceSourceIds,
+            outSegments,
+            nextWave,
+            cycleCtx,
+            cycleUniformByGroup,
+        );
+        pieceIncoming.delete(cellKey);
+        pieceEntryDirs.delete(cellKey);
+        pieceSourceIds.delete(cellKey);
+    }
+}
+
+function advanceBeamRay(
     input: OpticalBeamTraceInput,
+    beam: BeamRay,
     pieceAt: ReadonlyMap<number, IOpticalPiece>,
     targetAt: ReadonlyMap<number, number>,
     targetLit: boolean[],
+    visited: Set<string>,
+    pieceIncoming: Map<string, string[]>,
+    pieceEntryDirs: Map<string, Direction[]>,
+    pieceSourceIds: Map<string, Set<number>>,
+    pendingPieceCells: Set<string>,
     outSegments: OpticalBeamSegment[],
     outBlockContacts: OpticalBeamBlockContact[],
+    nextWave: BeamRay[],
+    cycleCtx: BeamCycleContext,
+    incomingByCycle: Map<number, string[]>,
+    traceOptions: TraceAllBeamsOptions = {},
 ): void {
+    const { recordCycleIncoming = true, cycleUniformByGroup } = traceOptions;
     const { width: w, height: h, terrain, player, targets } = input;
-    const srcDir = normalizeDirection(src.direction, Direction.Down);
-    const dx0 = DIR_DX[srcDir];
-    const dy0 = DIR_DY[srcDir];
-    if (dx0 === undefined || dy0 === undefined) {
+    const { cx, cy, dir } = beam;
+    let { ax, ay } = beam;
+    const colorKey = steadyColorAtCell(
+        cx,
+        cy,
+        dir,
+        w,
+        beam.colorKey,
+        beam.sourceIds,
+        cycleCtx,
+        cycleUniformByGroup,
+    );
+
+    if (!inBounds(cx, cy, w, h)) {
         return;
     }
-    const visited = new Set<string>();
-    const queue: BeamRay[] = [
-        {
-            ax: src.x + 0.5 + dx0 * 0.5,
-            ay: src.y + 0.5 + dy0 * 0.5,
-            cx: src.x + dx0,
-            cy: src.y + dy0,
-            dir: srcDir,
-            colorKey: resolveBeamColorKey(src.colorKey),
-        },
-    ];
 
-    const maxSteps = w * h * 16;
-    let steps = 0;
+    const piece = pieceAt.get(cellIndex(w, cx, cy));
+    const isPieceCell = piece != null && piece.connectivity !== 0;
 
-    while (queue.length > 0 && steps < maxSteps) {
-        steps++;
-        const beam = queue.shift()!;
-        const { cx, cy, dir, colorKey } = beam;
-        let { ax, ay } = beam;
+    const visitKey = isPieceCell
+        ? `${cx},${cy},${dir},${colorKey},p`
+        : `${cx},${cy},${dir},${colorKey}`;
+    if (visited.has(visitKey)) {
+        return;
+    }
+    visited.add(visitKey);
 
-        if (!inBounds(cx, cy, w, h)) {
-            continue;
-        }
+    if (recordCycleIncoming) {
+        recordCycleIncomingBeam(
+            cx,
+            cy,
+            dir,
+            colorKey,
+            cycleCtx,
+            w,
+            incomingByCycle,
+            pieceAt,
+            beam.sourceIds,
+        );
+    }
 
-        const visitKey = `${cx},${cy},${dir},${colorKey}`;
-        if (visited.has(visitKey)) {
-            continue;
-        }
-        visited.add(visitKey);
+    if (isWall(cx, cy, w, terrain) || isPlayerCell(cx, cy, player)) {
+        pushSegment(
+            outSegments,
+            ax,
+            ay,
+            cx + 0.5 - DIR_DX[dir] * 0.5,
+            cy + 0.5 - DIR_DY[dir] * 0.5,
+            colorKey,
+        );
+        pushBlockContact(outBlockContacts, cx, cy, dir, colorKey);
+        return;
+    }
 
-        if (isWall(cx, cy, w, terrain) || isPlayerCell(cx, cy, player)) {
+    if (terrain[cellIndex(w, cx, cy)] === TerrainKind.Target) {
+        pushSegment(
+            outSegments,
+            ax,
+            ay,
+            cx + 0.5 - DIR_DX[dir] * 0.5,
+            cy + 0.5 - DIR_DY[dir] * 0.5,
+            colorKey,
+        );
+        tryLightTarget(cx, cy, w, colorKey, targetAt, targets, targetLit);
+        return;
+    }
+
+    if (terrain[cellIndex(w, cx, cy)] === TerrainKind.Source) {
+        pushSegment(
+            outSegments,
+            ax,
+            ay,
+            cx + 0.5 - DIR_DX[dir] * 0.5,
+            cy + 0.5 - DIR_DY[dir] * 0.5,
+            colorKey,
+        );
+        return;
+    }
+
+    if (!piece || piece.connectivity === 0) {
+        if (piece) {
             pushSegment(
                 outSegments,
                 ax,
@@ -213,63 +445,12 @@ function traceOneSource(
                 colorKey,
             );
             pushBlockContact(outBlockContacts, cx, cy, dir, colorKey);
-            continue;
+            return;
         }
 
-        if (terrain[cellIndex(w, cx, cy)] === TerrainKind.Target) {
-            pushSegment(
-                outSegments,
-                ax,
-                ay,
-                cx + 0.5 - DIR_DX[dir] * 0.5,
-                cy + 0.5 - DIR_DY[dir] * 0.5,
-                colorKey,
-            );
-            tryLightTarget(cx, cy, w, colorKey, targetAt, targets, targetLit);
-            continue;
-        }
-
-        if (terrain[cellIndex(w, cx, cy)] === TerrainKind.Source) {
-            pushSegment(
-                outSegments,
-                ax,
-                ay,
-                cx + 0.5 - DIR_DX[dir] * 0.5,
-                cy + 0.5 - DIR_DY[dir] * 0.5,
-                colorKey,
-            );
-            continue;
-        }
-
-        const piece = pieceAt.get(cellIndex(w, cx, cy));
-        if (!piece || piece.connectivity === 0) {
-            if (piece) {
-                pushSegment(
-                    outSegments,
-                    ax,
-                    ay,
-                    cx + 0.5 - DIR_DX[dir] * 0.5,
-                    cy + 0.5 - DIR_DY[dir] * 0.5,
-                    colorKey,
-                );
-                pushBlockContact(outBlockContacts, cx, cy, dir, colorKey);
-                continue;
-            }
-
-            const nx = cx + DIR_DX[dir];
-            const ny = cy + DIR_DY[dir];
-            if (!inBounds(nx, ny, w, h)) {
-                pushSegment(
-                    outSegments,
-                    ax,
-                    ay,
-                    cx + 0.5 + DIR_DX[dir] * 0.5,
-                    cy + 0.5 + DIR_DY[dir] * 0.5,
-                    colorKey,
-                );
-                pushBlockContact(outBlockContacts, cx, cy, dir, colorKey, true);
-                continue;
-            }
+        const nx = cx + DIR_DX[dir];
+        const ny = cy + DIR_DY[dir];
+        if (!inBounds(nx, ny, w, h)) {
             pushSegment(
                 outSegments,
                 ax,
@@ -278,55 +459,199 @@ function traceOneSource(
                 cy + 0.5 + DIR_DY[dir] * 0.5,
                 colorKey,
             );
-            ax = cx + 0.5 + DIR_DX[dir] * 0.5;
-            ay = cy + 0.5 + DIR_DY[dir] * 0.5;
-            queue.push({ ax, ay, cx: nx, cy: ny, dir, colorKey });
+            pushBlockContact(outBlockContacts, cx, cy, dir, colorKey, true);
+            return;
+        }
+        pushSegment(
+            outSegments,
+            ax,
+            ay,
+            cx + 0.5 + DIR_DX[dir] * 0.5,
+            cy + 0.5 + DIR_DY[dir] * 0.5,
+            colorKey,
+        );
+        ax = cx + 0.5 + DIR_DX[dir] * 0.5;
+        ay = cy + 0.5 + DIR_DY[dir] * 0.5;
+        nextWave.push({
+            ax,
+            ay,
+            cx: nx,
+            cy: ny,
+            dir,
+            colorKey,
+            sourceIds: copySourceIds(beam.sourceIds),
+        });
+        return;
+    }
+
+    const openDirs = openDirectionsForPiece(piece.connectivity, piece.direction);
+    const entrySide = propagationToEntrySide(dir);
+    if (!openDirs.includes(entrySide)) {
+        pushSegment(
+            outSegments,
+            ax,
+            ay,
+            cx + 0.5 - DIR_DX[dir] * 0.5,
+            cy + 0.5 - DIR_DY[dir] * 0.5,
+            colorKey,
+        );
+        pushBlockContact(outBlockContacts, cx, cy, dir, colorKey);
+        return;
+    }
+
+    const cellKey = pieceCellKey(cx, cy);
+    let incomingList = pieceIncoming.get(cellKey);
+    if (!incomingList) {
+        incomingList = [];
+        pieceIncoming.set(cellKey, incomingList);
+    }
+    incomingList.push(resolveBeamColorKey(colorKey));
+
+    let entryDirs = pieceEntryDirs.get(cellKey);
+    if (!entryDirs) {
+        entryDirs = [];
+        pieceEntryDirs.set(cellKey, entryDirs);
+    }
+    entryDirs.push(dir);
+    pendingPieceCells.add(cellKey);
+
+    let sourceIdSet = pieceSourceIds.get(cellKey);
+    if (!sourceIdSet) {
+        sourceIdSet = new Set<number>();
+        pieceSourceIds.set(cellKey, sourceIdSet);
+    }
+    mergeSourceIds(sourceIdSet, beam.sourceIds);
+
+    const mx = cx + 0.5;
+    const my = cy + 0.5;
+    const entryX = mx - DIR_DX[dir] * 0.5;
+    const entryY = my - DIR_DY[dir] * 0.5;
+    pushSegment(outSegments, ax, ay, entryX, entryY, colorKey);
+    pushSegment(outSegments, entryX, entryY, mx, my, colorKey);
+}
+
+function sortPieceCellKeys(keys: readonly string[]): string[] {
+    return [...keys].sort((a, b) => {
+        const pa = a.split(',').map(Number);
+        const pb = b.split(',').map(Number);
+        return pa[1] - pb[1] || pa[0] - pb[0];
+    });
+}
+
+function beamRayStateKey(beam: BeamRay): string {
+    return `${beam.cx},${beam.cy},${beam.dir},${beam.colorKey}`;
+}
+
+/** 同波层内合并相同 (格, 方向, 色) 的射线，避免分路指数膨胀 */
+function dedupeWaveRays(beams: readonly BeamRay[]): BeamRay[] {
+    const map = new Map<string, BeamRay>();
+    for (const beam of beams) {
+        const key = beamRayStateKey(beam);
+        const existing = map.get(key);
+        if (!existing) {
+            map.set(key, { ...beam, sourceIds: copySourceIds(beam.sourceIds) });
+        } else {
+            mergeSourceIds(existing.sourceIds, beam.sourceIds);
+        }
+    }
+    return [...map.values()];
+}
+
+function traceAllBeams(
+    input: OpticalBeamTraceInput,
+    sources: readonly IOpticalLightSource[],
+    pieceAt: ReadonlyMap<number, IOpticalPiece>,
+    targetAt: ReadonlyMap<number, number>,
+    targetLit: boolean[],
+    outSegments: OpticalBeamSegment[],
+    outBlockContacts: OpticalBeamBlockContact[],
+    cycleCtx: BeamCycleContext,
+    incomingByCycle: Map<number, string[]>,
+    traceOptions: TraceAllBeamsOptions = {},
+): void {
+    const { width: w, height: h } = input;
+    let currentWave: BeamRay[] = [];
+
+    for (let si = 0; si < sources.length; si++) {
+        const src = sources[si];
+        const srcDir = normalizeDirection(src.direction, Direction.Down);
+        const dx0 = DIR_DX[srcDir];
+        const dy0 = DIR_DY[srcDir];
+        if (dx0 === undefined || dy0 === undefined) {
             continue;
         }
+        currentWave.push({
+            ax: src.x + 0.5 + dx0 * 0.5,
+            ay: src.y + 0.5 + dy0 * 0.5,
+            cx: src.x + dx0,
+            cy: src.y + dy0,
+            dir: srcDir,
+            colorKey: steadyEmissionColorForSource(
+                src,
+                si,
+                w,
+                cycleCtx,
+                traceOptions.cycleUniformByGroup,
+            ),
+            sourceIds: new Set([si]),
+        });
+    }
 
-        const openDirs = openDirectionsForPiece(piece.connectivity, piece.direction);
-        const entrySide = propagationToEntrySide(dir);
-        if (!openDirs.includes(entrySide)) {
-            pushSegment(
+    /** 空地/目标等：按色分开防环；元件格用 `,p` 后缀允许多色入射累积 */
+    const visited = new Set<string>();
+    const maxWaves = w * h * 8 * Math.max(1, sources.length);
+
+    for (let wave = 0; wave < maxWaves && currentWave.length > 0; wave++) {
+        currentWave = dedupeWaveRays(currentWave);
+        if (currentWave.length === 0) {
+            break;
+        }
+
+        const nextWave: BeamRay[] = [];
+        const pieceIncoming = new Map<string, string[]>();
+        const pieceEntryDirs = new Map<string, Direction[]>();
+        const pieceSourceIds = new Map<string, Set<number>>();
+        const pendingPieceCells = new Set<string>();
+
+        for (const beam of currentWave) {
+            advanceBeamRay(
+                input,
+                beam,
+                pieceAt,
+                targetAt,
+                targetLit,
+                visited,
+                pieceIncoming,
+                pieceEntryDirs,
+                pieceSourceIds,
+                pendingPieceCells,
                 outSegments,
-                ax,
-                ay,
-                cx + 0.5 - DIR_DX[dir] * 0.5,
-                cy + 0.5 - DIR_DY[dir] * 0.5,
-                colorKey,
+                outBlockContacts,
+                nextWave,
+                cycleCtx,
+                incomingByCycle,
+                traceOptions,
             );
-            pushBlockContact(outBlockContacts, cx, cy, dir, colorKey);
-            continue;
         }
 
-        const mx = cx + 0.5;
-        const my = cy + 0.5;
-        const entryX = mx - DIR_DX[dir] * 0.5;
-        const entryY = my - DIR_DY[dir] * 0.5;
-        const outColor = mixLightColors([colorKey, colorModeToKey(piece.colorMode)]);
+        processWavePendingPieces(
+            w,
+            pieceAt,
+            pendingPieceCells,
+            pieceIncoming,
+            pieceEntryDirs,
+            pieceSourceIds,
+            outSegments,
+            nextWave,
+            cycleCtx,
+            traceOptions.cycleUniformByGroup,
+        );
 
-        pushSegment(outSegments, ax, ay, entryX, entryY, colorKey);
-        pushSegment(outSegments, entryX, entryY, mx, my, colorKey);
-
-        const outputSides = openDirs.filter((s) => s !== entrySide);
-        for (const outSide of outputSides) {
-            const outDir = entrySideToPropagation(outSide);
-            const exitX = mx + DIR_DX[outDir] * 0.5;
-            const exitY = my + DIR_DY[outDir] * 0.5;
-            pushSegment(outSegments, mx, my, exitX, exitY, outColor);
-            queue.push({
-                ax: exitX,
-                ay: exitY,
-                cx: cx + DIR_DX[outDir],
-                cy: cy + DIR_DY[outDir],
-                dir: outDir,
-                colorKey: outColor,
-            });
-        }
+        currentWave = nextWave;
     }
 }
 
-/** 通道 0～4 统一光追（格内 L 形折线，无斜镜反射表） */
+/** 通道 0～4 统一光追（波层同步多光源 + 稳态环后处理） */
 export function traceBeams(input: OpticalBeamTraceInput): OpticalBeamTraceResult {
     const { width: w, pieces, sources, targets } = input;
     const pieceAt = new Map<number, IOpticalPiece>();
@@ -338,15 +663,45 @@ export function traceBeams(input: OpticalBeamTraceInput): OpticalBeamTraceResult
         targetAt.set(cellIndex(w, t.x, t.y), i);
     });
 
+    const cycleCtx = buildBeamCycleContext(input, pieceAt);
+    const incomingByCycle = createCycleIncomingMap(cycleCtx);
+
+    /** 第一遍：收集环外入射（不产出最终光段） */
+    const incomingProbeLit = targets.map(() => false);
+    traceAllBeams(
+        input,
+        sources,
+        pieceAt,
+        targetAt,
+        incomingProbeLit,
+        [],
+        [],
+        cycleCtx,
+        incomingByCycle,
+        { recordCycleIncoming: true },
+    );
+
+    const cycleColors = computeCycleUniformColors(cycleCtx, incomingByCycle);
+
+    /** 第二遍：环上元件出射使用环稳态色 */
     const rawSegments: OpticalBeamSegment[] = [];
     const rawBlockContacts: OpticalBeamBlockContact[] = [];
     const scratchTargetLit = targets.map(() => false);
+    traceAllBeams(
+        input,
+        sources,
+        pieceAt,
+        targetAt,
+        scratchTargetLit,
+        rawSegments,
+        rawBlockContacts,
+        cycleCtx,
+        incomingByCycle,
+        { recordCycleIncoming: false, cycleUniformByGroup: cycleColors },
+    );
+    const cycleResolvedSegments = applyCycleUniformColors(rawSegments, cycleCtx, cycleColors, w, pieceAt);
 
-    for (const src of sources) {
-        traceOneSource(src, input, pieceAt, targetAt, scratchTargetLit, rawSegments, rawBlockContacts);
-    }
-
-    const segments = mergeOverlappingBeamSegments(rawSegments);
+    const segments = mergeOverlappingBeamSegments(cycleResolvedSegments);
     const blockContacts = alignBlockContactsWithSegments(
         dedupeBlockContacts(rawBlockContacts),
         segments,
