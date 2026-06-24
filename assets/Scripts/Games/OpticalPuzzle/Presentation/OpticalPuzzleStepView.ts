@@ -44,13 +44,20 @@ export class OpticalPuzzleStepView extends Component {
     }
 }
 
+export interface EnsureStepViewsOptions {
+    /** 步数仅由外部 setMoveCount 驱动，不订阅 OPTICAL_SNAPSHOT_CHANGED */
+    manualStepCount?: boolean;
+}
+
 /** 为 TopBar/Step 挂上外框；StepIcon 仍在子节点上单独绘制爪印 */
-export function ensureStepViews(topBar: Node | null): void {
+export function ensureStepViews(topBar: Node | null, options?: EnsureStepViewsOptions): void {
     const step = topBar?.getChildByName('Step') ?? null;
     if (step?.isValid && !step.getComponent(OpticalPuzzleStepView)) {
         step.addComponent(OpticalPuzzleStepView);
     }
     const stepIcon = step?.getChildByName('StepIcon') ?? topBar?.getChildByName('StepIcon') ?? null;
     ensureStepIconView(stepIcon);
-    ensureStepCountView(resolveStepCountNode(topBar));
+    ensureStepCountView(resolveStepCountNode(topBar), {
+        manualOnly: options?.manualStepCount ?? false,
+    });
 }

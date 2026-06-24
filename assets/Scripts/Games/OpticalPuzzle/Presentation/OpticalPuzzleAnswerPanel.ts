@@ -24,6 +24,7 @@ import {
     ensureAnswerReplayView,
     OpticalPuzzleAnswerReplayView,
 } from './OpticalPuzzleAnswerReplayView';
+import { ensureAnswerPanelStepViews } from './OpticalPuzzleAnswerPanelStepView';
 
 const { ccclass } = _decorator;
 
@@ -125,6 +126,7 @@ export class OpticalPuzzleAnswerPanel extends Component {
 
         ensureAnswerReplayView(this._ensureNamedChild('answer'));
         this._ensureResetButton(this._ensureNamedChild('resetbtn'));
+        ensureAnswerPanelStepViews(this.node);
     }
 
     private _ensureNamedChild(name: string): Node {
@@ -346,6 +348,7 @@ export function ensureAnswerPanel(panelNode: Node | null): void {
     if (!panelNode.getComponent(OpticalPuzzleAnswerPanel)) {
         panelNode.addComponent(OpticalPuzzleAnswerPanel);
     }
+    ensureAnswerPanelStepViews(panelNode);
 }
 
 /** 打开参考解面板 */

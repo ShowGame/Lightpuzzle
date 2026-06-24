@@ -12,9 +12,17 @@ export function getLastOpticalSnapshotNotify(): OpticalSnapshotNotify | null {
     return _lastSnapshotNotify;
 }
 
+export interface EnsureStepCountViewOptions {
+    /** 为 true 时不订阅快照事件，仅由 setMoveCount 驱动（参考解回放） */
+    manualOnly?: boolean;
+}
+
 /** Step/StepCount：显示本局移动步数（TopBar 与 winPanel/winds/step 共用） */
 @ccclass('OpticalPuzzleStepCountView')
 export class OpticalPuzzleStepCountView extends Component {
+    /** 参考解回放等场景：不监听局内快照，避免与 TopBar 步数混淆 */
+    manualOnly = false;
+
     private _label: Label | null = null;
 
     protected onLoad(): void {
@@ -22,21 +30,29 @@ export class OpticalPuzzleStepCountView extends Component {
     }
 
     protected onEnable(): void {
-        OPTICAL_PUZZLE.on(EVENT_ENUM.OPTICAL_SNAPSHOT_CHANGED, this._onSnapshotChanged, this);
-        const cached = _lastSnapshotNotify?.moveCount;
-        if (typeof cached === 'number') {
-            this._refreshLabel(cached);
-        } else {
-            this._refreshLabel(0);
+        if (!this.manualOnly) {
+            OPTICAL_PUZZLE.on(EVENT_ENUM.OPTICAL_SNAPSHOT_CHANGED, this._onSnapshotChanged, this);
+            const cached = _lastSnapshotNotify?.moveCount;
+            if (typeof cached === 'number') {
+                this._refreshLabel(cached);
+            } else {
+                this._refreshLabel(0);
+            }
+            return;
         }
+        this._refreshLabel(0);
     }
 
     protected onDisable(): void {
-        OPTICAL_PUZZLE.off(EVENT_ENUM.OPTICAL_SNAPSHOT_CHANGED, this._onSnapshotChanged, this);
+        if (!this.manualOnly) {
+            OPTICAL_PUZZLE.off(EVENT_ENUM.OPTICAL_SNAPSHOT_CHANGED, this._onSnapshotChanged, this);
+        }
     }
 
     protected onDestroy(): void {
-        OPTICAL_PUZZLE.off(EVENT_ENUM.OPTICAL_SNAPSHOT_CHANGED, this._onSnapshotChanged, this);
+        if (!this.manualOnly) {
+            OPTICAL_PUZZLE.off(EVENT_ENUM.OPTICAL_SNAPSHOT_CHANGED, this._onSnapshotChanged, this);
+        }
     }
 
     /** 直接刷新步数（开局或事件未到前） */
@@ -93,11 +109,18 @@ function _findDescendantByName(root: Node, name: string): Node | null {
 }
 
 /** 为 StepCount 挂上步数 Label 同步 */
-export function ensureStepCountView(stepCount: Node | null): void {
+export function ensureStepCountView(
+    stepCount: Node | null,
+    options?: EnsureStepCountViewOptions,
+): void {
     if (!stepCount?.isValid) {
         return;
     }
-    if (!stepCount.getComponent(OpticalPuzzleStepCountView)) {
-        stepCount.addComponent(OpticalPuzzleStepCountView);
+    let view = stepCount.getComponent(OpticalPuzzleStepCountView);
+    if (!view) {
+        view = stepCount.addComponent(OpticalPuzzleStepCountView);
+    }
+    if (options?.manualOnly) {
+        view.manualOnly = true;
     }
 }

@@ -12,6 +12,7 @@ import {
 import type { OpticalSessionNotifyReason } from '../Application/OpticalPuzzleSession';
 import { OpticalPuzzleBeamView } from './OpticalPuzzleBeamView';
 import { OpticalPuzzleBoardView } from './OpticalPuzzleBoardView';
+import { resolveAnswerPanelStepCountView } from './OpticalPuzzleAnswerPanelStepView';
 import {
     boardPixelHeight,
     boardPixelWidth,
@@ -38,6 +39,8 @@ export class OpticalPuzzleAnswerReplayView extends Component {
     private _stepIndex = 0;
     private _elapsed = 0;
     private _running = false;
+    /** 参考解回放已演示的有效移动步数 */
+    private _replayMoveCount = 0;
 
     /** 从初始局面重新播放参考解（answerPanel resetbtn） */
     restartFromBeginning(): void {
@@ -77,6 +80,10 @@ export class OpticalPuzzleAnswerReplayView extends Component {
         }
         const result = this._applySolutionStep(this._solution[this._stepIndex]);
         this._stepIndex += 1;
+        if (result === MoveAttemptResult.PlayerMoved || result === MoveAttemptResult.PiecePushed) {
+            this._replayMoveCount += 1;
+            this._syncReplayStepCount();
+        }
         this._renderSnapshot(this._notifyReasonForMove(result));
         if (this._stepIndex >= this._solution.length) {
             this._running = false;
@@ -163,6 +170,11 @@ export class OpticalPuzzleAnswerReplayView extends Component {
         this._running = false;
         this._elapsed = 0;
         this._stepIndex = 0;
+        this._replayMoveCount = 0;
+    }
+
+    private _syncReplayStepCount(): void {
+        resolveAnswerPanelStepCountView(this.node.parent)?.setMoveCount(this._replayMoveCount);
     }
 
     private _restartFromInitial(): void {
@@ -173,6 +185,8 @@ export class OpticalPuzzleAnswerReplayView extends Component {
         this._boardView?.resetPlayerEyeIdle();
         this._stepIndex = 0;
         this._elapsed = 0;
+        this._replayMoveCount = 0;
+        this._syncReplayStepCount();
         this._renderSnapshot('reset');
     }
 
