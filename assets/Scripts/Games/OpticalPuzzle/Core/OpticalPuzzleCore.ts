@@ -169,12 +169,29 @@ export class OpticalPuzzleCore {
         };
     }
 
-    restorePlayState(data: OpticalPlayStateSnapshot): void {
+    restorePlayState(data: OpticalPlayStateSnapshot, options?: { deferLighting?: boolean }): void {
         this._px = data.player.x;
         this._py = data.player.y;
         this._playerFacing = data.playerFacing ?? Direction.Left;
         this._pieces = data.pieces.map((p) => ({ ...p }));
-        this._recomputeLighting();
+        if (!options?.deferLighting) {
+            this._recomputeLighting();
+        }
+    }
+
+    /** 目标点亮位掩码（求解器剪枝用，低位对应 targets 顺序） */
+    getTargetLitMask(): number {
+        let mask = 0;
+        for (let i = 0; i < this._targetLit.length; i++) {
+            if (this._targetLit[i]) {
+                mask |= 1 << i;
+            }
+        }
+        return mask;
+    }
+
+    get targetCount(): number {
+        return this._targets.length;
     }
 
     private _inBounds(x: number, y: number): boolean {

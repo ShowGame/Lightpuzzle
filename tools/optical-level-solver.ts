@@ -10,8 +10,8 @@ import {
     type IOpticalLevelConfig,
     type IOpticalLevelLayeredSource,
 } from '../assets/Scripts/Games/OpticalPuzzle/Config/OpticalPuzzleLevelSchema';
-import { OpticalPuzzleCore } from '../assets/Scripts/Games/OpticalPuzzle/Core/OpticalPuzzleCore';
 import { ColorMode, Direction, MoveAttemptResult } from '../assets/Scripts/Games/OpticalPuzzle/Core/OpticalPuzzleTypes';
+import { runOptimizedBfs } from './optical-bfs-engine';
 
 const ASPECT_MIN = 0.5;
 const ASPECT_MAX = 0.67;
@@ -73,6 +73,8 @@ export interface LevelSolveResult {
     solvable: boolean;
     minSteps: number | null;
     exploredStates: number;
+    visitedStates?: number;
+    elapsedMs?: number;
     reason?: string;
 }
 
@@ -86,6 +88,26 @@ export interface LevelAnalysisResult {
 
 function clamp(n: number, lo: number, hi: number): number {
     return Math.max(lo, Math.min(hi, n));
+}
+
+function toSolveResult(r: ReturnType<typeof runOptimizedBfs>): LevelSolveResult {
+    if (r.minSteps !== null) {
+        return {
+            solvable: true,
+            minSteps: r.minSteps,
+            exploredStates: r.exploredStates,
+            visitedStates: r.visitedStates,
+            elapsedMs: r.elapsedMs,
+        };
+    }
+    return {
+        solvable: false,
+        minSteps: null,
+        exploredStates: r.exploredStates,
+        visitedStates: r.visitedStates,
+        elapsedMs: r.elapsedMs,
+        reason: r.reason,
+    };
 }
 
 function ceilMul(n: number, factor: number): number {
@@ -137,153 +159,22 @@ export function validateLayeredSource(
     return { ok: errors.length === 0, errors, warnings };
 }
 
-function stateKey(core: OpticalPuzzleCore): string {
-    const play = core.clonePlayState();
-    const parts = play.pieces
-        .map((p) => `${p.id}@${p.x},${p.y}`)
-        .sort()
-        .join(';');
-    return `${play.player.x},${play.player.y}|${parts}`;
-}
-
 export function solveMinSteps(level: IOpticalLevelConfig, maxDepth = BFS_MAX_DEPTH): LevelSolveResult {
-    const startCore = new OpticalPuzzleCore();
-    startCore.reset(level);
-    if (startCore.isAllTargetsLit()) {
-        return { solvable: true, minSteps: 0, exploredStates: 1 };
-    }
-
-    interface QueueNode {
-        core: OpticalPuzzleCore;
-        steps: number;
-    }
-
-    const visited = new Set<string>();
-    const queue: QueueNode[] = [{ core: startCore, steps: 0 }];
-    visited.add(stateKey(startCore));
-    let explored = 0;
-
-    while (queue.length > 0) {
-        const { core, steps } = queue.shift()!;
-        explored += 1;
-        if (steps >= maxDepth) {
-            continue;
-        }
-
-        for (let d = 0; d < 4; d++) {
-            const next = new OpticalPuzzleCore();
-            next.reset(level);
-            next.restorePlayState(core.clonePlayState());
-            next.setPlayerFacing(d as Direction);
-            const r = next.tryMove(d as Direction);
-            if (r === MoveAttemptResult.Blocked) {
-                continue;
-            }
-            if (next.isAllTargetsLit()) {
-                return { solvable: true, minSteps: steps + 1, exploredStates: explored };
-            }
-            const key = stateKey(next);
-            if (visited.has(key)) {
-                continue;
-            }
-            visited.add(key);
-            queue.push({ core: next, steps: steps + 1 });
-        }
-    }
-
-    return {
-        solvable: false,
-        minSteps: null,
-        exploredStates: explored,
-        reason: `BFS 在深度 ${maxDepth} 内未找到解（已探索 ${visited.size} 状态）`,
-    };
+    return toSolveResult(runOptimizedBfs(level, { maxDepth, trackPath: false }));
 }
 
 export function solveWithPath(
     level: IOpticalLevelConfig,
     maxDepth = BFS_MAX_DEPTH,
-): { minSteps: number | null; moves: SolutionMove[]; exploredStates: number } {
-    const startCore = new OpticalPuzzleCore();
-    startCore.reset(level);
-    if (startCore.isAllTargetsLit()) {
-        return { minSteps: 0, moves: [], exploredStates: 1 };
-    }
-
-    interface QueueNode {
-        core: OpticalPuzzleCore;
-        steps: number;
-    }
-
-    const visited = new Set<string>();
-    const parent = new Map<string, { prevKey: string; dir: Direction; result: MoveAttemptResult }>();
-    const queue: QueueNode[] = [{ core: startCore, steps: 0 }];
-    const startKey = stateKey(startCore);
-    visited.add(startKey);
-    let explored = 0;
-    let goalKey: string | null = null;
-
-    while (queue.length > 0) {
-        const { core, steps } = queue.shift()!;
-        explored += 1;
-        if (steps >= maxDepth) {
-            continue;
-        }
-
-        for (let d = 0; d < 4; d++) {
-            const next = new OpticalPuzzleCore();
-            next.reset(level);
-            next.restorePlayState(core.clonePlayState());
-            next.setPlayerFacing(d as Direction);
-            const r = next.tryMove(d as Direction);
-            if (r === MoveAttemptResult.Blocked) {
-                continue;
-            }
-            const key = stateKey(next);
-            const fromKey = stateKey(core);
-            if (next.isAllTargetsLit()) {
-                parent.set(key, { prevKey: fromKey, dir: d as Direction, result: r });
-                goalKey = key;
-                queue.length = 0;
-                break;
-            }
-            if (visited.has(key)) {
-                continue;
-            }
-            visited.add(key);
-            parent.set(key, { prevKey: fromKey, dir: d as Direction, result: r });
-            queue.push({ core: next, steps: steps + 1 });
-        }
-    }
-
-    if (!goalKey) {
-        return { minSteps: null, moves: [], exploredStates: explored };
-    }
-
-    const path: Array<{ dir: Direction; result: MoveAttemptResult }> = [];
-    let k: string | undefined = goalKey;
-    while (k && k !== startKey) {
-        const p = parent.get(k)!;
-        path.push({ dir: p.dir, result: p.result });
-        k = p.prevKey;
-    }
-    path.reverse();
-
-    const moves: SolutionMove[] = [];
-    const sim = new OpticalPuzzleCore();
-    sim.reset(level);
-    for (let i = 0; i < path.length; i++) {
-        const { dir, result } = path[i]!;
-        sim.setPlayerFacing(dir);
-        sim.tryMove(dir);
-        moves.push({
-            step: i + 1,
-            direction: dir,
-            wasd: DIR_WASD[dir],
-            result: result === MoveAttemptResult.PiecePushed ? 'push' : 'move',
-        });
-    }
-
-    return { minSteps: path.length, moves, exploredStates: explored };
+): { minSteps: number | null; moves: SolutionMove[]; exploredStates: number; visitedStates?: number; elapsedMs?: number } {
+    const r = runOptimizedBfs(level, { maxDepth, trackPath: true });
+    return {
+        minSteps: r.minSteps,
+        moves: r.moves,
+        exploredStates: r.exploredStates,
+        visitedStates: r.visitedStates,
+        elapsedMs: r.elapsedMs,
+    };
 }
 
 export function solveBestSolutionStrings(
