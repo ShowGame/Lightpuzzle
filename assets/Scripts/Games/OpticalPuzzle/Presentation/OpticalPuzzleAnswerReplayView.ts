@@ -16,6 +16,7 @@ import { resolveAnswerPanelStepCountView } from './OpticalPuzzleAnswerPanelStepV
 import {
     boardPixelHeight,
     boardPixelWidth,
+    computePlayLayerScale,
     OPTICAL_CELL_SIZE,
 } from './OpticalPuzzleLayout';
 
@@ -146,7 +147,7 @@ export class OpticalPuzzleAnswerReplayView extends Component {
         const boardW = boardPixelWidth(level.width, OPTICAL_CELL_SIZE);
         const boardH = boardPixelHeight(level.height, OPTICAL_CELL_SIZE);
         const availW = Math.max(1, hostUt.width - ANSWER_BOARD_PADDING * 2);
-        const scale = availW / boardW;
+        const scale = computePlayLayerScale(level.width, level.height, availW);
         root.setScale(scale, scale, 1);
         root.setPosition(0, 0, 0);
 

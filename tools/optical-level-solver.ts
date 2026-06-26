@@ -138,6 +138,12 @@ export function validateLayeredSource(
         );
     }
 
+    if (src.height > src.width) {
+        warnings.push(
+            `高度 ${src.height} 大于宽度 ${src.width}：局内将按屏宽二次压缩棋盘（缩放后棋盘高不超过屏宽）`,
+        );
+    }
+
     try {
         parseLayeredGridsToLevelConfig(src);
     } catch (e) {

@@ -76,18 +76,23 @@ export function boardPixelWidth(levelWidth: number, cellSize: number = OPTICAL_C
 }
 
 /**
- * 按关卡列数计算 layerPlay 等比缩放，使棋盘宽撑满 targetWidth。
+ * 计算 layerPlay 等比缩放：棋盘宽撑满 targetWidth（屏宽）；
+ * 若缩放后棋盘高仍超过 targetWidth，再按 targetWidth / 棋盘高 收紧（高不超过屏宽）。
  */
 export function computePlayLayerScale(
     levelWidth: number,
+    levelHeight: number,
     targetWidth: number,
     cellSize: number = OPTICAL_CELL_SIZE,
 ): number {
     const boardWidth = boardPixelWidth(levelWidth, cellSize);
-    if (boardWidth <= 0 || targetWidth <= 0) {
+    const boardHeight = boardPixelHeight(levelHeight, cellSize);
+    if (boardWidth <= 0 || boardHeight <= 0 || targetWidth <= 0) {
         return 1;
     }
-    return targetWidth / boardWidth;
+    const scaleByWidth = targetWidth / boardWidth;
+    const scaleByHeight = targetWidth / boardHeight;
+    return Math.min(scaleByWidth, scaleByHeight);
 }
 
 /**

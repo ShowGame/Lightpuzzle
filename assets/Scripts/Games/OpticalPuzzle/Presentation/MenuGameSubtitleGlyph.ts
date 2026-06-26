@@ -12,11 +12,11 @@ export const GAME_SUBTITLE_STROKE_PX = 1;
 const SUBTITLE_FILL = new Color(255, 255, 255, 255);
 const SUBTITLE_STROKE = new Color(255, 255, 255, 255);
 
-/** 外轮廓 + 内孔边缘发光（与主标题一致） */
+/** 外轮廓 + 内孔边缘发光（整体收窄，减轻叠光发糊） */
 const SUBTITLE_GLOW_LAYERS: ReadonlyArray<{ width: number; alpha: number }> = [
-    { width: 15, alpha: 36 },
-    { width: 10, alpha: 72 },
-    { width: 6, alpha: 108 },
+    { width: 8, alpha: 20 },
+    { width: 5, alpha: 40 },
+    { width: 3, alpha: 60 },
 ];
 
 function traceOutlinePath(
@@ -75,7 +75,7 @@ function strokeSubtitleGlow(g: Graphics, cx: number, cy: number, drawScale: numb
             drawScale,
             layer.width,
             new Color(255, 255, 255, layer.alpha),
-            false,
+            true,
         );
     }
 }

@@ -3,6 +3,7 @@ import type { OpticalBeamSegment } from './OpticalBeamTypes';
 import { mixLightColors, type MixedLightColorKey } from './OpticalColorMix';
 import { colorModeToKey, resolveBeamColorKey } from './OpticalLightColor';
 import {
+    canEnterPieceWithPropagation,
     entrySideToPropagation,
     openDirectionsForPiece,
     propagationToEntrySide,
@@ -18,7 +19,7 @@ export interface BeamCycleGroup {
     id: number;
     /** 稳态环上的光传播状态 (x,y,dir) */
     stateKeys: ReadonlySet<string>;
-    /** 由状态推导的格（用于滤光元件邻域等） */
+    /** 由状态推导的格（光实际经过） */
     cellIndices: ReadonlySet<number>;
     /** 参与本稳态环的光源下标（`sources` 数组索引） */
     sourceIndices: readonly number[];
@@ -103,6 +104,14 @@ function transitionsFromState(
         if (!inBounds(nx, ny, w, h) || isBlockedCell(nx, ny, w, terrain, player)) {
             return [];
         }
+        const nextPiece = pieceAt.get(cellIndex(w, nx, ny));
+        if (
+            nextPiece
+            && nextPiece.connectivity !== 0
+            && !canEnterPieceWithPropagation(dir, nextPiece)
+        ) {
+            return [];
+        }
         return [{ x: nx, y: ny, dir }];
     }
 
@@ -145,6 +154,14 @@ function findCyclicStateGroups(
             }
             for (let dir = 0; dir < 4; dir++) {
                 const d = dir as Direction;
+                const piece = pieceAt.get(cellIndex(w, x, y));
+                if (
+                    piece
+                    && piece.connectivity !== 0
+                    && !canEnterPieceWithPropagation(d, piece)
+                ) {
+                    continue;
+                }
                 const from = stateKey(x, y, d);
                 nodes.push(from);
                 const nexts = transitionsFromState(x, y, d, w, h, terrain, player, pieceAt);
@@ -246,7 +263,7 @@ function reachableStatesFromSourceEmission(
     return states;
 }
 
-/** 两束光路是否在光学元件格上通过方向状态交汇（同格不同方向不算地板虚空交叉） */
+/** 两束光路是否在光学元件格上以合法入射态交汇（按 connectivity 通道，非按格 footprint） */
 function stateSetsConnectOnPieces(
     a: ReadonlySet<string>,
     b: ReadonlySet<string>,
@@ -255,16 +272,27 @@ function stateSetsConnectOnPieces(
 ): boolean {
     const pieceCellsB = new Set<number>();
     for (const sk of b) {
-        const { x, y } = parseStateKey(sk);
+        const { x, y, dir } = parseStateKey(sk);
         const idx = cellIndex(w, x, y);
-        if (isPassableOpticalPieceCell(idx, pieceAt)) {
+        const piece = pieceAt.get(idx);
+        if (
+            piece
+            && piece.connectivity !== 0
+            && canEnterPieceWithPropagation(dir, piece)
+        ) {
             pieceCellsB.add(idx);
         }
     }
     for (const sk of a) {
-        const { x, y } = parseStateKey(sk);
+        const { x, y, dir } = parseStateKey(sk);
         const idx = cellIndex(w, x, y);
-        if (pieceCellsB.has(idx) && isPassableOpticalPieceCell(idx, pieceAt)) {
+        const piece = pieceAt.get(idx);
+        if (
+            piece
+            && piece.connectivity !== 0
+            && pieceCellsB.has(idx)
+            && canEnterPieceWithPropagation(dir, piece)
+        ) {
             return true;
         }
     }
@@ -360,45 +388,18 @@ function mergeOverlappingStateSets(
     return merged;
 }
 
-/**
- * 多光源经十字等元件光路连通（在元件格上可达交汇）时，视为同一稳态环；
- * 状态集为簇内各光源可达状态的并集（按 (x,y,dir)，非按格 footprint）。
- */
-/** 同行对射光源：无元件但地板光路在同一行交汇（如左右侧源） */
-function sourcesConnectOnOpposingFloorRow(
-    i: number,
-    j: number,
-    sources: readonly IOpticalLightSource[],
-    reachSets: readonly ReadonlySet<string>[],
-    w: number,
+function isPassableOpticalPieceCell(
+    idx: number,
+    pieceAt: ReadonlyMap<number, IOpticalPiece>,
 ): boolean {
-    const a = sources[i];
-    const b = sources[j];
-    if (a.y !== b.y) {
-        return false;
-    }
-    const dirA = normalizeDirection(a.direction, Direction.Down);
-    const dirB = normalizeDirection(b.direction, Direction.Down);
-    if (dirA !== Direction.Right || dirB !== Direction.Left) {
-        return false;
-    }
-    const row = a.y;
-    const cellsOnRowB = new Set<number>();
-    for (const sk of reachSets[j]) {
-        const { x, y } = parseStateKey(sk);
-        if (y === row) {
-            cellsOnRowB.add(cellIndex(w, x, y));
-        }
-    }
-    for (const sk of reachSets[i]) {
-        const { x, y } = parseStateKey(sk);
-        if (y === row && cellsOnRowB.has(cellIndex(w, x, y))) {
-            return true;
-        }
-    }
-    return false;
+    const piece = pieceAt.get(idx);
+    return piece != null && piece.connectivity !== 0;
 }
 
+/**
+ * 多光源经光学元件连通（共享元件格过光）时视为同一抽象稳态网；
+ * 不含纯地板对射合并（避免无元件交汇时误染整段光路）。
+ */
 function findMultiSourceConnectedStateGroups(
     input: OpticalBeamTraceInput,
     pieceAt: ReadonlyMap<number, IOpticalPiece>,
@@ -430,10 +431,7 @@ function findMultiSourceConnectedStateGroups(
 
     for (let i = 0; i < sources.length; i++) {
         for (let j = i + 1; j < sources.length; j++) {
-            if (
-                stateSetsConnectOnPieces(reachSets[i], reachSets[j], pieceAt, w) ||
-                sourcesConnectOnOpposingFloorRow(i, j, sources, reachSets, w)
-            ) {
+            if (stateSetsConnectOnPieces(reachSets[i], reachSets[j], pieceAt, w)) {
                 union(i, j);
             }
         }
@@ -466,63 +464,39 @@ function findMultiSourceConnectedStateGroups(
     return out;
 }
 
-function isPassableOpticalPieceCell(
-    idx: number,
-    pieceAt: ReadonlyMap<number, IOpticalPiece>,
-): boolean {
-    const piece = pieceAt.get(idx);
-    return piece != null && piece.connectivity !== 0;
-}
-
-function coloredFilterKeysAttachedToCycle(
-    cellIndices: ReadonlySet<number>,
+/** 稳态环上光实际经过的滤光元件色（不含邻域未过光格） */
+function coloredFilterKeysOnCycleStates(
+    stateKeys: ReadonlySet<string>,
     w: number,
-    h: number,
     pieceAt: ReadonlyMap<number, IOpticalPiece>,
 ): string[] {
     const keys: string[] = [];
     const seenKeys = new Set<string>();
-    const visited = new Set<number>();
-    const queue: Array<{ idx: number; depth: number }> = [];
-    for (const idx of cellIndices) {
-        queue.push({ idx, depth: 0 });
-        visited.add(idx);
-    }
-    /** 环外短支路上的滤光元件（如底绿十字）也参与稳态混色 */
-    const maxDepth = 4;
-    while (queue.length > 0) {
-        const { idx, depth } = queue.shift()!;
-        const piece = pieceAt.get(idx);
-        if (piece) {
-            const key = colorModeToKey(piece.colorMode);
-            if (key !== 'white' && !seenKeys.has(key)) {
-                seenKeys.add(key);
-                keys.push(key);
-            }
-        }
-        if (depth >= maxDepth) {
+    const seenCells = new Set<number>();
+    for (const sk of stateKeys) {
+        const { x, y, dir } = parseStateKey(sk);
+        const idx = cellIndex(w, x, y);
+        if (seenCells.has(idx)) {
             continue;
         }
-        const x = idx % w;
-        const y = Math.floor(idx / w);
-        for (let d = 0; d < 4; d++) {
-            const nx = x + DIR_DX[d];
-            const ny = y + DIR_DY[d];
-            if (!inBounds(nx, ny, w, h)) {
-                continue;
-            }
-            const nidx = cellIndex(w, nx, ny);
-            if (visited.has(nidx)) {
-                continue;
-            }
-            visited.add(nidx);
-            queue.push({ idx: nidx, depth: depth + 1 });
+        const piece = pieceAt.get(idx);
+        if (!piece || piece.connectivity === 0) {
+            continue;
+        }
+        if (!canEnterPieceWithPropagation(dir, piece)) {
+            continue;
+        }
+        seenCells.add(idx);
+        const key = colorModeToKey(piece.colorMode);
+        if (key !== 'white' && !seenKeys.has(key)) {
+            seenKeys.add(key);
+            keys.push(key);
         }
     }
     return keys;
 }
 
-/** 稳态环：状态图 SCC + 多光源经元件连通（二者有交集则合并） */
+/** 稳态：SCC 闭合环 + 多光源经元件抽象连通网（二者在元件格交汇时合并） */
 export function buildBeamCycleContext(
     input: OpticalBeamTraceInput,
     pieceAt: ReadonlyMap<number, IOpticalPiece>,
@@ -558,7 +532,7 @@ export function buildBeamCycleContext(
             cellIndices,
             sourceIndices,
             sourceColorKeys: sourceColorKeysForIndices(sources, sourceIndices),
-            pieceFilterColorKeys: coloredFilterKeysAttachedToCycle(cellIndices, w, h, pieceAt),
+            pieceFilterColorKeys: coloredFilterKeysOnCycleStates(stateKeys, w, pieceAt),
         };
     });
 

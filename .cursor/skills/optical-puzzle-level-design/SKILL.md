@@ -21,6 +21,7 @@ description: >-
 
 - `width` ≤ **15**
 - 高宽比 `height / width` ∈ **[0.5, 0.67]**
+- **`height` ≤ `width`**（局内棋盘宽撑满屏宽；若 `height > width`，缩放后棋盘高会超过屏宽，将按屏宽二次压缩）
 - 四层同尺寸：`staticLayout`、`objects`、`colors`、`directions`
 - 输出含：`levelId`、`levelName`、`height`、`width`、四层数组、四档步数阈值
 - 难度分 ≥1（见 reference 公式，无上限）
@@ -60,7 +61,7 @@ npx --yes tsx tools/optical-level-solver.ts --stdin < path/to/level.json
 
 检查 `validation.ok === true`。若失败，阅读 `validation.errors`，修正后**从步骤 1 重来**。
 
-合法性包括：四层尺寸、墙对齐、字符集、`parseLayeredGridsToLevelConfig` 规则、高宽比、宽度上限。
+合法性包括：四层尺寸、墙对齐、字符集、`parseLayeredGridsToLevelConfig` 规则、高宽比、宽度上限、`height ≤ width`（超出则警告二次压缩）。
 
 ### 3. 验证地图可完成/达成性
 

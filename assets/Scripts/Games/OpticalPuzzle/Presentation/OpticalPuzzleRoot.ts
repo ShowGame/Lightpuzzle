@@ -310,14 +310,14 @@ export class OpticalPuzzleRoot extends Component {
         view.applyExternalSparkSpriteFrames(this.beamSparkKeepAlive);
     }
 
-    /** 按关卡尺寸缩放并定位 layerPlay：宽撑满、顶边距 Canvas 顶 playAreaTopMargin */
+    /** 按关卡尺寸缩放并定位 layerPlay：宽撑满屏宽；高超过屏宽时同步压缩 */
     private _applyPlayLayerLayout(levelWidth: number, levelHeight: number): void {
         const playLayer = this._resolveLayerPlay();
         if (!playLayer?.isValid) {
             return;
         }
         const targetWidth = this._resolvePlayAreaWidth();
-        const scale = computePlayLayerScale(levelWidth, targetWidth);
+        const scale = computePlayLayerScale(levelWidth, levelHeight, targetWidth);
         playLayer.setScale(new Vec3(scale, scale, 1));
 
         const canvasHeight = this._resolveCanvasHeight();

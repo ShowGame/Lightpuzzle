@@ -42,6 +42,18 @@ export function openDirectionsForPiece(
     return rotateOpenDirections(base, pieceDirection);
 }
 
+/** 光以 propagation 方向进入元件格时，入射侧是否为该 connectivity 的通道开口 */
+export function canEnterPieceWithPropagation(
+    propagation: Direction,
+    piece: { connectivity: PieceConnectivity; direction: Direction },
+): boolean {
+    if (piece.connectivity === 0) {
+        return false;
+    }
+    const openDirs = openDirectionsForPiece(piece.connectivity, piece.direction);
+    return openDirs.includes(propagationToEntrySide(propagation));
+}
+
 /** 传播方向 → 从哪一侧进入该格（向下传播 = 从上方进入 = Up） */
 export function propagationToEntrySide(propagation: Direction): Direction {
     return ((propagation + 2) % 4) as Direction;
