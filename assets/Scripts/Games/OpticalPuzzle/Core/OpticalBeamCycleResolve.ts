@@ -27,6 +27,8 @@ export interface BeamCycleGroup {
     sourceColorKeys: readonly string[];
     /** 环上滤光元件层 3 色（R/G/B，每格至多一项） */
     pieceFilterColorKeys: readonly string[];
+    /** 组内是否存在 SCC 闭合环（有则地板态也强制稳态色；纯源间连通则否） */
+    hasClosedCycle: boolean;
 }
 
 export interface BeamCycleContext {
@@ -137,15 +139,14 @@ function transitionsFromState(
     return out;
 }
 
-function findCyclicStateGroups(
+function buildTransitionEdges(
     w: number,
     h: number,
     terrain: TerrainKind[],
     player: { x: number; y: number },
     pieceAt: ReadonlyMap<number, IOpticalPiece>,
-): ReadonlySet<string>[] {
+): Map<string, string[]> {
     const edges = new Map<string, string[]>();
-    const nodes: string[] = [];
 
     for (let y = 0; y < h; y++) {
         for (let x = 0; x < w; x++) {
@@ -163,11 +164,292 @@ function findCyclicStateGroups(
                     continue;
                 }
                 const from = stateKey(x, y, d);
-                nodes.push(from);
                 const nexts = transitionsFromState(x, y, d, w, h, terrain, player, pieceAt);
                 edges.set(from, nexts.map((n) => stateKey(n.x, n.y, n.dir)));
             }
         }
+    }
+
+    return edges;
+}
+
+function buildReverseEdges(forward: ReadonlyMap<string, string[]>): Map<string, string[]> {
+    const reverse = new Map<string, string[]>();
+    for (const [from, tos] of forward) {
+        for (const to of tos) {
+            let preds = reverse.get(to);
+            if (!preds) {
+                preds = [];
+                reverse.set(to, preds);
+            }
+            preds.push(from);
+        }
+    }
+    return reverse;
+}
+
+/** 从 seed 状态沿正向边 BFS */
+function forwardReachableFrom(
+    seeds: ReadonlySet<string>,
+    forwardEdges: ReadonlyMap<string, string[]>,
+): Set<string> {
+    const out = new Set<string>();
+    const queue: string[] = [];
+    for (const sk of seeds) {
+        if (!out.has(sk)) {
+            out.add(sk);
+            queue.push(sk);
+        }
+    }
+    while (queue.length > 0) {
+        const sk = queue.shift()!;
+        for (const next of forwardEdges.get(sk) ?? []) {
+            if (!out.has(next)) {
+                out.add(next);
+                queue.push(next);
+            }
+        }
+    }
+    return out;
+}
+
+function collectSourceEmissionStateKeys(
+    sources: readonly IOpticalLightSource[],
+    w: number,
+    h: number,
+    terrain: TerrainKind[],
+    player: { x: number; y: number },
+): Set<string> {
+    const out = new Set<string>();
+    for (let i = 0; i < sources.length; i++) {
+        const sk = sourceEmissionStateKey(sources[i], i, w, h, terrain, player);
+        if (sk) {
+            out.add(sk);
+        }
+    }
+    return out;
+}
+
+function collectSourceEmissionStateKeyByIndex(
+    sources: readonly IOpticalLightSource[],
+    w: number,
+    h: number,
+    terrain: TerrainKind[],
+    player: { x: number; y: number },
+): Map<number, string> {
+    const out = new Map<number, string>();
+    for (let i = 0; i < sources.length; i++) {
+        const sk = sourceEmissionStateKey(sources[i], i, w, h, terrain, player);
+        if (sk) {
+            out.set(i, sk);
+        }
+    }
+    return out;
+}
+
+function sourceEmissionStateKey(
+    src: IOpticalLightSource,
+    _index: number,
+    w: number,
+    h: number,
+    terrain: TerrainKind[],
+    player: { x: number; y: number },
+): string | null {
+    const dir = normalizeDirection(src.direction, Direction.Down);
+    const startX = src.x + DIR_DX[dir];
+    const startY = src.y + DIR_DY[dir];
+    if (!inBounds(startX, startY, w, h) || isBlockedCell(startX, startY, w, terrain, player)) {
+        return null;
+    }
+    return stateKey(startX, startY, dir);
+}
+
+/** 在状态子集内找 SCC 闭合环，其状态作为「环锚点」（环外射后须能回到此处） */
+function findCycleAnchorStatesInSet(
+    states: ReadonlySet<string>,
+    forwardEdges: ReadonlyMap<string, string[]>,
+): Set<string> {
+    const anchors = new Set<string>();
+    if (states.size === 0) {
+        return anchors;
+    }
+
+    const edgesFrom = (v: string): string[] =>
+        (forwardEdges.get(v) ?? []).filter((to) => states.has(to));
+
+    const nodes = [...states];
+    const index = new Map<string, number>();
+    const lowlink = new Map<string, number>();
+    const onStack = new Set<string>();
+    const stack: string[] = [];
+    let nextIndex = 0;
+    const sccs: string[][] = [];
+
+    function strongConnect(v: string): void {
+        index.set(v, nextIndex);
+        lowlink.set(v, nextIndex);
+        nextIndex++;
+        stack.push(v);
+        onStack.add(v);
+
+        for (const wKey of edgesFrom(v)) {
+            if (!index.has(wKey)) {
+                strongConnect(wKey);
+                lowlink.set(v, Math.min(lowlink.get(v)!, lowlink.get(wKey)!));
+            } else if (onStack.has(wKey)) {
+                lowlink.set(v, Math.min(lowlink.get(v)!, index.get(wKey)!));
+            }
+        }
+
+        if (lowlink.get(v) === index.get(v)) {
+            const comp: string[] = [];
+            let wNode: string;
+            do {
+                wNode = stack.pop()!;
+                onStack.delete(wNode);
+                comp.push(wNode);
+            } while (wNode !== v);
+            sccs.push(comp);
+        }
+    }
+
+    for (const n of nodes) {
+        if (!index.has(n)) {
+            strongConnect(n);
+        }
+    }
+
+    for (const comp of sccs) {
+        if (comp.length <= 1) {
+            const only = comp[0];
+            if (edgesFrom(only).includes(only)) {
+                for (const sk of comp) {
+                    anchors.add(sk);
+                }
+            }
+        } else if (comp.length >= 3) {
+            for (const sk of comp) {
+                anchors.add(sk);
+            }
+        }
+    }
+    return anchors;
+}
+
+function buildAnchorStatesForBundle(
+    bundle: SteadyStateBundle,
+    forwardEdges: ReadonlyMap<string, string[]>,
+    emissionBySourceIndex: ReadonlyMap<number, string>,
+): Set<string> {
+    const anchors = new Set<string>();
+    for (const i of bundle.sourceIndices) {
+        const es = emissionBySourceIndex.get(i);
+        if (es) {
+            anchors.add(es);
+        }
+    }
+    for (const sk of findCycleAnchorStatesInSet(bundle.states, forwardEdges)) {
+        anchors.add(sk);
+    }
+    return anchors;
+}
+
+function canReachAnyAnchorState(
+    fromSk: string,
+    forwardEdges: ReadonlyMap<string, string[]>,
+    anchorStates: ReadonlySet<string>,
+): boolean {
+    if (anchorStates.size === 0) {
+        return false;
+    }
+    const reachable = forwardReachableFrom(new Set([fromSk]), forwardEdges);
+    for (const anchor of anchorStates) {
+        if (reachable.has(anchor)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * 剔除元件格上不能回到稳态锚点的状态（锚点 = 环上 SCC 态 ∪ 组内光源出射态）；地板态保留。
+ */
+function filterStatesByPieceReturnToAnchors(
+    states: ReadonlySet<string>,
+    forwardEdges: ReadonlyMap<string, string[]>,
+    anchorStates: ReadonlySet<string>,
+    pieceAt: ReadonlyMap<number, IOpticalPiece>,
+    w: number,
+): Set<string> {
+    const out = new Set<string>();
+    for (const sk of states) {
+        const { x, y, dir } = parseStateKey(sk);
+        const piece = pieceAt.get(cellIndex(w, x, y));
+        if (!piece || piece.connectivity === 0) {
+            out.add(sk);
+            continue;
+        }
+        if (!canEnterPieceWithPropagation(dir, piece)) {
+            continue;
+        }
+        if (canReachAnyAnchorState(sk, forwardEdges, anchorStates)) {
+            out.add(sk);
+        }
+    }
+    return out;
+}
+
+
+/** 从 seed 状态沿反向边 BFS，得到「能到达 seed 中某一态」的全部状态 */
+function reverseReachableFrom(
+    seeds: ReadonlySet<string>,
+    reverseEdges: ReadonlyMap<string, string[]>,
+): Set<string> {
+    const out = new Set<string>();
+    const queue: string[] = [];
+    for (const sk of seeds) {
+        if (!out.has(sk)) {
+            out.add(sk);
+            queue.push(sk);
+        }
+    }
+    while (queue.length > 0) {
+        const sk = queue.shift()!;
+        for (const pred of reverseEdges.get(sk) ?? []) {
+            if (!out.has(pred)) {
+                out.add(pred);
+                queue.push(pred);
+            }
+        }
+    }
+    return out;
+}
+
+/**
+ * 光源 A 可达态 ∩ 「能到达光源 B 可达态」= 位于 A→B 光路上的状态（含地板与元件）。
+ * 不含 A 可达但到不了 B 的岔路/末梢。
+ */
+function statesOnPathBetweenReachSets(
+    reachA: ReadonlySet<string>,
+    reachB: ReadonlySet<string>,
+    reverseEdges: ReadonlyMap<string, string[]>,
+): Set<string> {
+    const canReachB = reverseReachableFrom(reachB, reverseEdges);
+    const out = new Set<string>();
+    for (const sk of reachA) {
+        if (canReachB.has(sk)) {
+            out.add(sk);
+        }
+    }
+    return out;
+}
+
+function findCyclicStateGroups(
+    forwardEdges: ReadonlyMap<string, string[]>,
+): ReadonlySet<string>[] {
+    const nodes: string[] = [];
+    for (const from of forwardEdges.keys()) {
+        nodes.push(from);
     }
 
     const index = new Map<string, number>();
@@ -184,7 +466,7 @@ function findCyclicStateGroups(
         stack.push(v);
         onStack.add(v);
 
-        for (const wKey of edges.get(v) ?? []) {
+        for (const wKey of forwardEdges.get(v) ?? []) {
             if (!index.has(wKey)) {
                 strongConnect(wKey);
                 lowlink.set(v, Math.min(lowlink.get(v)!, lowlink.get(wKey)!));
@@ -215,7 +497,7 @@ function findCyclicStateGroups(
     for (const comp of sccs) {
         if (comp.length <= 1) {
             const only = comp[0];
-            const outs = edges.get(only) ?? [];
+            const outs = forwardEdges.get(only) ?? [];
             if (!outs.includes(only)) {
                 continue;
             }
@@ -388,21 +670,16 @@ function mergeOverlappingStateSets(
     return merged;
 }
 
-function isPassableOpticalPieceCell(
-    idx: number,
-    pieceAt: ReadonlyMap<number, IOpticalPiece>,
-): boolean {
-    const piece = pieceAt.get(idx);
-    return piece != null && piece.connectivity !== 0;
-}
-
 /**
  * 多光源经光学元件连通（共享元件格过光）时视为同一抽象稳态网；
+ * 状态集为源间光路；元件是否参与稳态在合并后按锚点统一过滤。
  * 不含纯地板对射合并（避免无元件交汇时误染整段光路）。
  */
 function findMultiSourceConnectedStateGroups(
     input: OpticalBeamTraceInput,
     pieceAt: ReadonlyMap<number, IOpticalPiece>,
+    forwardEdges: ReadonlyMap<string, string[]>,
+    reverseEdges: ReadonlyMap<string, string[]>,
 ): SteadyStateBundle[] {
     const { width: w, height: h, terrain, player, sources } = input;
     if (sources.length < 2) {
@@ -454,31 +731,49 @@ function findMultiSourceConnectedStateGroups(
             continue;
         }
         const merged = new Set<string>();
-        for (const i of indices) {
-            for (const sk of reachSets[i]) {
-                merged.add(sk);
+        for (let a = 0; a < indices.length; a++) {
+            for (let b = a + 1; b < indices.length; b++) {
+                const i = indices[a];
+                const j = indices[b];
+                for (const sk of statesOnPathBetweenReachSets(
+                    reachSets[i],
+                    reachSets[j],
+                    reverseEdges,
+                )) {
+                    merged.add(sk);
+                }
+                for (const sk of statesOnPathBetweenReachSets(
+                    reachSets[j],
+                    reachSets[i],
+                    reverseEdges,
+                )) {
+                    merged.add(sk);
+                }
             }
+        }
+        if (merged.size === 0) {
+            continue;
         }
         out.push({ states: merged, sourceIndices: [...indices] });
     }
     return out;
 }
 
-/** 稳态环上光实际经过的滤光元件色（不含邻域未过光格） */
+/** 稳态滤光元件：合法入射且至少一态能回到组内锚点（环 SCC 态 ∪ 光源出射态） */
 function coloredFilterKeysOnCycleStates(
     stateKeys: ReadonlySet<string>,
     w: number,
     pieceAt: ReadonlyMap<number, IOpticalPiece>,
+    forwardEdges?: ReadonlyMap<string, string[]>,
+    anchorStates?: ReadonlySet<string>,
 ): string[] {
     const keys: string[] = [];
     const seenKeys = new Set<string>();
     const seenCells = new Set<number>();
+    const statesByCell = new Map<number, string[]>();
     for (const sk of stateKeys) {
         const { x, y, dir } = parseStateKey(sk);
         const idx = cellIndex(w, x, y);
-        if (seenCells.has(idx)) {
-            continue;
-        }
         const piece = pieceAt.get(idx);
         if (!piece || piece.connectivity === 0) {
             continue;
@@ -486,7 +781,27 @@ function coloredFilterKeysOnCycleStates(
         if (!canEnterPieceWithPropagation(dir, piece)) {
             continue;
         }
+        let list = statesByCell.get(idx);
+        if (!list) {
+            list = [];
+            statesByCell.set(idx, list);
+        }
+        list.push(sk);
+    }
+    for (const [idx, cellStates] of statesByCell) {
+        if (seenCells.has(idx)) {
+            continue;
+        }
+        if (
+            forwardEdges
+            && anchorStates
+            && anchorStates.size > 0
+            && !cellStates.some((sk) => canReachAnyAnchorState(sk, forwardEdges, anchorStates))
+        ) {
+            continue;
+        }
         seenCells.add(idx);
+        const piece = pieceAt.get(idx)!;
         const key = colorModeToKey(piece.colorMode);
         if (key !== 'white' && !seenKeys.has(key)) {
             seenKeys.add(key);
@@ -496,13 +811,28 @@ function coloredFilterKeysOnCycleStates(
     return keys;
 }
 
-/** 稳态：SCC 闭合环 + 多光源经元件抽象连通网（二者在元件格交汇时合并） */
+/**
+ * 稳态上下文：
+ * 1. SCC 闭合环；
+ * 2. 多光源经元件连通；
+ * 有元件交集可合并。参与稳态的元件须能沿正向光路回到组内锚点（环 SCC 态或光源出射态），
+ * 环外射、只单向收光且不回流到环/源的元件不计入。
+ */
 export function buildBeamCycleContext(
     input: OpticalBeamTraceInput,
     pieceAt: ReadonlyMap<number, IOpticalPiece>,
 ): BeamCycleContext {
     const { width: w, height: h, terrain, player, sources } = input;
-    const cyclicStateSets = findCyclicStateGroups(w, h, terrain, player, pieceAt);
+    const forwardEdges = buildTransitionEdges(w, h, terrain, player, pieceAt);
+    const reverseEdges = buildReverseEdges(forwardEdges);
+    const emissionBySourceIndex = collectSourceEmissionStateKeyByIndex(
+        sources,
+        w,
+        h,
+        terrain,
+        player,
+    );
+    const cyclicStateSets = findCyclicStateGroups(forwardEdges);
     const cyclicBundles: SteadyStateBundle[] = cyclicStateSets.map((states) => ({
         states: new Set(states),
         sourceIndices: sourceIndicesReachingStateSet(
@@ -515,24 +845,54 @@ export function buildBeamCycleContext(
             pieceAt,
         ),
     }));
-    const connectedBundles = findMultiSourceConnectedStateGroups(input, pieceAt);
+    const connectedBundles = findMultiSourceConnectedStateGroups(
+        input,
+        pieceAt,
+        forwardEdges,
+        reverseEdges,
+    );
     const mergedBundles = mergeOverlappingStateSets(
         [...cyclicBundles, ...connectedBundles],
         pieceAt,
         w,
     );
 
-    const groups: BeamCycleGroup[] = mergedBundles.map((bundle, id) => {
+    const filteredBundles: SteadyStateBundle[] = [];
+    for (const bundle of mergedBundles) {
+        const anchors = buildAnchorStatesForBundle(bundle, forwardEdges, emissionBySourceIndex);
+        const filtered = filterStatesByPieceReturnToAnchors(
+            bundle.states,
+            forwardEdges,
+            anchors,
+            pieceAt,
+            w,
+        );
+        if (filtered.size === 0) {
+            continue;
+        }
+        filteredBundles.push({ states: filtered, sourceIndices: [...bundle.sourceIndices] });
+    }
+
+    const groups: BeamCycleGroup[] = filteredBundles.map((bundle, id) => {
         const stateKeys = bundle.states;
         const cellIndices = statesToCellIndices(stateKeys, w);
         const sourceIndices = bundle.sourceIndices;
+        const anchorStates = buildAnchorStatesForBundle(bundle, forwardEdges, emissionBySourceIndex);
+        const hasClosedCycle = findCycleAnchorStatesInSet(stateKeys, forwardEdges).size > 0;
         return {
             id,
             stateKeys,
             cellIndices,
             sourceIndices,
             sourceColorKeys: sourceColorKeysForIndices(sources, sourceIndices),
-            pieceFilterColorKeys: coloredFilterKeysOnCycleStates(stateKeys, w, pieceAt),
+            pieceFilterColorKeys: coloredFilterKeysOnCycleStates(
+                stateKeys,
+                w,
+                pieceAt,
+                forwardEdges,
+                anchorStates,
+            ),
+            hasClosedCycle,
         };
     });
 
@@ -620,7 +980,7 @@ export function computeCycleUniformColors(
     return out;
 }
 
-/** 稳态环内传播/着色用的统一色（第二遍光追）；仅当射线归属该环光源时替换 */
+/** 稳态环内传播/着色用的统一色；纯源间连通时仅强制稳态网络元件，地板保留滤光结果 */
 export function steadyColorAtCell(
     cx: number,
     cy: number,
@@ -634,12 +994,17 @@ export function steadyColorAtCell(
     if (!steadyByGroup) {
         return colorKey;
     }
-    const gid = ctx.stateToGroupId.get(stateKey(cx, cy, dir));
+    const sk = stateKey(cx, cy, dir);
+    const gid = ctx.stateToGroupId.get(sk);
     if (gid === undefined) {
         return colorKey;
     }
     const group = ctx.groups.find((g) => g.id === gid);
     if (!group || !beamBelongsToSteadyGroup(group, sourceIds)) {
+        return colorKey;
+    }
+    const onSteadyPiece = ctx.cellToGroupId.has(cellIndex(w, cx, cy));
+    if (!onSteadyPiece && !group.hasClosedCycle) {
         return colorKey;
     }
     return steadyByGroup.get(gid) ?? colorKey;

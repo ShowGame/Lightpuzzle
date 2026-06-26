@@ -200,21 +200,7 @@ function cycleGroupIdForPieceEmission(
     cy: number,
     cycleCtx: BeamCycleContext,
 ): number | undefined {
-    const idx = cellIndex(w, cx, cy);
-    const direct = cycleCtx.cellToGroupId.get(idx);
-    if (direct !== undefined) {
-        return direct;
-    }
-    /** 环外一格相连的支路元件（如底绿十字）与所属环同色出射 */
-    for (let d = 0; d < 4; d++) {
-        const nx = cx + DIR_DX[d];
-        const ny = cy + DIR_DY[d];
-        const neighborGid = cycleCtx.cellToGroupId.get(cellIndex(w, nx, ny));
-        if (neighborGid !== undefined) {
-            return neighborGid;
-        }
-    }
-    return undefined;
+    return cycleCtx.cellToGroupId.get(cellIndex(w, cx, cy));
 }
 
 function pieceOutColor(
