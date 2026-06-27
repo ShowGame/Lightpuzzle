@@ -21,7 +21,7 @@ const EYE_CENTER_GAP = 20;
 const BLOCKED_EYE_CENTER_GAP = 22;
 
 /** 与 TargetGlyph 外缘一致：bezel 环宽比例、内面板圆角系数 */
-const BEZEL_RATIO = 0.034;
+const BEZEL_RATIO = 0.017;
 const INNER_CORNER_FACTOR = 0.7;
 const INNER_FRAME_STROKE_RATIO = 0.008;
 

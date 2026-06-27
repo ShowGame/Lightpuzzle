@@ -110,7 +110,7 @@ export function drawTargetLamp(
     const lw = Math.max(1, size * 0.022);
     const litFill = targetLitFillColor(colorKey);
 
-    const bezel = size * 0.034;
+    const bezel = size * 0.017;
     const innerLeft = left + bezel;
     const innerBottom = bottom + bezel;
     const innerSize = size - bezel * 2;

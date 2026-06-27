@@ -19,7 +19,7 @@ const ARM_EDGE_INSET = 1;
 /** 元件格底圆角（设计像素，随格宽等比缩放） */
 const PIECE_CORNER_RADIUS = 4;
 /** 与 Target / Player 外缘一致：bezel 环宽、内面板圆角系数 */
-const BEZEL_RATIO = 0.034;
+const BEZEL_RATIO = 0.017;
 const INNER_CORNER_FACTOR = 0.7;
 /** 内面板描边线宽比例（与 TargetGlyph 点亮内框一致） */
 const INNER_FRAME_STROKE_RATIO = 0.008;
