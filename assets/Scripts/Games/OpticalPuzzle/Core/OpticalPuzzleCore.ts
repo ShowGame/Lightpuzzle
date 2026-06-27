@@ -5,6 +5,13 @@ import type {
     IOpticalTarget,
 } from '../Config/OpticalPuzzleLevelSchema';
 import { colorModeToKey, resolveBeamColorKey } from './OpticalLightColor';
+import type { PieceConnectivity } from './OpticalPieceConnectivity';
+import {
+    normalizeGridCoord,
+    normalizeGridSize,
+    normalizePieceConnectivity,
+    normalizeTerrainKind,
+} from './OpticalRuntimeCoerce';
 import {
     type OpticalBeamBlockContact,
     type OpticalBeamSegment,
@@ -68,20 +75,29 @@ export class OpticalPuzzleCore {
         }
         this._levelId = level.levelId;
         this._levelName = level.levelName;
-        this._w = level.width;
-        this._h = level.height;
-        this._terrain = level.terrain.slice();
-        this._px = level.player.x;
-        this._py = level.player.y;
+        this._w = normalizeGridSize(level.width, level.width);
+        this._h = normalizeGridSize(level.height, level.height);
+        this._terrain = level.terrain.map((t) => normalizeTerrainKind(t) as TerrainKind);
+        this._px = normalizeGridCoord(level.player.x);
+        this._py = normalizeGridCoord(level.player.y);
         this._playerFacing = Direction.Left;
         this._sources = level.sources.map((s) => ({
             ...s,
+            x: normalizeGridCoord(s.x),
+            y: normalizeGridCoord(s.y),
             direction: normalizeDirection(s.direction, Direction.Down),
         }));
-        this._targets = level.targets.map((t) => ({ ...t }));
+        this._targets = level.targets.map((t) => ({
+            ...t,
+            x: normalizeGridCoord(t.x),
+            y: normalizeGridCoord(t.y),
+        }));
         this._pieces = level.pieces.map((p) => ({
             ...p,
+            x: normalizeGridCoord(p.x),
+            y: normalizeGridCoord(p.y),
             direction: normalizeDirection(p.direction, Direction.Up),
+            connectivity: normalizePieceConnectivity(p.connectivity) as PieceConnectivity,
         }));
         this._recomputeLighting();
     }
@@ -170,10 +186,16 @@ export class OpticalPuzzleCore {
     }
 
     restorePlayState(data: OpticalPlayStateSnapshot, options?: { deferLighting?: boolean }): void {
-        this._px = data.player.x;
-        this._py = data.player.y;
-        this._playerFacing = data.playerFacing ?? Direction.Left;
-        this._pieces = data.pieces.map((p) => ({ ...p }));
+        this._px = normalizeGridCoord(data.player.x);
+        this._py = normalizeGridCoord(data.player.y);
+        this._playerFacing = normalizeDirection(data.playerFacing, Direction.Left);
+        this._pieces = data.pieces.map((p) => ({
+            ...p,
+            x: normalizeGridCoord(p.x),
+            y: normalizeGridCoord(p.y),
+            direction: normalizeDirection(p.direction, Direction.Up),
+            connectivity: normalizePieceConnectivity(p.connectivity) as PieceConnectivity,
+        }));
         if (!options?.deferLighting) {
             this._recomputeLighting();
         }

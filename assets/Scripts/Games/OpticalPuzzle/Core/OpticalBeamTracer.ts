@@ -23,11 +23,20 @@ import {
     steadyEmissionColorForSource,
 } from './OpticalBeamCycleResolve';
 import { colorModeToKey, lightMatchesTarget, resolveBeamColorKey } from './OpticalLightColor';
+import type { PieceConnectivity } from './OpticalPieceConnectivity';
 import {
     entrySideToPropagation,
     openDirectionsForPiece,
     propagationToEntrySide,
 } from './OpticalPieceConnectivity';
+import {
+    normalizeGridCoord,
+    normalizeGridSize,
+    normalizePieceConnectivity,
+    normalizeTerrainKind,
+    opticalDirDelta,
+    terrainKindAt,
+} from './OpticalRuntimeCoerce';
 import { Direction, normalizeDirection, TerrainKind } from './OpticalPuzzleTypes';
 
 const DIR_DX: ReadonlyArray<number> = [1, 0, -1, 0];
@@ -79,7 +88,7 @@ function inBounds(x: number, y: number, w: number, h: number): boolean {
 }
 
 function isWall(x: number, y: number, w: number, terrain: TerrainKind[]): boolean {
-    return terrain[cellIndex(w, x, y)] === TerrainKind.Wall;
+    return terrainKindAt(terrain, cellIndex(w, x, y)) === TerrainKind.Wall;
 }
 
 function isPlayerCell(x: number, y: number, player: { x: number; y: number }): boolean {
@@ -298,7 +307,7 @@ function processWavePendingPieces(
     cycleCtx: BeamCycleContext,
     cycleUniformByGroup?: ReadonlyMap<number, MixedLightColorKey>,
 ): void {
-    const cells = sortPieceCellKeys([...pendingPieceCells]);
+    const cells = sortPieceCellKeys(Array.from(pendingPieceCells));
     pendingPieceCells.clear();
 
     for (const cellKey of cells) {
@@ -395,7 +404,7 @@ function advanceBeamRay(
         return;
     }
 
-    if (terrain[cellIndex(w, cx, cy)] === TerrainKind.Target) {
+    if (terrainKindAt(terrain, cellIndex(w, cx, cy)) === TerrainKind.Target) {
         pushSegment(
             outSegments,
             ax,
@@ -408,7 +417,7 @@ function advanceBeamRay(
         return;
     }
 
-    if (terrain[cellIndex(w, cx, cy)] === TerrainKind.Source) {
+    if (terrainKindAt(terrain, cellIndex(w, cx, cy)) === TerrainKind.Source) {
         pushSegment(
             outSegments,
             ax,
@@ -540,7 +549,7 @@ function dedupeWaveRays(beams: readonly BeamRay[]): BeamRay[] {
             mergeSourceIds(existing.sourceIds, beam.sourceIds);
         }
     }
-    return [...map.values()];
+    return Array.from(map.values());
 }
 
 function traceAllBeams(
@@ -560,17 +569,18 @@ function traceAllBeams(
 
     for (let si = 0; si < sources.length; si++) {
         const src = sources[si];
-        const srcDir = normalizeDirection(src.direction, Direction.Down);
-        const dx0 = DIR_DX[srcDir];
-        const dy0 = DIR_DY[srcDir];
-        if (dx0 === undefined || dy0 === undefined) {
+        const delta = opticalDirDelta(src.direction);
+        if (!delta) {
             continue;
         }
+        const { dx: dx0, dy: dy0, dir: srcDir } = delta;
+        const sx = normalizeGridCoord(src.x);
+        const sy = normalizeGridCoord(src.y);
         currentWave.push({
-            ax: src.x + 0.5 + dx0 * 0.5,
-            ay: src.y + 0.5 + dy0 * 0.5,
-            cx: src.x + dx0,
-            cy: src.y + dy0,
+            ax: sx + 0.5 + dx0 * 0.5,
+            ay: sy + 0.5 + dy0 * 0.5,
+            cx: sx + dx0,
+            cy: sy + dy0,
             dir: srcDir,
             colorKey: steadyEmissionColorForSource(
                 src,
@@ -639,7 +649,37 @@ function traceAllBeams(
 
 /** 通道 0～4 统一光追（波层同步多光源 + 稳态环后处理） */
 export function traceBeams(input: OpticalBeamTraceInput): OpticalBeamTraceResult {
-    const { width: w, pieces, sources, targets } = input;
+    const w = normalizeGridSize(input.width, input.width);
+    const h = normalizeGridSize(input.height, input.height);
+    const normalizedInput: OpticalBeamTraceInput = {
+        ...input,
+        width: w,
+        height: h,
+        terrain: input.terrain.map((t) => normalizeTerrainKind(t) as TerrainKind),
+        player: {
+            x: normalizeGridCoord(input.player.x),
+            y: normalizeGridCoord(input.player.y),
+        },
+        pieces: input.pieces.map((p) => ({
+            ...p,
+            x: normalizeGridCoord(p.x),
+            y: normalizeGridCoord(p.y),
+            direction: normalizeDirection(p.direction, Direction.Up),
+            connectivity: normalizePieceConnectivity(p.connectivity) as PieceConnectivity,
+        })),
+        sources: input.sources.map((s) => ({
+            ...s,
+            x: normalizeGridCoord(s.x),
+            y: normalizeGridCoord(s.y),
+            direction: normalizeDirection(s.direction, Direction.Down),
+        })),
+        targets: input.targets.map((t) => ({
+            ...t,
+            x: normalizeGridCoord(t.x),
+            y: normalizeGridCoord(t.y),
+        })),
+    };
+    const { pieces, sources, targets } = normalizedInput;
     const pieceAt = new Map<number, IOpticalPiece>();
     for (const p of pieces) {
         pieceAt.set(cellIndex(w, p.x, p.y), p);
@@ -649,13 +689,13 @@ export function traceBeams(input: OpticalBeamTraceInput): OpticalBeamTraceResult
         targetAt.set(cellIndex(w, t.x, t.y), i);
     });
 
-    const cycleCtx = buildBeamCycleContext(input, pieceAt);
+    const cycleCtx = buildBeamCycleContext(normalizedInput, pieceAt);
     const incomingByCycle = createCycleIncomingMap(cycleCtx);
 
     /** 第一遍：收集环外入射（不产出最终光段） */
     const incomingProbeLit = targets.map(() => false);
     traceAllBeams(
-        input,
+        normalizedInput,
         sources,
         pieceAt,
         targetAt,
@@ -674,7 +714,7 @@ export function traceBeams(input: OpticalBeamTraceInput): OpticalBeamTraceResult
     const rawBlockContacts: OpticalBeamBlockContact[] = [];
     const scratchTargetLit = targets.map(() => false);
     traceAllBeams(
-        input,
+        normalizedInput,
         sources,
         pieceAt,
         targetAt,

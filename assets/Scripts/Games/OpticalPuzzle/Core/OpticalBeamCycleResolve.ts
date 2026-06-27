@@ -2,6 +2,7 @@ import type { IOpticalLightSource, IOpticalPiece } from '../Config/OpticalPuzzle
 import type { OpticalBeamSegment } from './OpticalBeamTypes';
 import { mixLightColors, type MixedLightColorKey } from './OpticalColorMix';
 import { colorModeToKey, resolveBeamColorKey } from './OpticalLightColor';
+import { terrainKindAt } from './OpticalRuntimeCoerce';
 import {
     canEnterPieceWithPropagation,
     entrySideToPropagation,
@@ -60,7 +61,7 @@ function isBlockedCell(
     if (player.x === x && player.y === y) {
         return true;
     }
-    const t = terrain[cellIndex(w, x, y)];
+    const t = terrainKindAt(terrain, cellIndex(w, x, y));
     return t === TerrainKind.Wall || t === TerrainKind.Source || t === TerrainKind.Target;
 }
 
@@ -1023,7 +1024,7 @@ export function steadyEmissionColorForSource(
         return base;
     }
     for (const g of ctx.groups) {
-        if (g.sourceIndices.includes(sourceIndex)) {
+        if (g.sourceIndices.some((sid) => Number(sid) === Number(sourceIndex))) {
             const steady = steadyByGroup.get(g.id);
             if (steady !== undefined) {
                 return steady;
@@ -1034,8 +1035,8 @@ export function steadyEmissionColorForSource(
 }
 
 function beamBelongsToSteadyGroup(group: BeamCycleGroup, sourceIds: ReadonlySet<number>): boolean {
-    for (const sid of sourceIds) {
-        if (group.sourceIndices.includes(sid)) {
+    for (const sid of Array.from(sourceIds)) {
+        if (group.sourceIndices.includes(Number(sid))) {
             return true;
         }
     }

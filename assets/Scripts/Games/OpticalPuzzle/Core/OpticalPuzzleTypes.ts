@@ -15,11 +15,14 @@ const DIR_CHAR_TO_DIRECTION: Readonly<Record<string, Direction>> = {
     s: Direction.Down,
 };
 
+/** 字面量 fallback，避免微信包 enum 初始化顺序导致 Direction.Down 为 undefined */
+const DIR_DOWN_LITERAL = 3 as Direction;
+
 /**
  * 将关卡/存档中的朝向归一为 0～3 数值枚举。
- * 微信包 Rollup 后偶发 string（wasd 或枚举名），会导致 DIR_DX[dir] 为 undefined → 光追零段。
+ * 微信包 Rollup 后偶发 string（wasd、数字串或枚举名），会导致 DIR_DX[dir] 为 undefined → 光追零段。
  */
-export function normalizeDirection(dir: unknown, fallback: Direction = Direction.Down): Direction {
+export function normalizeDirection(dir: unknown, fallback: Direction = DIR_DOWN_LITERAL): Direction {
     if (typeof dir === 'number' && Number.isFinite(dir)) {
         const n = Math.floor(dir);
         if (n >= 0 && n <= 3) {
@@ -27,16 +30,25 @@ export function normalizeDirection(dir: unknown, fallback: Direction = Direction
         }
     }
     if (typeof dir === 'string') {
-        const fromChar = DIR_CHAR_TO_DIRECTION[dir];
+        const trimmed = dir.trim();
+        const fromChar = DIR_CHAR_TO_DIRECTION[trimmed] ?? DIR_CHAR_TO_DIRECTION[trimmed.toLowerCase()];
         if (fromChar !== undefined) {
             return fromChar;
         }
-        const fromEnum = Direction[dir as keyof typeof Direction];
+        const asNum = Number(trimmed);
+        if (Number.isFinite(asNum)) {
+            const n = Math.floor(asNum);
+            if (n >= 0 && n <= 3) {
+                return n as Direction;
+            }
+        }
+        const fromEnum = Direction[trimmed as keyof typeof Direction];
         if (typeof fromEnum === 'number' && fromEnum >= 0 && fromEnum <= 3) {
             return fromEnum as Direction;
         }
     }
-    return fallback;
+    const fb = typeof fallback === 'number' && fallback >= 0 && fallback <= 3 ? fallback : DIR_DOWN_LITERAL;
+    return fb as Direction;
 }
 
 /** 地形（与《小游戏设计文档》§3.2） */

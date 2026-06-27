@@ -137,8 +137,8 @@ export class OpticalPuzzleRoot extends Component {
         if (!resolved) {
             console.warn(`[OpticalPuzzleRoot] 未知关卡 id=${levelId}，使用 DEV_LEVEL_MINIMAL`);
         }
-        this._session.loadLevel(level);
         this._applyPlayLayerLayout(level.width, level.height);
+        this._session.loadLevel(level);
         this._cancelWinRevealSchedule();
         this._setPreWinPanelVisible(false);
         this._setWinPanelVisible(false);

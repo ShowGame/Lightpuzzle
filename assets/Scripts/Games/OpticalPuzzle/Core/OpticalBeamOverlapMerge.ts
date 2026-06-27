@@ -80,7 +80,7 @@ function sweepMergeIntervals(list: readonly AxisInterval[]): AxisInterval[] {
         points.add(s.start);
         points.add(s.end);
     }
-    const sorted = [...points].sort((a, b) => a - b);
+    const sorted = Array.from(points).sort((a, b) => a - b);
     const out: AxisInterval[] = [];
 
     for (let i = 0; i < sorted.length - 1; i++) {
@@ -179,7 +179,7 @@ export function computeCrossBeamOverlays(segments: readonly OpticalBeamSegment[]
     }
 
     const overlays: OpticalCrossBeamOverlay[] = [];
-    for (const [key, colors] of colorSets) {
+    for (const [key, colors] of Array.from(colorSets.entries())) {
         if (colors.size < 2) {
             continue;
         }
@@ -187,11 +187,12 @@ export function computeCrossBeamOverlays(segments: readonly OpticalBeamSegment[]
         if (!pt) {
             continue;
         }
+        const colorList = Array.from(colors);
         overlays.push({
             x: pt.x,
             y: pt.y,
-            colorKey: mixLightColors([...colors]),
-            colorKeys: [...colors],
+            colorKey: mixLightColors(colorList),
+            colorKeys: colorList,
         });
     }
     return overlays;
@@ -295,7 +296,7 @@ export function mergeOverlappingBeamSegments(segments: readonly OpticalBeamSegme
     }
 
     const merged: OpticalBeamSegment[] = [...passthrough];
-    for (const bucket of axisBuckets.values()) {
+    for (const bucket of Array.from(axisBuckets.values())) {
         for (const interval of sweepMergeIntervals(bucket)) {
             merged.push(axisIntervalToSegment(interval));
         }
