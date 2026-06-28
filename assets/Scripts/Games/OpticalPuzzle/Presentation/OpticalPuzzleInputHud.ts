@@ -15,6 +15,7 @@ import { Direction } from '../Core/OpticalPuzzleTypes';
 import { AUDIO_EFFECT_ENUM, EVENT_ENUM } from '../../../Utils/Enum';
 import { PLAY_AUDIO } from '../../../Utils/Event';
 import { showWeChatRewardedVideo } from '../../../Utils/WeChatRewardedVideoAd';
+import { invokeWeChatFriendShare } from '../../../Utils/WeChatShare';
 import { openAnswerPanel, resolveAnswerPanelNode } from './OpticalPuzzleAnswerPanel';
 import { ensureActionButtonViews, OpticalPuzzleActionButtonView } from './OpticalPuzzleActionButtonView';
 import type { OpticalPuzzleBoardView } from './OpticalPuzzleBoardView';
@@ -48,6 +49,10 @@ export class OpticalPuzzleInputHud extends Component {
     @property(Button)
     btnAnswer: Button | null = null;
 
+    /** 微信分享（ActionPad/BtnShare） */
+    @property(Button)
+    btnShare: Button | null = null;
+
     private _session: OpticalPuzzleSession | null = null;
     private _boardView: OpticalPuzzleBoardView | null = null;
     /** 激励广告拉起中，避免重复点击 */
@@ -73,6 +78,7 @@ export class OpticalPuzzleInputHud extends Component {
         this.btnUndo = this._resolveButton(actionPad, 'BtnUndo', this.btnUndo);
         this.btnReset = this._resolveButton(actionPad, 'BtnReset', this.btnReset);
         this.btnAnswer = this._resolveButton(actionPad, 'BtnAnswer', this.btnAnswer);
+        this.btnShare = this._resolveButton(actionPad, 'BtnShare', this.btnShare);
     }
 
     private _resolveButton(
@@ -108,6 +114,7 @@ export class OpticalPuzzleInputHud extends Component {
         this.btnUndo?.node.on(Button.EventType.CLICK, this._onUndo, this);
         this.btnReset?.node.on(Button.EventType.CLICK, this._onReset, this);
         this.btnAnswer?.node.on(Button.EventType.CLICK, this._onAnswer, this);
+        this.btnShare?.node.on(Button.EventType.CLICK, this._onShare, this);
         this._bindUndoVideoBadgeHit();
         this._bindAnswerVideoBadgeHit();
         input.on(Input.EventType.KEY_DOWN, this._onKeyDown, this);
@@ -159,6 +166,7 @@ export class OpticalPuzzleInputHud extends Component {
         this._unbindBtnClick(this.btnUndo, this._onUndo);
         this._unbindBtnClick(this.btnReset, this._onReset);
         this._unbindBtnClick(this.btnAnswer, this._onAnswer);
+        this._unbindBtnClick(this.btnShare, this._onShare);
         this._unbindUndoBadgeClick();
         this._unbindAnswerBadgeClick();
         this._btnUndoBadge = null;
@@ -349,6 +357,19 @@ export class OpticalPuzzleInputHud extends Component {
         }
         this._playUiClick();
         this._session?.resetLevel();
+    }
+
+    /** 微信好友分享（与菜单 BtnShare 一致；非微信环境静默失败） */
+    private _onShare(): void {
+        this._playUiClick();
+        invokeWeChatFriendShare({
+            onSuccess: () => {
+                /* 可按需加分享奖励 */
+            },
+            onFail: () => {
+                /* 浏览器预览等环境无 wx.shareAppMessage */
+            },
+        });
     }
 
     private _onAnswer(): void {

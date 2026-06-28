@@ -276,6 +276,9 @@ export class OpticalPuzzleActionButtonView extends Component {
         if (key.includes('undo')) {
             return ActionButtonKind.Undo;
         }
+        if (key.includes('share')) {
+            return ActionButtonKind.Share;
+        }
         return fallback;
     }
 

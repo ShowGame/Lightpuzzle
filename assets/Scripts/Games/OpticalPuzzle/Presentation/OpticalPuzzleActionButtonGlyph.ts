@@ -12,6 +12,7 @@ import {
     unlitHudIconColor,
 } from './OpticalPuzzleHudButtonCommon';
 import { traceHudSvgDirectionArrow } from './OpticalPuzzleHudArrowGlyph';
+import { drawHudShareIcon } from './MenuShareButtonGlyph';
 import { Direction } from '../Core/OpticalPuzzleTypes';
 
 import { UNDO_ICON_FILL_STAGES } from '../Application/OpticalPuzzleSession';
@@ -22,10 +23,13 @@ export enum ActionButtonKind {
     Undo = 'undo',
     Reset = 'reset',
     Answer = 'answer',
+    Share = 'share',
 }
 
 /** 图标占键帽比例（与四向键 ARROW_SIZE_RATIO 一致） */
 const ICON_SIZE_RATIO = 0.42;
+/** 分享 icon 在默认占格基础上放大 20%（描边仍按键帽 size 与其他操作键一致） */
+const SHARE_ICON_SIZE_RATIO = ICON_SIZE_RATIO * 1.2;
 /** 路径归一化半径（viewBox 1102×1024 → 80 键帽约 17px 半宽） */
 const UNDO_PATH_UNIT = 17;
 /** 重开图标路径半宽（viewBox 1024×1024，iconR=10） */
@@ -802,6 +806,11 @@ export function drawActionButtonGlyph(
 
     if (kind === ActionButtonKind.Reset) {
         drawResetIcon(g, cx, cy, size, pressed);
+        return;
+    }
+
+    if (kind === ActionButtonKind.Share) {
+        drawHudShareIcon(g, cx, cy, size, pressed, SHARE_ICON_SIZE_RATIO);
         return;
     }
 

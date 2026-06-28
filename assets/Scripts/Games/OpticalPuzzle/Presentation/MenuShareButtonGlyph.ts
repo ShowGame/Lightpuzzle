@@ -1,5 +1,12 @@
 import { Color, Graphics } from 'cc';
-import { unlitHudIconColor } from './OpticalPuzzleHudButtonCommon';
+import {
+    HUD_ICON_BORDER_DESIGN,
+    pressedHudIconColor,
+    scaleHudDesign,
+    strokeGlowLayers,
+    PRESSED_GLOW_LAYERS,
+    unlitHudIconColor,
+} from './OpticalPuzzleHudButtonCommon';
 import {
     drawMenuCircleButtonChrome,
     MENU_START_ICON_BORDER_PX,
@@ -103,6 +110,41 @@ function drawMenuShareIcon(
     g.lineJoin = Graphics.LineJoin.ROUND;
     g.lineCap = Graphics.LineCap.ROUND;
     traceShareIconStroke(g, cx, cy, iconH);
+    g.stroke();
+}
+
+/** ActionPad 等方键帽：三圆分享 icon（与菜单同路径，HUD 描边/光晕） */
+export function drawHudShareIcon(
+    g: Graphics,
+    cx: number,
+    cy: number,
+    size: number,
+    pressed: boolean,
+    iconSizeRatio = 0.42,
+): void {
+    const iconH = size * iconSizeRatio;
+    const borderW = Math.max(1, scaleHudDesign(size, HUD_ICON_BORDER_DESIGN));
+    const traceStroke = (): void => {
+        traceShareIconStroke(g, cx, cy, iconH);
+    };
+
+    if (pressed) {
+        g.fillColor = pressedHudIconColor();
+        traceShareCircles(g, cx, cy, iconH);
+        g.fill();
+        strokeGlowLayers(g, size, PRESSED_GLOW_LAYERS, traceStroke, true);
+        return;
+    }
+
+    g.fillColor = unlitHudIconColor();
+    traceShareCircles(g, cx, cy, iconH);
+    g.fill();
+
+    g.strokeColor = MENU_ICON_BORDER;
+    g.lineWidth = borderW;
+    g.lineJoin = Graphics.LineJoin.ROUND;
+    g.lineCap = Graphics.LineCap.ROUND;
+    traceStroke();
     g.stroke();
 }
 

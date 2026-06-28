@@ -4,8 +4,8 @@
  */
 
 /** 与转发、朋友圈展示文案一致时可改此处 */
-const SHARE_TITLE_FRIEND = '光学解谜 — 你能点亮全部接收器吗？';
-const SHARE_TITLE_TIMELINE = '光学解谜 — 推光路大挑战';
+const SHARE_TITLE_FRIEND = '物理老师来了都要被硬控60s';
+const SHARE_TITLE_TIMELINE = '光学解谜 — 光路大挑战';
 
 /**
  * 分享预览图（imageUrl）。
