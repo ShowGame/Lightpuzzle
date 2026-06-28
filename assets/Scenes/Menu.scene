@@ -6677,7 +6677,7 @@
     "_horizontalAlign": 0,
     "_verticalAlign": 1,
     "_actualFontSize": 43,
-    "_fontSize": 54,
+    "_fontSize": 60,
     "_fontFamily": "Arial",
     "_lineHeight": 74,
     "_overflow": 2,
@@ -6737,7 +6737,7 @@
     "_lpos": {
       "__type__": "cc.Vec3",
       "x": 0,
-      "y": -550,
+      "y": -560,
       "z": 0
     },
     "_lrot": {
