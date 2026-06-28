@@ -20,7 +20,7 @@
         "__id__": 2
       },
       {
-        "__id__": 187
+        "__id__": 193
       }
     ],
     "_active": true,
@@ -55,7 +55,7 @@
     },
     "autoReleaseAssets": false,
     "_globals": {
-      "__id__": 193
+      "__id__": 199
     },
     "_id": "1b5a962f-d18d-4a44-b0bd-fbec9266aaf5"
   },
@@ -78,13 +78,13 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 184
+        "__id__": 190
       },
       {
-        "__id__": 185
+        "__id__": 191
       },
       {
-        "__id__": 186
+        "__id__": 192
       }
     ],
     "_prefab": null,
@@ -230,10 +230,10 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 182
+        "__id__": 188
       },
       {
-        "__id__": 183
+        "__id__": 189
       }
     ],
     "_prefab": null,
@@ -4204,7 +4204,7 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 181
+        "__id__": 187
       }
     ],
     "_prefab": null,
@@ -5552,15 +5552,21 @@
       },
       {
         "__id__": 172
+      },
+      {
+        "__id__": 179
+      },
+      {
+        "__id__": 182
       }
     ],
     "_active": false,
     "_components": [
       {
-        "__id__": 179
+        "__id__": 185
       },
       {
-        "__id__": 180
+        "__id__": 186
       }
     ],
     "_prefab": null,
@@ -6220,7 +6226,7 @@
     "_string": "开 发 者",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 341,
+    "_actualFontSize": 360,
     "_fontSize": 340,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
@@ -6578,6 +6584,270 @@
     "_id": "425+BfcBtJ4omJ4dMHcOMS"
   },
   {
+    "__type__": "cc.Node",
+    "_name": "text",
+    "_objFlags": 0,
+    "__editorExtras__": {},
+    "_parent": {
+      "__id__": 151
+    },
+    "_children": [],
+    "_active": true,
+    "_components": [
+      {
+        "__id__": 180
+      },
+      {
+        "__id__": 181
+      }
+    ],
+    "_prefab": null,
+    "_lpos": {
+      "__type__": "cc.Vec3",
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "_lrot": {
+      "__type__": "cc.Quat",
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "w": 1
+    },
+    "_lscale": {
+      "__type__": "cc.Vec3",
+      "x": 0.5,
+      "y": 0.5,
+      "z": 1
+    },
+    "_mobility": 0,
+    "_layer": 33554432,
+    "_euler": {
+      "__type__": "cc.Vec3",
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "_id": "f1r2OphpFNyIU7Sa8K3rsy"
+  },
+  {
+    "__type__": "cc.UITransform",
+    "_name": "",
+    "_objFlags": 0,
+    "__editorExtras__": {},
+    "node": {
+      "__id__": 179
+    },
+    "_enabled": true,
+    "__prefab": null,
+    "_contentSize": {
+      "__type__": "cc.Size",
+      "width": 1200,
+      "height": 2050
+    },
+    "_anchorPoint": {
+      "__type__": "cc.Vec2",
+      "x": 0.5,
+      "y": 0.5
+    },
+    "_id": "e9bJAGE7FDf6koZvyZbAjZ"
+  },
+  {
+    "__type__": "cc.Label",
+    "_name": "",
+    "_objFlags": 0,
+    "__editorExtras__": {},
+    "node": {
+      "__id__": 179
+    },
+    "_enabled": true,
+    "__prefab": null,
+    "_customMaterial": null,
+    "_srcBlendFactor": 2,
+    "_dstBlendFactor": 4,
+    "_color": {
+      "__type__": "cc.Color",
+      "r": 255,
+      "g": 255,
+      "b": 255,
+      "a": 255
+    },
+    "_string": "　　《光学迷宫》（Light Puzzle）由秀幹工作室独立开发完成，面向喜爱动脑、节奏偏休闲的解谜玩家。\n\n　　玩法上，以经典推箱子为骨架：按「只能推、不能拉」的规则推动光学元件，在有限空间里反复试错、调整布局。光学点亮的玩法则参考了独立游戏《Sampo Lock》的解谜思路，让玩家在百变的光路组合中寻求正确答案。\n\n　　视觉方面，参考了独立游戏《帕特里克的箱子》（Patrick's Parabox），采用简洁明快的 2D 画风，降低认知负担，让玩家更专注解谜本身。推动箱子过程的Q弹效果、光线溅射则是做了反复的打磨。\n\n　　音乐方面，游戏以纾缓的钢琴曲作为背景音乐，不抢思考时的注意力，又能在解谜过程提供一点陪伴。\n\n　　本作的核心创新在于光路颜色叠加：红、绿、蓝等光束沿格网传播，经染色、分光等元件交互后，按规则混合、分路或阻挡；玩家需同时满足路径正确与颜色匹配，才能点亮全部接收器并通关。\n\n　　《光学迷宫》是团队在经典推箱范式与现代光学解谜之间的一次融合尝试，希望以「动一子、变万光」的策略深度，带来清晰、耐玩、有成就感的解谜体验。\n\n　　最后，谢谢你玩我的游戏。",
+    "_horizontalAlign": 0,
+    "_verticalAlign": 1,
+    "_actualFontSize": 43,
+    "_fontSize": 54,
+    "_fontFamily": "Arial",
+    "_lineHeight": 74,
+    "_overflow": 2,
+    "_enableWrapText": true,
+    "_font": null,
+    "_isSystemFontUsed": true,
+    "_spacingX": 0,
+    "_isItalic": false,
+    "_isBold": false,
+    "_isUnderline": false,
+    "_underlineHeight": 2,
+    "_cacheMode": 0,
+    "_enableOutline": false,
+    "_outlineColor": {
+      "__type__": "cc.Color",
+      "r": 0,
+      "g": 0,
+      "b": 0,
+      "a": 255
+    },
+    "_outlineWidth": 2,
+    "_enableShadow": false,
+    "_shadowColor": {
+      "__type__": "cc.Color",
+      "r": 0,
+      "g": 0,
+      "b": 0,
+      "a": 255
+    },
+    "_shadowOffset": {
+      "__type__": "cc.Vec2",
+      "x": 2,
+      "y": 2
+    },
+    "_shadowBlur": 2,
+    "_id": "60OfIQzYhINocIqIHvM8Jb"
+  },
+  {
+    "__type__": "cc.Node",
+    "_name": "text-end",
+    "_objFlags": 0,
+    "__editorExtras__": {},
+    "_parent": {
+      "__id__": 151
+    },
+    "_children": [],
+    "_active": true,
+    "_components": [
+      {
+        "__id__": 183
+      },
+      {
+        "__id__": 184
+      }
+    ],
+    "_prefab": null,
+    "_lpos": {
+      "__type__": "cc.Vec3",
+      "x": 0,
+      "y": -550,
+      "z": 0
+    },
+    "_lrot": {
+      "__type__": "cc.Quat",
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "w": 1
+    },
+    "_lscale": {
+      "__type__": "cc.Vec3",
+      "x": 0.5,
+      "y": 0.5,
+      "z": 1
+    },
+    "_mobility": 0,
+    "_layer": 33554432,
+    "_euler": {
+      "__type__": "cc.Vec3",
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "_id": "39H7BQAvtLkpy0BRZQZ5dp"
+  },
+  {
+    "__type__": "cc.UITransform",
+    "_name": "",
+    "_objFlags": 0,
+    "__editorExtras__": {},
+    "node": {
+      "__id__": 182
+    },
+    "_enabled": true,
+    "__prefab": null,
+    "_contentSize": {
+      "__type__": "cc.Size",
+      "width": 1150,
+      "height": 200
+    },
+    "_anchorPoint": {
+      "__type__": "cc.Vec2",
+      "x": 0.5,
+      "y": 0.5
+    },
+    "_id": "78VBWXQ/hPbo48iK5ELFWF"
+  },
+  {
+    "__type__": "cc.Label",
+    "_name": "",
+    "_objFlags": 0,
+    "__editorExtras__": {},
+    "node": {
+      "__id__": 182
+    },
+    "_enabled": true,
+    "__prefab": null,
+    "_customMaterial": null,
+    "_srcBlendFactor": 2,
+    "_dstBlendFactor": 4,
+    "_color": {
+      "__type__": "cc.Color",
+      "r": 255,
+      "g": 255,
+      "b": 255,
+      "a": 255
+    },
+    "_string": "——  秀幹工作室\n(1208857549@qq.com)",
+    "_horizontalAlign": 2,
+    "_verticalAlign": 1,
+    "_actualFontSize": 58,
+    "_fontSize": 50,
+    "_fontFamily": "Arial",
+    "_lineHeight": 74,
+    "_overflow": 2,
+    "_enableWrapText": true,
+    "_font": null,
+    "_isSystemFontUsed": true,
+    "_spacingX": 0,
+    "_isItalic": false,
+    "_isBold": false,
+    "_isUnderline": false,
+    "_underlineHeight": 2,
+    "_cacheMode": 0,
+    "_enableOutline": false,
+    "_outlineColor": {
+      "__type__": "cc.Color",
+      "r": 0,
+      "g": 0,
+      "b": 0,
+      "a": 255
+    },
+    "_outlineWidth": 2,
+    "_enableShadow": false,
+    "_shadowColor": {
+      "__type__": "cc.Color",
+      "r": 0,
+      "g": 0,
+      "b": 0,
+      "a": 255
+    },
+    "_shadowOffset": {
+      "__type__": "cc.Vec2",
+      "x": 2,
+      "y": 2
+    },
+    "_shadowBlur": 2,
+    "_id": "2aWB7EiENEm54kMGNfs496"
+  },
+  {
     "__type__": "cc.UITransform",
     "_name": "",
     "_objFlags": 0,
@@ -6768,10 +7038,10 @@
     },
     "_children": [
       {
-        "__id__": 188
+        "__id__": 194
       },
       {
-        "__id__": 191
+        "__id__": 197
       }
     ],
     "_active": true,
@@ -6812,16 +7082,16 @@
     "_objFlags": 0,
     "__editorExtras__": {},
     "_parent": {
-      "__id__": 187
+      "__id__": 193
     },
     "_children": [],
     "_active": true,
     "_components": [
       {
-        "__id__": 189
+        "__id__": 195
       },
       {
-        "__id__": 190
+        "__id__": 196
       }
     ],
     "_prefab": null,
@@ -6860,7 +7130,7 @@
     "_objFlags": 0,
     "__editorExtras__": {},
     "node": {
-      "__id__": 188
+      "__id__": 194
     },
     "_enabled": true,
     "__prefab": null,
@@ -6889,7 +7159,7 @@
       "__expectedType__": "cc.AudioClip"
     },
     "audioSource": {
-      "__id__": 190
+      "__id__": 196
     },
     "_id": "7cYYvJz8JEyaaZbpIOlw1a"
   },
@@ -6899,7 +7169,7 @@
     "_objFlags": 0,
     "__editorExtras__": {},
     "node": {
-      "__id__": 188
+      "__id__": 194
     },
     "_enabled": true,
     "__prefab": null,
@@ -6918,13 +7188,13 @@
     "_objFlags": 0,
     "__editorExtras__": {},
     "_parent": {
-      "__id__": 187
+      "__id__": 193
     },
     "_children": [],
     "_active": true,
     "_components": [
       {
-        "__id__": 192
+        "__id__": 198
       }
     ],
     "_prefab": null,
@@ -6963,7 +7233,7 @@
     "_objFlags": 0,
     "__editorExtras__": {},
     "node": {
-      "__id__": 191
+      "__id__": 197
     },
     "_enabled": true,
     "__prefab": null,
@@ -6976,28 +7246,28 @@
   {
     "__type__": "cc.SceneGlobals",
     "ambient": {
-      "__id__": 194
-    },
-    "shadows": {
-      "__id__": 195
-    },
-    "_skybox": {
-      "__id__": 196
-    },
-    "fog": {
-      "__id__": 197
-    },
-    "octree": {
-      "__id__": 198
-    },
-    "skin": {
-      "__id__": 199
-    },
-    "lightProbeInfo": {
       "__id__": 200
     },
-    "postSettings": {
+    "shadows": {
       "__id__": 201
+    },
+    "_skybox": {
+      "__id__": 202
+    },
+    "fog": {
+      "__id__": 203
+    },
+    "octree": {
+      "__id__": 204
+    },
+    "skin": {
+      "__id__": 205
+    },
+    "lightProbeInfo": {
+      "__id__": 206
+    },
+    "postSettings": {
+      "__id__": 207
     },
     "bakedWithStationaryMainLight": false,
     "bakedWithHighpLightmap": false
