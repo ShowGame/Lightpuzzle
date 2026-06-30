@@ -359,10 +359,12 @@ export class OpticalPuzzleInputHud extends Component {
         this._session?.resetLevel();
     }
 
-    /** 微信好友分享（与菜单 BtnShare 一致；非微信环境静默失败） */
+    /** 微信好友分享（局内带 levelId query + 动态标题） */
     private _onShare(): void {
         this._playUiClick();
+        const levelId = this._session?.getSnapshot().levelId;
         invokeWeChatFriendShare({
+            levelId: levelId && levelId > 0 ? levelId : undefined,
             onSuccess: () => {
                 /* 可按需加分享奖励 */
             },

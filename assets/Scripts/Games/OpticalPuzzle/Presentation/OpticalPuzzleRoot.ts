@@ -17,6 +17,11 @@ import { OpticalPuzzleBoardView } from './OpticalPuzzleBoardView';
 import { OpticalPuzzleInputHud } from './OpticalPuzzleInputHud';
 import { computePlayLayerPosition, computePlayLayerScale } from './OpticalPuzzleLayout';
 import {
+    consumeShareEntryLevelId,
+    setWeChatShareContext,
+    setWeChatShareEntryRouteHandler,
+} from '../../../Utils/WeChatShare';
+import {
     OpticalPuzzleWinPanelNextLevelButtonView,
     resolveWinPanelNextLevelNode,
 } from './OpticalPuzzleWinPanelNextLevelButtonView';
@@ -117,7 +122,21 @@ export class OpticalPuzzleRoot extends Component {
             console.warn('[OpticalPuzzleRoot] 未绑定 OpticalPuzzleInputHud');
         }
 
-        this.reloadCurrentLevel();
+        setWeChatShareEntryRouteHandler((levelId) => this.enterFromShareLink(levelId));
+
+        const shareLevelId = consumeShareEntryLevelId();
+        if (shareLevelId != null) {
+            DataManager.instance.applyShareLinkEntry(shareLevelId);
+            this.loadLevelById(shareLevelId);
+        } else {
+            this.reloadCurrentLevel();
+        }
+    }
+
+    /** 分享链接热启动：解锁占位 + 加载对应关（不写 opticalCurrentLevelId） */
+    enterFromShareLink(levelId: number): void {
+        DataManager.instance.applyShareLinkEntry(levelId);
+        this.loadLevelById(levelId);
     }
 
     /** 本局当前关卡 id（来自 Session 快照，非存档） */
@@ -137,6 +156,7 @@ export class OpticalPuzzleRoot extends Component {
         if (!resolved) {
             console.warn(`[OpticalPuzzleRoot] 未知关卡 id=${levelId}，使用 DEV_LEVEL_MINIMAL`);
         }
+        setWeChatShareContext(resolved ? level.levelId : null);
         this._applyPlayLayerLayout(level.width, level.height);
         this._session.loadLevel(level);
         this._cancelWinRevealSchedule();
@@ -145,6 +165,8 @@ export class OpticalPuzzleRoot extends Component {
     }
 
     protected onDestroy(): void {
+        setWeChatShareEntryRouteHandler(null);
+        setWeChatShareContext(null);
         SHOW_TOAST.off(EVENT_ENUM.SHOW_TOAST, this._onShowToast, this);
         this._cancelWinRevealSchedule();
         this._session.onStateChanged = null;

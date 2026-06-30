@@ -20,7 +20,11 @@ import { ensureMenuStartButtonView } from '../MenuStartButtonView';
 import { DataManager } from './DataManager';
 import { AUDIO_EFFECT_ENUM, EVENT_ENUM, SCENE_ENUM } from '../Utils/Enum';
 import { PLAY_AUDIO } from '../Utils/Event';
-import { invokeWeChatFriendShare } from '../Utils/WeChatShare';
+import {
+    ensureOfficialGameClubButtonHost,
+    resolveOfficialGameClubHostNode,
+} from '../Utils/OfficialGameClubButtonHost';
+import { invokeWeChatFriendShare, scheduleShareEntryBootstrap } from '../Utils/WeChatShare';
 
 const { ccclass, property } = _decorator;
 
@@ -78,6 +82,7 @@ export class MenuManager extends Component {
         ensureMenuLevelSelectButtonView(this.btnLevelSelect);
         ensureMenuShareButtonView(this.btnShare);
         ensureMenuAboutButtonView(this.btnAbout);
+        ensureOfficialGameClubButtonHost(resolveOfficialGameClubHostNode(this.node));
         ensureLevelSelectPanel(this.levelSelectPanel);
         ensureAboutMePanel(this.aboutMePanel);
         ensureMenuGameTitleView(this.gameTitle);
@@ -91,6 +96,11 @@ export class MenuManager extends Component {
         this.bindLevelSelectButton();
         this.bindShareButton();
         this.bindAboutButton();
+    }
+
+    protected start(): void {
+        /** 冷启动分享：等 PersistRoot 解析 query 后，下一帧切 Game（onLoad 内 loadScene 不可靠） */
+        scheduleShareEntryBootstrap(this, 0);
     }
 
     protected onDestroy(): void {

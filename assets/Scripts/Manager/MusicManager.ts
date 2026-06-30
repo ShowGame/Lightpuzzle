@@ -14,7 +14,7 @@ import {
     cancelWeChatRewardedVideoPreloadSchedule,
     scheduleWeChatRewardedVideoPreloadForGame,
 } from '../Utils/WeChatRewardedVideoAd';
-import { initWeChatMiniGameShare, trySettlePendingShareAfterWxOnShow } from '../Utils/WeChatShare';
+import { handleWeChatOnShow, initWeChatMiniGameShare, scheduleShareEntryBootstrap } from '../Utils/WeChatShare';
 
 const { ccclass, property } = _decorator;
 
@@ -62,8 +62,8 @@ export class MusicManager extends Component {
     /** 当前正在播放的 BGM Clip，避免同曲重复 stop/play */
     private _currentBgmClip: AudioClip | null = null;
 
-    private readonly _wxOnShowHandler = (): void => {
-        trySettlePendingShareAfterWxOnShow();
+    private readonly _wxOnShowHandler = (res?: unknown): void => {
+        handleWeChatOnShow(res);
     };
 
     protected onLoad(): void {
@@ -72,6 +72,7 @@ export class MusicManager extends Component {
         PLAY_AUDIO.on(EVENT_ENUM.PLAY_AUDIO, this.onAudioPlay, this);
         PLAY_BGM.on(EVENT_ENUM.PLAY_BGM, this.onPlayBgmEvent, this);
         initWeChatMiniGameShare();
+        scheduleShareEntryBootstrap(this, 0);
         this._bindWeChatOnShow();
     }
 

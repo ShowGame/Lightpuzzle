@@ -6,6 +6,7 @@ import {
 } from '../Games/OpticalPuzzle/Config/OpticalPuzzleLevels';
 import {
     ensureDefaultFirstLevelUnlock,
+    ensureOpticalLevelUnlockInFlat,
     getOpticalLevelBestStepsFromFlat,
     isOpticalLevelClearedInFlat,
     isOpticalLevelUnlockedInFlat,
@@ -366,6 +367,27 @@ export class DataManager {
 
     getOpticalLevelBestSteps(levelId: number): number | null {
         return getOpticalLevelBestStepsFromFlat(this._data.opticalLevelClears, levelId);
+    }
+
+    /**
+     * 分享链接进关：未解锁则写入 (levelId, 999999)；已有记录则不改动。
+     * 不修改 opticalCurrentLevelId。
+     */
+    applyShareLinkEntry(levelId: number): void {
+        const id = Math.trunc(levelId);
+        if (id <= 0) {
+            return;
+        }
+        const { changed, clears } = ensureOpticalLevelUnlockInFlat(this._data.opticalLevelClears, id);
+        if (!changed) {
+            return;
+        }
+        this._data.opticalLevelClears = clears;
+        logSaveDebug('applyShareLinkEntry', {
+            levelId: id,
+            clears: summarizeClears(clears),
+        });
+        this.save();
     }
 
     /** 关卡通关：写入/刷新最少步数、解锁下一关占位、立即推进 opticalCurrentLevelId */
