@@ -63,7 +63,7 @@ function getWx(): IWxMiniGameShare | undefined {
 
 /** 局内分享标题（好友 / 朋友圈 / 主动 shareAppMessage 共用） */
 export function formatInGameShareTitle(levelId: number): string {
-    return `第${Math.trunc(levelId)}关的谜题有点意思`;
+    return `第${Math.trunc(levelId)}关的谜题有点烧脑`;
 }
 
 export function buildShareQueryString(levelId: number): string {
