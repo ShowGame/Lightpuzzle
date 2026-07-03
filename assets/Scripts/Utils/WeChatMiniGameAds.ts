@@ -3,8 +3,9 @@ import { EVENT_ENUM, SCENE_ENUM } from './Enum';
 import { PLAY_BGM } from './Event';
 
 /**
- * 微信小游戏流量主 — 激励视频（参考 MemoMaster）。
- * 文档：https://developers.weixin.qq.com/minigame/dev/api/ad/wx.createRewardedVideoAd.html
+ * 微信小游戏流量主 — 激励视频 / 插屏（参考 MemoMaster）。
+ * - 激励视频 https://developers.weixin.qq.com/minigame/dev/api/ad/wx.createRewardedVideoAd.html
+ * - 插屏 https://developers.weixin.qq.com/minigame/dev/api/ad/wx.createInterstitialAd.html
  */
 
 const LOG = '[WeChatMiniGameAds]';
@@ -13,10 +14,16 @@ const LOG = '[WeChatMiniGameAds]';
  * 开发测试：true 时不拉真实广告，直接 resolve true。
  * 发版前务必改回 false。
  */
-export let USE_DEBUG_MOCK_REWARDED_AD_SUCCESS = true;//mock广告返回true
+export let USE_DEBUG_MOCK_REWARDED_AD_SUCCESS = false;
 
-/** 激励式视频广告位 id（流量主后台；留空则 show 直接 resolve false） */
-export let WECHAT_REWARDED_VIDEO_AD_UNIT_ID = '';
+/** 开发测试：true 时插屏不拉真实广告，直接 resolve true */
+export let USE_DEBUG_MOCK_INTERSTITIAL_AD_SUCCESS = false;
+
+/** 激励式视频（参考解解锁等需完整观看才发奖） */
+export let WECHAT_REWARDED_VIDEO_AD_UNIT_ID = 'adunit-b12879d569227597';
+
+/** 插屏（撤回次数耗尽后 +3 次） */
+export let WECHAT_INTERSTITIAL_AD_UNIT_ID = 'adunit-460706b96b20c908';
 
 interface RewardedVideoCloseResult {
     isEnded?: boolean;
@@ -30,8 +37,18 @@ interface IRewardedVideoAd {
     onError(listener: (err: unknown) => void): void;
 }
 
+interface IInterstitialAd {
+    load?(): Promise<void>;
+    show(): Promise<void>;
+    destroy?(): void;
+    onClose?(listener: () => void): void;
+    offClose?(listener: () => void): void;
+    onError(listener: (err: unknown) => void): void;
+}
+
 interface IWxAds {
     createRewardedVideoAd?(opt: { adUnitId: string; multiton?: boolean }): IRewardedVideoAd | null;
+    createInterstitialAd?(opt: { adUnitId: string }): IInterstitialAd | null;
 }
 
 function getWx(): IWxAds | undefined {
@@ -39,16 +56,10 @@ function getWx(): IWxAds | undefined {
     return g.wx;
 }
 
-let _rewarded: IRewardedVideoAd | null = null;
-let _rewardedErrorBound = false;
-let _rewardedShowInFlight = false;
-let _warnedEmptyRewardedId = false;
-let _firstPreloadTimer: ReturnType<typeof setTimeout> | null = null;
-
 const REWARDED_PRELOAD_DELAY_MS = 2000;
 const REWARDED_RESUME_BGM_DELAY_MS = 100;
 
-function scheduleResumeBgmAfterRewardedAd(): void {
+function scheduleResumeBgmAfterFullScreenAd(): void {
     setTimeout(() => {
         const scene = director.getScene()?.name;
         if (scene === SCENE_ENUM.MENU || scene === SCENE_ENUM.GAME) {
@@ -56,6 +67,14 @@ function scheduleResumeBgmAfterRewardedAd(): void {
         }
     }, REWARDED_RESUME_BGM_DELAY_MS);
 }
+
+// #region —— 激励视频
+
+let _rewarded: IRewardedVideoAd | null = null;
+let _rewardedErrorBound = false;
+let _rewardedShowInFlight = false;
+let _warnedEmptyRewardedId = false;
+let _firstPreloadTimer: ReturnType<typeof setTimeout> | null = null;
 
 function bindRewardedErrorOnce(ad: IRewardedVideoAd): void {
     if (_rewardedErrorBound) {
@@ -99,6 +118,7 @@ export function initWeChatRewardedVideoAd(delayMs: number): void {
     const run = (): void => {
         _firstPreloadTimer = null;
         preloadWeChatRewardedVideo();
+        preloadWeChatInterstitialAd();
     };
     if (delayMs <= 0) {
         run();
@@ -153,7 +173,7 @@ export function showWeChatRewardedVideo(): Promise<boolean> {
         const onClose = (res?: RewardedVideoCloseResult): void => {
             const ok = !res || res.isEnded === true;
             finish(ok);
-            scheduleResumeBgmAfterRewardedAd();
+            scheduleResumeBgmAfterFullScreenAd();
             preloadWeChatRewardedVideo();
         };
         ad.onClose(onClose);
@@ -179,3 +199,101 @@ export function preloadWeChatRewardedVideo(): void {
         console.warn(LOG, 'Rewarded preload 失败', err);
     });
 }
+
+// #endregion
+
+// #region —— 插屏
+
+let _interstitial: IInterstitialAd | null = null;
+let _interstitialErrorBound = false;
+let _interstitialShowInFlight = false;
+
+function getOrCreateInterstitial(adUnitId: string): IInterstitialAd | null {
+    const wxApi = getWx();
+    if (typeof wxApi?.createInterstitialAd !== 'function') {
+        return null;
+    }
+    if (!_interstitial) {
+        const ad = wxApi.createInterstitialAd({ adUnitId });
+        if (!ad) {
+            return null;
+        }
+        _interstitial = ad;
+        if (!_interstitialErrorBound) {
+            _interstitialErrorBound = true;
+            ad.onError((err: unknown) => {
+                console.warn(LOG, 'Interstitial onError', err);
+            });
+        }
+    }
+    return _interstitial;
+}
+
+export function isWeChatInterstitialAdConfigured(): boolean {
+    return WECHAT_INTERSTITIAL_AD_UNIT_ID.trim().length > 0;
+}
+
+/** 展示插屏；show 成功返回 true（与微信示例一致，失败时尝试 load → show） */
+export function showWeChatInterstitialAd(): Promise<boolean> {
+    if (USE_DEBUG_MOCK_INTERSTITIAL_AD_SUCCESS) {
+        console.warn(LOG, 'USE_DEBUG_MOCK_INTERSTITIAL_AD_SUCCESS=true，模拟插屏成功');
+        return Promise.resolve(true);
+    }
+    const id = WECHAT_INTERSTITIAL_AD_UNIT_ID.trim();
+    if (!id) {
+        return Promise.resolve(false);
+    }
+    if (_interstitialShowInFlight) {
+        console.warn(LOG, '插屏已在展示/加载中，忽略本次');
+        return Promise.resolve(false);
+    }
+    const ad = getOrCreateInterstitial(id);
+    if (!ad) {
+        return Promise.resolve(false);
+    }
+    _interstitialShowInFlight = true;
+    const showWithRetry = (): Promise<void> =>
+        ad
+            .show()
+            .catch(() => {
+                if (typeof ad.load === 'function') {
+                    return ad.load().then(() => ad.show());
+                }
+                return ad.show();
+            });
+    return showWithRetry()
+        .then(() => {
+            scheduleResumeBgmAfterFullScreenAd();
+            preloadWeChatInterstitialAd();
+            return true;
+        })
+        .catch((err: unknown) => {
+            console.warn(LOG, '插屏广告显示失败', err);
+            return false;
+        })
+        .finally(() => {
+            _interstitialShowInFlight = false;
+        });
+}
+
+export function preloadWeChatInterstitialAd(): void {
+    const id = WECHAT_INTERSTITIAL_AD_UNIT_ID.trim();
+    if (!id) {
+        return;
+    }
+    const ad = getOrCreateInterstitial(id);
+    if (!ad || typeof ad.load !== 'function') {
+        return;
+    }
+    ad.load().catch((err: unknown) => {
+        console.warn(LOG, 'Interstitial preload 失败', err);
+    });
+}
+
+export function destroyWeChatInterstitialAd(): void {
+    _interstitial?.destroy?.();
+    _interstitial = null;
+    _interstitialErrorBound = false;
+}
+
+// #endregion

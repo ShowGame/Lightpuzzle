@@ -14,7 +14,7 @@ import { OpticalGameFlowState } from '../Application/OpticalPuzzleStateMachine';
 import { Direction } from '../Core/OpticalPuzzleTypes';
 import { AUDIO_EFFECT_ENUM, EVENT_ENUM } from '../../../Utils/Enum';
 import { PLAY_AUDIO } from '../../../Utils/Event';
-import { showWeChatRewardedVideo } from '../../../Utils/WeChatRewardedVideoAd';
+import { showWeChatInterstitialAd, showWeChatRewardedVideo } from '../../../Utils/WeChatRewardedVideoAd';
 import { invokeWeChatFriendShare } from '../../../Utils/WeChatShare';
 import { openAnswerPanel, resolveAnswerPanelNode } from './OpticalPuzzleAnswerPanel';
 import { ensureActionButtonViews, OpticalPuzzleActionButtonView } from './OpticalPuzzleActionButtonView';
@@ -55,7 +55,7 @@ export class OpticalPuzzleInputHud extends Component {
 
     private _session: OpticalPuzzleSession | null = null;
     private _boardView: OpticalPuzzleBoardView | null = null;
-    /** 激励广告拉起中，避免重复点击 */
+    /** 激励 / 插屏拉起中，避免重复点击 */
     private _undoRewardAdPending = false;
     private _answerRewardAdPending = false;
     private _btnUndoBadge: Button | null = null;
@@ -302,7 +302,7 @@ export class OpticalPuzzleInputHud extends Component {
 
     /**
      * 撤回：无可撤回步时不变化、不扣次数；填充未耗尽时正常撤回；
-     * 耗尽后拉起激励广告，完整观看则恢复满填（不执行撤回）。
+     * 耗尽后拉起插屏广告，展示成功则恢复满填（不执行撤回）。
      */
     private _handleUndoRequest(): void {
         const session = this._session;
@@ -327,12 +327,12 @@ export class OpticalPuzzleInputHud extends Component {
             return;
         }
         this._undoRewardAdPending = true;
-        showWeChatRewardedVideo()
-            .then((watched) => {
+        showWeChatInterstitialAd()
+            .then((shown) => {
                 if (!this.isValid) {
                     return;
                 }
-                if (watched) {
+                if (shown) {
                     session.restoreUndoFillFromRewardedAd();
                     this.refreshActionButtons();
                 }
