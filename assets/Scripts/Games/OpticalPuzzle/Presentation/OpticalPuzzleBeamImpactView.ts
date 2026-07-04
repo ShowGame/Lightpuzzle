@@ -218,17 +218,45 @@ function beamImpactEmissionAngle(dir: Direction): number {
     return beamScreenAngle(dir) + 180;
 }
 
-function contactPosVar(dir: Direction): Vec2 {
+/** 设计分辨率下（scale=1）的阻挡火花参数；ParticleSystem2D 不随父节点 scale 缩放 */
+const IMPACT_PARTICLE_BASE = {
+    startSize: 3,
+    startSizeVar: 1,
+    endSize: 1,
+    endSizeVar: 0.5,
+    speed: 50,
+    speedVar: 20,
+    radialAccel: 20,
+    radialAccelVar: 5,
+    tangentialAccelVar: 12,
+} as const;
+
+function contactPosVar(dir: Direction, visualScale = 1): Vec2 {
+    const s = Math.max(0.01, visualScale);
     switch (dir) {
         case Direction.Right:
         case Direction.Left:
-            return new Vec2(2, 10);
+            return new Vec2(2 * s, 10 * s);
         case Direction.Up:
         case Direction.Down:
-            return new Vec2(10, 2);
+            return new Vec2(10 * s, 2 * s);
         default:
-            return new Vec2(6, 6);
+            return new Vec2(6 * s, 6 * s);
     }
+}
+
+function applyImpactVisualScale(ps: ParticleSystem2D, dir: Direction, visualScale: number): void {
+    const s = Math.max(0.01, visualScale);
+    ps.startSize = IMPACT_PARTICLE_BASE.startSize * s;
+    ps.startSizeVar = IMPACT_PARTICLE_BASE.startSizeVar * s;
+    ps.endSize = IMPACT_PARTICLE_BASE.endSize * s;
+    ps.endSizeVar = IMPACT_PARTICLE_BASE.endSizeVar * s;
+    ps.speed = IMPACT_PARTICLE_BASE.speed * s;
+    ps.speedVar = IMPACT_PARTICLE_BASE.speedVar * s;
+    ps.radialAccel = IMPACT_PARTICLE_BASE.radialAccel * s;
+    ps.radialAccelVar = IMPACT_PARTICLE_BASE.radialAccelVar * s;
+    ps.tangentialAccelVar = IMPACT_PARTICLE_BASE.tangentialAccelVar * s;
+    ps.posVar = contactPosVar(dir, s);
 }
 
 function contactScreenPosition(
@@ -268,7 +296,12 @@ function applyBeamColorToParticle(ps: ParticleSystem2D, colorKey: unknown): void
     ps.endColorVar = new Color(0, 0, 0, 0);
 }
 
-function configureImpactParticle(ps: ParticleSystem2D, dir: Direction, colorKey: string): void {
+function configureImpactParticle(
+    ps: ParticleSystem2D,
+    dir: Direction,
+    colorKey: string,
+    visualScale = 1,
+): void {
     ps.custom = true;
     ps.playOnLoad = false;
     ps.autoRemoveOnFinish = false;
@@ -277,33 +310,24 @@ function configureImpactParticle(ps: ParticleSystem2D, dir: Direction, colorKey:
     ps.lifeVar = 0.1;
     ps.emissionRate = 60;
     ps.totalParticles = 100;
-    ps.startSize = 3;
-    ps.startSizeVar = 1;
-    ps.endSize = 1;
-    ps.endSizeVar = 0.5;
     ps.angle = beamImpactEmissionAngle(dir);
     ps.angleVar = 100;
-    ps.speed = 50;
-    ps.speedVar = 20;
-    ps.radialAccel = 20;
-    ps.radialAccelVar = 5;
     ps.tangentialAccel = 0;
-    ps.tangentialAccelVar = 12;
     ps.gravity = new Vec2(0, 0);
-    ps.posVar = contactPosVar(dir);
     ps.startSpin = 0;
     ps.startSpinVar = 90;
     ps.endSpin = 0;
     ps.endSpinVar = 0;
     ps.emitterMode = ParticleSystem2D.EmitterMode.GRAVITY;
     ps.positionType = ParticleSystem2D.PositionType.FREE;
+    applyImpactVisualScale(ps, dir, visualScale);
     applyBeamColorToParticle(ps, colorKey);
 }
 
-function applyImpactDirection(ps: ParticleSystem2D, dir: Direction): void {
+function applyImpactDirection(ps: ParticleSystem2D, dir: Direction, visualScale = 1): void {
     ps.angle = beamImpactEmissionAngle(dir);
     ps.angleVar = 85;
-    ps.posVar = contactPosVar(dir);
+    applyImpactVisualScale(ps, dir, visualScale);
 }
 
 interface ImpactEmitterEntry {
@@ -333,6 +357,8 @@ export class OpticalPuzzleBeamImpactView extends Component {
 
     private _emitters = new Map<string, ImpactEmitterEntry>();
     private _lastSnapshot: OpticalBeamSnapshot | null = null;
+    /** 与 layerPlay 缩放一致，补偿 ParticleSystem2D 不继承父节点 scale */
+    private _visualScale = 1;
 
     protected onLoad(): void {
         let ut = this.getComponent(UITransform);
@@ -355,6 +381,23 @@ export class OpticalPuzzleBeamImpactView extends Component {
 
     protected onDestroy(): void {
         this._clearEmitters();
+    }
+
+    /** 同步棋盘缩放（由 OpticalPuzzleRoot._applyPlayLayerLayout 调用） */
+    setVisualScale(scale: number): void {
+        const next = Math.max(0.01, scale);
+        if (Math.abs(this._visualScale - next) < 1e-4) {
+            return;
+        }
+        this._visualScale = next;
+        for (const entry of this._emitters.values()) {
+            if (!isParticleAlive(entry.ps)) {
+                continue;
+            }
+            applyImpactDirection(entry.ps, entry.dir, next);
+            applyBeamColorToParticle(entry.ps, entry.colorKey);
+            entry.ps.resetSystem();
+        }
     }
 
     /** 由 OpticalPuzzleRoot.beamSparkKeepAlive 注入，保证微信构建包含贴图 */
@@ -424,7 +467,7 @@ export class OpticalPuzzleBeamImpactView extends Component {
             }
             entry.node.setPosition(target.px, target.py, 0);
             if (isParticleAlive(entry.ps) && entry.dir !== target.dir) {
-                applyImpactDirection(entry.ps, target.dir);
+                applyImpactDirection(entry.ps, target.dir, this._visualScale);
                 entry.dir = target.dir;
             }
         }
@@ -433,7 +476,7 @@ export class OpticalPuzzleBeamImpactView extends Component {
     private _createEmitter(colorKey: string, dir: Direction): ImpactEmitterEntry {
         const node = new Node('BeamImpact');
         const ps = node.addComponent(ParticleSystem2D);
-        configureImpactParticle(ps, dir, colorKey);
+        configureImpactParticle(ps, dir, colorKey, this._visualScale);
         node.parent = this.node;
         this.scheduleOnce(() => {
             if (!this.isValid || !ps.isValid) {
@@ -469,6 +512,7 @@ export function configureBeamSparkParticle(
     ps: ParticleSystem2D,
     dir: Direction,
     colorKey: string,
+    visualScale = 1,
 ): void {
-    configureImpactParticle(ps, dir, colorKey);
+    configureImpactParticle(ps, dir, colorKey, visualScale);
 }

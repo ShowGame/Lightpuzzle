@@ -40,6 +40,7 @@ const PRE_WIN_PANEL_DELAY_SEC = 0.75;
 interface IBeamImpactView {
     render(snapshot: OpticalBeamSnapshot): void;
     applyExternalSparkSpriteFrames?(frames: ReadonlyArray<SpriteFrame>): void;
+    setVisualScale?(scale: number): void;
 }
 
 const BEAM_IMPACT_VIEW_CLASS = 'OpticalPuzzleBeamImpactView';
@@ -341,6 +342,7 @@ export class OpticalPuzzleRoot extends Component {
         const targetWidth = this._resolvePlayAreaWidth();
         const scale = computePlayLayerScale(levelWidth, levelHeight, targetWidth);
         playLayer.setScale(new Vec3(scale, scale, 1));
+        this._beamImpactView?.setVisualScale?.(scale);
 
         const canvasHeight = this._resolveCanvasHeight();
         const pos = computePlayLayerPosition(
