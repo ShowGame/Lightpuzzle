@@ -57,7 +57,7 @@ function getWx(): IWxAds | undefined {
 }
 
 const REWARDED_PRELOAD_DELAY_MS = 2000;
-const REWARDED_RESUME_BGM_DELAY_MS = 100;
+const REWARDED_RESUME_BGM_DELAY_MS = 200;
 
 function scheduleResumeBgmAfterFullScreenAd(): void {
     setTimeout(() => {
@@ -182,6 +182,7 @@ export function showWeChatRewardedVideo(): Promise<boolean> {
             .catch((err: unknown) => {
                 console.warn(LOG, '激励视频 广告显示失败', err);
                 finish(false);
+                scheduleResumeBgmAfterFullScreenAd();
             });
     });
 }
@@ -263,8 +264,8 @@ export function showWeChatInterstitialAd(): Promise<boolean> {
             });
     return showWithRetry()
         .then(() => {
-            scheduleResumeBgmAfterFullScreenAd();
             preloadWeChatInterstitialAd();
+            bindInterstitialCloseForBgmResume(ad);
             return true;
         })
         .catch((err: unknown) => {
@@ -274,6 +275,18 @@ export function showWeChatInterstitialAd(): Promise<boolean> {
         .finally(() => {
             _interstitialShowInFlight = false;
         });
+}
+
+function bindInterstitialCloseForBgmResume(ad: IInterstitialAd): void {
+    if (typeof ad.onClose !== 'function') {
+        scheduleResumeBgmAfterFullScreenAd();
+        return;
+    }
+    const onClose = (): void => {
+        ad.offClose?.(onClose);
+        scheduleResumeBgmAfterFullScreenAd();
+    };
+    ad.onClose(onClose);
 }
 
 export function preloadWeChatInterstitialAd(): void {

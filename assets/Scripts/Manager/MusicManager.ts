@@ -62,8 +62,11 @@ export class MusicManager extends Component {
     /** 当前正在播放的 BGM Clip，避免同曲重复 stop/play */
     private _currentBgmClip: AudioClip | null = null;
 
+    private _resumeBgmTimer: ReturnType<typeof setTimeout> | null = null;
+
     private readonly _wxOnShowHandler = (res?: unknown): void => {
         handleWeChatOnShow(res);
+        this.scheduleResumeBgmAfterForeground();
     };
 
     protected onLoad(): void {
@@ -78,6 +81,7 @@ export class MusicManager extends Component {
 
     protected onDestroy(): void {
         this._unbindWeChatOnShow();
+        this._clearResumeBgmTimer();
         cancelWeChatRewardedVideoPreloadSchedule();
         director.off(Director.EVENT_AFTER_SCENE_LAUNCH, this.onAfterSceneLaunch, this);
         PLAY_AUDIO.off(EVENT_ENUM.PLAY_AUDIO, this.onAudioPlay, this);
@@ -98,26 +102,26 @@ export class MusicManager extends Component {
     /** 设置页切换 BGM 开关后可 emit PLAY_BGM 刷新当前 BGM */
     onPlayBgmEvent(): void {
         const sceneName = director.getScene()?.name ?? '';
-        this.switchBgmBySceneName(sceneName);
+        this.switchBgmBySceneName(sceneName, true);
     }
 
-    switchBgmBySceneName(sceneName: string): void {
+    switchBgmBySceneName(sceneName: string, forceBgm = false): void {
         if (sceneName === SCENE_ENUM.MENU || sceneName === SCENE_ENUM.GAME) {
-            this.playGlobalBgm();
+            this.playGlobalBgm(forceBgm);
         } else {
             this.stopBgm();
         }
     }
 
-    playGlobalBgm(): void {
+    playGlobalBgm(force = false): void {
         if (!DataManager.instance.bgmOn) {
             this.stopBgm();
             return;
         }
-        this.playBgmClip(this.bgm);
+        this.playBgmClip(this.bgm, force);
     }
 
-    private playBgmClip(clip: AudioClip | null): void {
+    private playBgmClip(clip: AudioClip | null, force = false): void {
         const source = this.audioSource;
         if (!source) {
             return;
@@ -126,7 +130,8 @@ export class MusicManager extends Component {
             this.stopBgm();
             return;
         }
-        if (this._currentBgmClip === clip && source.playing) {
+        // 全屏广告返回后 loop 可能仍 reporting playing 但已无声，须 force 重启
+        if (!force && this._currentBgmClip === clip && source.playing) {
             return;
         }
         source.stop();
@@ -141,6 +146,25 @@ export class MusicManager extends Component {
             this.audioSource.stop();
         }
         this._currentBgmClip = null;
+    }
+
+    /** 从广告/后台回到前台时恢复 BGM（与 PLAY_BGM 事件、广告 onClose 互补） */
+    private scheduleResumeBgmAfterForeground(): void {
+        this._clearResumeBgmTimer();
+        this._resumeBgmTimer = setTimeout(() => {
+            this._resumeBgmTimer = null;
+            const sceneName = director.getScene()?.name ?? '';
+            if (sceneName === SCENE_ENUM.MENU || sceneName === SCENE_ENUM.GAME) {
+                this.playGlobalBgm(true);
+            }
+        }, 150);
+    }
+
+    private _clearResumeBgmTimer(): void {
+        if (this._resumeBgmTimer !== null) {
+            clearTimeout(this._resumeBgmTimer);
+            this._resumeBgmTimer = null;
+        }
     }
 
     //#endregion
