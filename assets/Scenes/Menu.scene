@@ -5836,7 +5836,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 650,
-      "height": 1200
+      "height": 1150
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -5927,7 +5927,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 650,
-      "height": 1200
+      "height": 1150
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -5965,7 +5965,7 @@
     "_lpos": {
       "__type__": "cc.Vec3",
       "x": 0,
-      "y": 575,
+      "y": 550,
       "z": 0
     },
     "_lrot": {
@@ -6226,7 +6226,7 @@
     "_string": "开 发 者",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 360,
+    "_actualFontSize": 383,
     "_fontSize": 340,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
@@ -6301,7 +6301,7 @@
     "_target": null,
     "_left": 0,
     "_right": 0,
-    "_top": -565,
+    "_top": -540,
     "_bottom": 0,
     "_horizontalCenter": 0,
     "_verticalCenter": 0,
@@ -6343,7 +6343,7 @@
     "_lpos": {
       "__type__": "cc.Vec3",
       "x": 315,
-      "y": 570,
+      "y": 540,
       "z": 0
     },
     "_lrot": {
@@ -6644,7 +6644,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 1200,
-      "height": 2050
+      "height": 2000
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -6673,13 +6673,13 @@
       "b": 255,
       "a": 255
     },
-    "_string": "　　《光学迷宫》（Light Puzzle）由秀幹工作室独立开发完成，面向喜爱动脑、节奏偏休闲的解谜玩家。\n\n　　玩法上，以经典推箱子为骨架：按「只能推、不能拉」的规则推动光学元件，在有限空间里反复试错、调整布局。光学点亮的玩法则参考了独立游戏《Sampo Lock》的解谜思路，让玩家在百变的光路组合中寻求正确答案。\n\n　　视觉方面，参考了独立游戏《帕特里克的箱子》（Patrick's Parabox），采用简洁明快的 2D 画风，降低认知负担，让玩家更专注解谜本身。推动箱子过程的Q弹效果、光线溅射则是做了反复的打磨。\n\n　　音乐方面，游戏以纾缓的钢琴曲作为背景音乐，不抢思考时的注意力，又能在解谜过程提供一点陪伴。\n\n　　本作的核心创新在于光路颜色叠加：红、绿、蓝等光束沿格网传播，经染色、分光等元件交互后，按规则混合、分路或阻挡；玩家需同时满足路径正确与颜色匹配，才能点亮全部接收器并通关。\n\n　　《光学迷宫》是团队在经典推箱范式与现代光学解谜之间的一次融合尝试，希望以「动一子、变万光」的策略深度，带来清晰、耐玩、有成就感的解谜体验。\n\n　　最后，谢谢你玩我的游戏。",
+    "_string": "　　《光学迷宫》（Light Puzzle）由秀幹工作室独立开发完成，面向喜爱动脑、节奏休闲的解谜玩家。\n\n　　玩法上，以经典推箱子为骨架：按「只能推、不能拉」的规则推动光学元件，在有限空间里反复试错、调整布局。光学点亮的玩法则参考了独立游戏《Sampo Lock》的解谜思路，让玩家在百变的光路组合中寻求正确答案。\n\n　　视觉方面，参考了独立游戏《帕特里克的箱子》（Patrick's Parabox），采用简洁明快的 2D 画风，降低认知负担，让玩家更专注解谜本身。推动箱子过程的Q弹效果、光线溅射则是做了反复的打磨。\n\n　　音乐方面，游戏以纾缓的钢琴曲作为背景音乐，不抢思考时的注意力，又能在解谜过程提供一点陪伴。\n\n　　本作的核心创新在于光路颜色叠加：红、绿、蓝等光束沿格网传播，经染色、分光等元件交互后，按规则混合、分路或阻挡；玩家需同时满足路径正确与颜色匹配，才能点亮全部接收器并通关。\n\n　　《光学迷宫》是团队在经典推箱范式与现代光学解谜之间的一次融合尝试，希望以「动一子、变万光」的策略深度，带来耐玩、有成就感的解谜体验。\n\n　　最后，谢谢你玩我的游戏。",
     "_horizontalAlign": 0,
     "_verticalAlign": 1,
-    "_actualFontSize": 43,
+    "_actualFontSize": 53,
     "_fontSize": 60,
     "_fontFamily": "Arial",
-    "_lineHeight": 74,
+    "_lineHeight": 80,
     "_overflow": 2,
     "_enableWrapText": true,
     "_font": null,
@@ -6737,7 +6737,7 @@
     "_lpos": {
       "__type__": "cc.Vec3",
       "x": 0,
-      "y": -560,
+      "y": -535,
       "z": 0
     },
     "_lrot": {
@@ -6808,7 +6808,7 @@
     "_string": "——  秀幹工作室\n(1208857549@qq.com)",
     "_horizontalAlign": 2,
     "_verticalAlign": 1,
-    "_actualFontSize": 58,
+    "_actualFontSize": 57,
     "_fontSize": 50,
     "_fontFamily": "Arial",
     "_lineHeight": 74,
