@@ -12,6 +12,7 @@ import {
 import { OpticalPuzzleSession } from '../Application/OpticalPuzzleSession';
 import { OpticalGameFlowState } from '../Application/OpticalPuzzleStateMachine';
 import { Direction } from '../Core/OpticalPuzzleTypes';
+import { DEBUG_SKIP_ALL_ADS } from '../../../Config/DebugMockSave';
 import { AUDIO_EFFECT_ENUM, EVENT_ENUM } from '../../../Utils/Enum';
 import { PLAY_AUDIO } from '../../../Utils/Event';
 import { showWeChatInterstitialAd, showWeChatRewardedVideo } from '../../../Utils/WeChatRewardedVideoAd';
@@ -309,7 +310,14 @@ export class OpticalPuzzleInputHud extends Component {
         if (!session) {
             return;
         }
-        if (session.isUndoIconFillExhausted() && session.canUndo()) {
+        if (DEBUG_SKIP_ALL_ADS && session.isUndoIconFillExhausted()) {
+            session.restoreUndoFillFromRewardedAd();
+        }
+        if (
+            !DEBUG_SKIP_ALL_ADS &&
+            session.isUndoIconFillExhausted() &&
+            session.canUndo()
+        ) {
             this._requestUndoRewardAd(session);
             return;
         }
@@ -387,6 +395,12 @@ export class OpticalPuzzleInputHud extends Component {
             openAnswerPanel(this._resolveAnswerPanelNode());
             return;
         }
+        if (DEBUG_SKIP_ALL_ADS) {
+            session.unlockAnswerForCurrentLevel();
+            this.refreshActionButtons();
+            openAnswerPanel(this._resolveAnswerPanelNode());
+            return;
+        }
         this._requestAnswerRewardAd();
     }
 
@@ -434,8 +448,9 @@ export class OpticalPuzzleInputHud extends Component {
 
     /** 同步操作键图标（撤回填充阶段、参考解看视频角标、方向键教程提示等） */
     refreshActionButtons(): void {
-        const stage = this._session?.undoFillStage ?? 0;
-        const answerUnlocked = this._session?.isAnswerUnlocked() ?? false;
+        const stage = DEBUG_SKIP_ALL_ADS ? 0 : (this._session?.undoFillStage ?? 0);
+        const answerUnlocked =
+            DEBUG_SKIP_ALL_ADS || (this._session?.isAnswerUnlocked() ?? false);
         const actionPad = this.node.getChildByName('ActionPad');
         if (actionPad?.isValid) {
             for (const child of actionPad.children) {

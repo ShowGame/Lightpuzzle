@@ -1,4 +1,5 @@
 import { director } from 'cc';
+import { DEBUG_SKIP_ALL_ADS } from '../Config/DebugMockSave';
 import { EVENT_ENUM, SCENE_ENUM } from './Enum';
 import { PLAY_BGM } from './Event';
 
@@ -134,6 +135,10 @@ export function scheduleWeChatRewardedVideoPreloadForGame(): void {
 
 /** 展示激励视频；完整观看返回 true，否则 false */
 export function showWeChatRewardedVideo(): Promise<boolean> {
+    if (DEBUG_SKIP_ALL_ADS) {
+        console.warn(LOG, 'DEBUG_SKIP_ALL_ADS=true，跳过激励视频');
+        return Promise.resolve(true);
+    }
     if (USE_DEBUG_MOCK_REWARDED_AD_SUCCESS) {
         console.warn(LOG, 'USE_DEBUG_MOCK_REWARDED_AD_SUCCESS=true，模拟观看成功');
         return Promise.resolve(true);
@@ -236,6 +241,10 @@ export function isWeChatInterstitialAdConfigured(): boolean {
 
 /** 展示插屏；show 成功返回 true（与微信示例一致，失败时尝试 load → show） */
 export function showWeChatInterstitialAd(): Promise<boolean> {
+    if (DEBUG_SKIP_ALL_ADS) {
+        console.warn(LOG, 'DEBUG_SKIP_ALL_ADS=true，跳过插屏');
+        return Promise.resolve(true);
+    }
     if (USE_DEBUG_MOCK_INTERSTITIAL_AD_SUCCESS) {
         console.warn(LOG, 'USE_DEBUG_MOCK_INTERSTITIAL_AD_SUCCESS=true，模拟插屏成功');
         return Promise.resolve(true);

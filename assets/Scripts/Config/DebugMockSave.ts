@@ -5,6 +5,12 @@
  */
 export const USE_DEBUG_MOCK_SAVE = true;
 
+/**
+ * true：跳过所有微信广告（激励视频 / 插屏均视为成功，局内参考解与撤回不展示广告角标）。
+ * 发版前请改为 false。
+ */
+export const DEBUG_SKIP_ALL_ADS = true;
+
 /** 可只写关心的字段；其余在 restore 时与默认存档合并。仅当 USE_DEBUG_MOCK_SAVE 为 true 时写入本地 */
 export const MOCK_PLAYER_DATA: {
     /** 菜单「开始游戏」进入的关卡 / 上次退出关卡（与解锁无关，可任意已解锁关） */
