@@ -5,9 +5,14 @@ export type BeamColorKey = LightColorKey | 'yellow' | 'cyan' | 'purple';
 
 import type { ColorMode } from './OpticalPuzzleTypes';
 import { ColorMode as ColorModeEnum } from './OpticalPuzzleTypes';
+import { mixLightColors } from './OpticalColorMix';
 
 const BASE_KEYS: ReadonlySet<string> = new Set(['white', 'red', 'green', 'blue']);
 const MIXED_KEYS: ReadonlySet<string> = new Set(['yellow', 'cyan', 'purple']);
+
+export function isSecondaryTargetColor(key?: string): boolean {
+    return MIXED_KEYS.has(resolveBeamColorKey(key));
+}
 
 export function isBeamColorKey(key: string): key is BeamColorKey {
     return BASE_KEYS.has(key) || MIXED_KEYS.has(key);
@@ -32,6 +37,24 @@ export function resolveBeamColorKey(key?: string): BeamColorKey {
 /** 入射光色是否满足目标期望色（严格同色，含黄/青/紫混色） */
 export function lightMatchesTarget(beamKey: string | undefined, targetKey: string | undefined): boolean {
     return resolveBeamColorKey(beamKey) === resolveBeamColorKey(targetKey);
+}
+
+/**
+ * 目标是否被照亮：基色目标可在目标格混色后判定；
+ * 黄/青/紫目标须已有对应二次色光束直照（分束 R+G 等不可在目标处再混出黄灯）。
+ */
+export function beamsSatisfyTarget(
+    beamKeysAtTarget: readonly string[],
+    targetKey: string | undefined,
+): boolean {
+    if (beamKeysAtTarget.length === 0) {
+        return false;
+    }
+    const resolvedTarget = resolveBeamColorKey(targetKey);
+    if (isSecondaryTargetColor(resolvedTarget)) {
+        return beamKeysAtTarget.some((k) => resolveBeamColorKey(k) === resolvedTarget);
+    }
+    return lightMatchesTarget(mixLightColors(beamKeysAtTarget), targetKey);
 }
 
 /** 元件 `colorMode` → 混色/显示用 colorKey */

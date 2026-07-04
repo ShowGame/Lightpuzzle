@@ -1,7 +1,7 @@
 import type { IOpticalTarget } from '../Config/OpticalPuzzleLevelSchema';
 import { mixLightColors } from './OpticalColorMix';
 import type { OpticalBeamSegment } from './OpticalBeamTypes';
-import { lightMatchesTarget } from './OpticalLightColor';
+import { beamsSatisfyTarget } from './OpticalLightColor';
 
 const EPS = 1e-3;
 
@@ -345,6 +345,6 @@ export function recomputeTargetLitFromSegments(
         if (colors.length === 0) {
             return false;
         }
-        return lightMatchesTarget(mixLightColors(colors), t.colorKey);
+        return beamsSatisfyTarget(colors, t.colorKey);
     });
 }
