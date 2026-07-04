@@ -2,6 +2,9 @@ import { _decorator, Component, Enum, Node } from 'cc';
 
 const { ccclass, property } = _decorator;
 
+/** true 展示微信游戏圈入口，false 不创建、不显示 */
+export const ENABLE_GAME_CIRCLE = false;
+
 /** 调试完成后可改为 false，减少控制台噪音 */
 const OFFICIAL_GAME_CLUB_DEBUG = false;
 
@@ -148,6 +151,9 @@ export class OfficialGameClubButtonHost extends Component {
     private _onTapHandler: (() => void) | null = null;
 
     onEnable(): void {
+        if (!ENABLE_GAME_CIRCLE) {
+            return;
+        }
         dbg('onEnable: 节点=', this.node?.name, 'wx=', !!getWx());
         this.ensureNativeButton();
         if (this._btn) {
@@ -217,7 +223,7 @@ export class OfficialGameClubButtonHost extends Component {
 
 /** 在 host 节点上挂载游戏圈原生按钮（无节点则跳过） */
 export function ensureOfficialGameClubButtonHost(hostNode: Node | null): OfficialGameClubButtonHost | null {
-    if (!hostNode?.isValid) {
+    if (!ENABLE_GAME_CIRCLE || !hostNode?.isValid) {
         return null;
     }
     return (
@@ -228,7 +234,7 @@ export function ensureOfficialGameClubButtonHost(hostNode: Node | null): Officia
 
 /** 在 parent 下查找或创建 OfficialGameClubHost 子节点 */
 export function resolveOfficialGameClubHostNode(parent: Node | null): Node | null {
-    if (!parent?.isValid) {
+    if (!ENABLE_GAME_CIRCLE || !parent?.isValid) {
         return null;
     }
     let host = parent.getChildByName('OfficialGameClubHost');
