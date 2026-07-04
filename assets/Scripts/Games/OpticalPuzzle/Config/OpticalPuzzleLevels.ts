@@ -1692,7 +1692,57 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
     },
     {
         levelId: 35,//第35关
-        levelName: '关卡35（难度36）',
+        levelName: '关卡35（难度72）',
+        perfectSteps: 34,
+        threeStarSteps: 43,
+        twoStarSteps: 51,
+        oneStarSteps: 68,
+        bestSolution: [
+            'd', 's', 'a', 'w', 'w', 'w', 'd', 's', 'a', 's', 's', 'd', 'd', 'w', 'a', 's', 'a', 'w', 'a', 'a',
+            's', 'd', 'w', 'd', 'd', 'w', 'w', 'a', 's', 'd', 's', 'a', 'a', 's',
+        ],
+        height: 7,
+        width: 9,
+        staticLayout: [
+            '#########',
+            '####...##',
+            '####...##',
+            '##.#..###',
+            '#.......#',
+            '#.......#',
+            '#########',
+        ],
+        objects: [
+            '#########',
+            '####E..##',
+            '####...##',
+            '##S#.3###',
+            '#S..@..E#',
+            '#...1..S#',
+            '#########',
+        ],
+        colors: [
+            '#########',
+            '####P..##',
+            '####...##',
+            '##R#.W###',
+            '#G.....Y#',
+            '#...B..R#',
+            '#########',
+        ],
+        directions: [
+            '#########',
+            '####...##',
+            '####...##',
+            '##s#.w###',
+            '#d......#',
+            '#...w..a#',
+            '#########',
+        ],
+    },
+    {
+        levelId: 36,//第36关
+        levelName: '关卡36（难度36）',
         perfectSteps: 11,
         threeStarSteps: 14,
         twoStarSteps: 17,
@@ -1740,8 +1790,8 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         ],
     },
     {
-        levelId: 36,//第36关
-        levelName: '关卡36（难度76）',
+        levelId: 37,//第37关
+        levelName: '关卡37（难度76）',
         perfectSteps: 58,
         threeStarSteps: 68,
         twoStarSteps: 88,
@@ -1791,8 +1841,8 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         ],
     },
     {
-        levelId: 37,//第37关
-        levelName: '关卡37（难度44）',
+        levelId: 38,//第38关
+        levelName: '关卡38（难度44）',
         perfectSteps: 11,
         threeStarSteps: 18,
         twoStarSteps: 26,
@@ -1836,8 +1886,8 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         ],
     },
     {
-        levelId: 38,//第38关
-        levelName: '关卡38（难度101）',
+        levelId: 39,//第39关
+        levelName: '关卡39（难度101）',
         perfectSteps: 70,
         threeStarSteps: 89,
         twoStarSteps: 105,
@@ -1889,6 +1939,60 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
             '####w..##',
             '####...##',
             '#########',
+        ],
+    },
+    {
+        levelId: 40,//第40关
+        levelName: '关卡40（难度122）',
+        perfectSteps: 104,
+        threeStarSteps: 130,
+        twoStarSteps: 156,
+        oneStarSteps: 208,
+        bestSolution: [
+            'd', 'd', 's', 's', 'w', 'w', 'a', 'a', 'a', 's', 's', 'd', 'd', 's', 's', 'd', 'd', 'w', 'a', 's',
+            'a', 'w', 's', 'a', 'a', 'w', 'a', 'w', 'w', 'd', 'w', 'd', 'd', 'd', 's', 's', 'w', 'w', 'a', 'a',
+            'a', 's', 's', 'd', 'd', 's', 's', 'd', 'd', 'w', 'a', 's', 'a', 'a', 'a', 'w', 'a', 'w', 'd', 'w',
+            'w', 'd', 'd', 'd', 's', 's', 'w', 'w', 'a', 'a', 'a', 's', 's', 'd', 'd', 'a', 'a', 's', 's', 'd',
+            'd', 'w', 's', 'd', 'd', 'w', 'a', 's', 'a', 'a', 'a', 'w', 'w', 'w', 'w', 'd', 'd', 'd', 's', 's',
+            's', 'd', 's', 'a',
+        ],
+        height: 7,
+        width: 8,
+        staticLayout: [
+            '########',
+            '##.....#',
+            '#..#..##',
+            '#......#',
+            '#......#',
+            '#......#',
+            '########',
+        ],
+        objects: [
+            '########',
+            '##.@...#',
+            '#..#S3##',
+            '#.3.3.E#',
+            '#..E...#',
+            '#E.....#',
+            '########',
+        ],
+        colors: [
+            '########',
+            '##.....#',
+            '#..#WR##',
+            '#.G.W.W#',
+            '#..R...#',
+            '#Y.....#',
+            '########',
+        ],
+        directions: [
+            '########',
+            '##.....#',
+            '#..#sa##',
+            '#.w.d..#',
+            '#......#',
+            '#......#',
+            '########',
         ],
     },
     {
