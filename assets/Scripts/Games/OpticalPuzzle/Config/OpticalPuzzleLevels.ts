@@ -181,11 +181,11 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
     {
         levelId: 4,//第4关
         levelName: '关卡4（难度26）',
-        perfectSteps: 5,
-        threeStarSteps: 7,
-        twoStarSteps: 8,
-        oneStarSteps: 10,
-        bestSolution: ['d', 's', 'd', 'w', 'a'],
+        perfectSteps: 4,
+        threeStarSteps: 5,
+        twoStarSteps: 6,
+        oneStarSteps: 8,
+        bestSolution: ['w', 'd', 'w', 'a'],
         height: 6,
         width: 9,
         staticLayout: [
@@ -199,8 +199,8 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         objects: [
             '#########',
             '#..1....#',
-            '#....@1.#',
-            '#.......#',
+            '#.....1.#',
+            '#.....@.#',
             '#S.1#1.E#',
             '#########',
         ],
