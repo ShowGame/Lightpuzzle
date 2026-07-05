@@ -1,4 +1,4 @@
-import { Color } from 'cc';
+import { Color, Node, UITransform } from 'cc';
 
 /** 棋盘逻辑格边长（像素） */
 export const OPTICAL_CELL_SIZE = 56;
@@ -73,6 +73,76 @@ export function boardPixelHeight(levelHeight: number, cellSize: number = OPTICAL
 /** 关卡棋盘逻辑宽度（像素，未缩放） */
 export function boardPixelWidth(levelWidth: number, cellSize: number = OPTICAL_CELL_SIZE): number {
     return levelWidth * cellSize;
+}
+
+/** 棋盘局部坐标原点（与 BoardView / BeamView / 粒子阻挡点对齐） */
+export interface OpticalBoardLayout {
+    cell: number;
+    ox: number;
+    oy: number;
+    boardWidth: number;
+    boardHeight: number;
+}
+
+export function opticalBoardLayout(
+    width: number,
+    height: number,
+    cellSize: number = OPTICAL_CELL_SIZE,
+): OpticalBoardLayout {
+    const cell = cellSize;
+    return {
+        cell,
+        ox: (-width * cell) / 2,
+        oy: (height * cell) / 2,
+        boardWidth: width * cell,
+        boardHeight: height * cell,
+    };
+}
+
+/** 光追连续格坐标 → 棋盘节点局部 UI 坐标（与 cellScreenRect 格心一致） */
+export function opticalGridPointToLocal(
+    gx: number,
+    gy: number,
+    layout: OpticalBoardLayout,
+): { x: number; y: number } {
+    return {
+        x: layout.ox + gx * layout.cell,
+        y: layout.oy - gy * layout.cell,
+    };
+}
+
+/**
+ * 同步局内棋盘相关层 UITransform（与参考解 replayRoot 下 Board/Beam 一致）。
+ * 仅缩放棋盘容器 playRoot 及其子层，不修改外层 layerPlay 尺寸。
+ */
+export function syncOpticalPlayBoardLayers(
+    playRoot: Node | null | undefined,
+    layout: OpticalBoardLayout,
+): void {
+    syncOpticalBoardLayerContentSize(playRoot, layout);
+    if (!playRoot?.isValid) {
+        return;
+    }
+    for (const name of ['BoardLayer', 'BeamLayer', 'BeamImpactLayer', 'TargetLayer', 'PieceLayer']) {
+        syncOpticalBoardLayerContentSize(playRoot.getChildByName(name), layout);
+    }
+}
+
+/** 同步单层 UITransform 尺寸 */
+export function syncOpticalBoardLayerContentSize(
+    node: Node | null | undefined,
+    layout: OpticalBoardLayout,
+): void {
+    if (!node?.isValid) {
+        return;
+    }
+    let ut = node.getComponent(UITransform);
+    if (!ut) {
+        ut = node.addComponent(UITransform);
+    }
+    if (ut.width !== layout.boardWidth || ut.height !== layout.boardHeight) {
+        ut.setContentSize(layout.boardWidth, layout.boardHeight);
+    }
 }
 
 /**

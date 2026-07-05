@@ -32,7 +32,7 @@ import {
     lerpBeamColor,
     strokeBeamSegmentGradient,
 } from './OpticalPuzzleBeamGradient';
-import { BEAM_CORE_WIDTH_RATIO, BEAM_GRADIENT_STEPS, BEAM_LINE_WIDTH, OPTICAL_CELL_SIZE } from './OpticalPuzzleLayout';
+import { BEAM_CORE_WIDTH_RATIO, BEAM_GRADIENT_STEPS, BEAM_LINE_WIDTH, OPTICAL_CELL_SIZE, opticalBoardLayout, opticalGridPointToLocal, syncOpticalPlayBoardLayers } from './OpticalPuzzleLayout';
 const CELL = OPTICAL_CELL_SIZE;
 
 const EPS = 1e-3;
@@ -387,11 +387,8 @@ export class OpticalPuzzleBeamView extends Component {
 
         g.clear();
 
-        const ox = (-snapshot.width * CELL) / 2;
-
-        const oy = (snapshot.height * CELL) / 2;
-
-
+        const layout = opticalBoardLayout(snapshot.width, snapshot.height, CELL);
+        syncOpticalPlayBoardLayers(this.node.parent, layout);
 
         const crosses = computeCrossBeamOverlays(snapshot.segments);
 
@@ -411,17 +408,20 @@ export class OpticalPuzzleBeamView extends Component {
 
             for (const piece of pieces) {
 
+                const p0 = opticalGridPointToLocal(piece.x0, piece.y0, layout);
+                const p1 = opticalGridPointToLocal(piece.x1, piece.y1, layout);
+
                 strokeBeamSegmentGradient(
 
                     g,
 
-                    ox + piece.x0 * CELL,
+                    p0.x,
 
-                    oy - piece.y0 * CELL,
+                    p0.y,
 
-                    ox + piece.x1 * CELL,
+                    p1.x,
 
-                    oy - piece.y1 * CELL,
+                    p1.y,
 
                     beamColorFromKey(piece.colorKey),
 
@@ -435,13 +435,15 @@ export class OpticalPuzzleBeamView extends Component {
 
         for (const cross of crosses) {
 
+            const cp = opticalGridPointToLocal(cross.x, cross.y, layout);
+
             strokeCrossOverlay(
 
                 g,
 
-                ox + cross.x * CELL,
+                cp.x,
 
-                oy - cross.y * CELL,
+                cp.y,
 
                 halfPx,
 

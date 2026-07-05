@@ -15,7 +15,7 @@ import type { OpticalBeamSnapshot } from '../Core/OpticalPuzzleCore';
 import { OpticalPuzzleBeamView } from './OpticalPuzzleBeamView';
 import { OpticalPuzzleBoardView } from './OpticalPuzzleBoardView';
 import { OpticalPuzzleInputHud } from './OpticalPuzzleInputHud';
-import { computePlayLayerPosition, computePlayLayerScale } from './OpticalPuzzleLayout';
+import { computePlayLayerPosition, computePlayLayerScale, opticalBoardLayout, syncOpticalPlayBoardLayers } from './OpticalPuzzleLayout';
 import {
     consumeShareEntryLevelId,
     setWeChatShareContext,
@@ -264,9 +264,14 @@ export class OpticalPuzzleRoot extends Component {
         mgr?.show(payload.message, payload.bgWidth, payload.localY ?? 0);
     }
 
+    private _renderBeamFromSession(): void {
+        const beam = this._session.getBeamSnapshot();
+        this.beamView?.render(beam);
+        this._beamImpactView?.render(beam);
+    }
+
     private _onSessionChanged(reason: OpticalSessionNotifyReason): void {
         const snap = this._session.getSnapshot();
-        const beam = this._session.getBeamSnapshot();
 
         if (reason === 'complete') {
             DataManager.instance.recordOpticalLevelClear(
@@ -285,8 +290,7 @@ export class OpticalPuzzleRoot extends Component {
         }
 
         this.boardView?.render(snap);
-        this.beamView?.render(beam);
-        this._beamImpactView?.render(beam);
+        this._renderBeamFromSession();
         this.boardView?.renderTargetsOverlay(snap);
         this.boardView?.syncPlaySnapshot(snap, reason);
         this.inputHud?.refreshActionButtons();
@@ -303,22 +307,21 @@ export class OpticalPuzzleRoot extends Component {
             this._syncBeamSparkKeepAlive(this._beamImpactView);
             return;
         }
-        const fromSelf =
-            this.getComponent(BEAM_IMPACT_VIEW_CLASS) ??
-            this.getComponentInChildren(BEAM_IMPACT_VIEW_CLASS);
-        if (fromSelf) {
-            this._beamImpactView = fromSelf as unknown as IBeamImpactView;
-            this._syncBeamSparkKeepAlive(this._beamImpactView);
-            return;
+        const playRoot = this.boardView?.node.parent ?? this.node;
+        let impactLayer = playRoot.getChildByName('BeamImpactLayer');
+        if (!impactLayer?.isValid) {
+            impactLayer = new Node('BeamImpactLayer');
+            playRoot.addChild(impactLayer);
+            impactLayer.addComponent(UITransform);
+            const beamLayer = playRoot.getChildByName('BeamLayer');
+            if (beamLayer?.isValid) {
+                impactLayer.setSiblingIndex(beamLayer.getSiblingIndex() + 1);
+            }
         }
-        const beamNode = this.node.getChildByName('BeamLayer');
-        if (!beamNode?.isValid) {
-            return;
-        }
-        const onBeam =
-            beamNode.getComponent(BEAM_IMPACT_VIEW_CLASS) ??
-            beamNode.addComponent(BEAM_IMPACT_VIEW_CLASS);
-        this._beamImpactView = onBeam as unknown as IBeamImpactView;
+        const onImpact =
+            impactLayer.getComponent(BEAM_IMPACT_VIEW_CLASS) ??
+            impactLayer.addComponent(BEAM_IMPACT_VIEW_CLASS);
+        this._beamImpactView = onImpact as unknown as IBeamImpactView;
         this._syncBeamSparkKeepAlive(this._beamImpactView);
     }
 
@@ -339,9 +342,15 @@ export class OpticalPuzzleRoot extends Component {
         if (!playLayer?.isValid) {
             return;
         }
+        const scaleRoot = this.boardView?.node.parent ?? this.node;
         const targetWidth = this._resolvePlayAreaWidth();
         const scale = computePlayLayerScale(levelWidth, levelHeight, targetWidth);
-        playLayer.setScale(new Vec3(scale, scale, 1));
+        const boardLayout = opticalBoardLayout(levelWidth, levelHeight);
+
+        // 与参考解一致：缩放落在棋盘容器（OpticalPuzzle），layerPlay 仅负责位移
+        scaleRoot.setScale(new Vec3(scale, scale, 1));
+        playLayer.setScale(new Vec3(1, 1, 1));
+        syncOpticalPlayBoardLayers(scaleRoot, boardLayout);
         this._beamImpactView?.setVisualScale?.(scale);
 
         const canvasHeight = this._resolveCanvasHeight();

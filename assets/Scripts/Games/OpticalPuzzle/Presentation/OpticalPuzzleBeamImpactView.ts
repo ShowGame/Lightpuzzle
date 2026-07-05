@@ -23,7 +23,7 @@ import { resolveBeamColorKey } from '../Core/OpticalLightColor';
 import { Direction, normalizeDirection } from '../Core/OpticalPuzzleTypes';
 import { BEAM_SPARK_RESOURCE_PATHS, BEAM_SPARK_SPRITE_UUIDS } from './OpticalPuzzleBeamSparkSpriteUuids';
 import { beamColorFromKey } from './OpticalPuzzleColorUtil';
-import { OPTICAL_CELL_SIZE } from './OpticalPuzzleLayout';
+import { OPTICAL_CELL_SIZE, opticalBoardLayout, opticalGridPointToLocal, syncOpticalPlayBoardLayers } from './OpticalPuzzleLayout';
 
 const { ccclass, property } = _decorator;
 
@@ -261,16 +261,13 @@ function applyImpactVisualScale(ps: ParticleSystem2D, dir: Direction, visualScal
 
 function contactScreenPosition(
     contact: OpticalBeamBlockContact,
-    ox: number,
-    oy: number,
+    layout: ReturnType<typeof opticalBoardLayout>,
 ): { px: number; py: number } {
     const dir = normalizeDirection(contact.dir, Direction.Right);
     const gx = contact.x - GRID_DX[dir] * CONTACT_BACK_OFFSET;
     const gy = contact.y - GRID_DY[dir] * CONTACT_BACK_OFFSET;
-    return {
-        px: ox + gx * CELL,
-        py: oy - gy * CELL,
-    };
+    const p = opticalGridPointToLocal(gx, gy, layout);
+    return { px: p.x, py: p.y };
 }
 
 function applyBeamColorToParticle(ps: ParticleSystem2D, colorKey: unknown): void {
@@ -357,7 +354,7 @@ export class OpticalPuzzleBeamImpactView extends Component {
 
     private _emitters = new Map<string, ImpactEmitterEntry>();
     private _lastSnapshot: OpticalBeamSnapshot | null = null;
-    /** 与 layerPlay 缩放一致，补偿 ParticleSystem2D 不继承父节点 scale */
+    /** 与棋盘 scaleRoot 缩放一致，补偿 ParticleSystem2D 不继承父节点 scale */
     private _visualScale = 1;
 
     protected onLoad(): void {
@@ -424,8 +421,8 @@ export class OpticalPuzzleBeamImpactView extends Component {
             return;
         }
 
-        const ox = (-snapshot.width * CELL) / 2;
-        const oy = (snapshot.height * CELL) / 2;
+        const layout = opticalBoardLayout(snapshot.width, snapshot.height, CELL);
+        syncOpticalPlayBoardLayers(this.node.parent, layout);
         const contacts = snapshot.blockContacts ?? [];
         const segments = snapshot.segments ?? [];
         const capped = contacts.length > MAX_IMPACT_EMITTERS
@@ -437,7 +434,7 @@ export class OpticalPuzzleBeamImpactView extends Component {
             const dir = normalizeDirection(contact.dir, Direction.Right);
             const colorKey = resolveBlockContactColorFromSegments(contact, segments);
             const key = contactPoolKey(contact, colorKey);
-            const { px, py } = contactScreenPosition(contact, ox, oy);
+            const { px, py } = contactScreenPosition(contact, layout);
             desired.set(key, { px, py, colorKey, dir });
         }
 

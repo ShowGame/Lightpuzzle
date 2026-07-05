@@ -22,7 +22,7 @@ import {
 import { drawPlayerEyes } from './OpticalPuzzlePlayerGlyph';
 import { drawSourceEmitter } from './OpticalPuzzleSourceGlyph';
 import { drawTargetLamp } from './OpticalPuzzleTargetGlyph';
-import { OPTICAL_CELL_SIZE } from './OpticalPuzzleLayout';
+import { OPTICAL_CELL_SIZE, opticalBoardLayout, syncOpticalPlayBoardLayers } from './OpticalPuzzleLayout';
 import { cellScreenRect, fillBoardFloorBase, fillWallCell } from './OpticalPuzzleWallDraw';
 
 const { ccclass } = _decorator;
@@ -145,12 +145,10 @@ export class OpticalPuzzleBoardView extends Component {
     }
 
     private _cellLayout(snapshot: OpticalBoardSnapshot): { cell: number; ox: number; oy: number } {
-        const cell = OPTICAL_CELL_SIZE;
-        return {
-            cell,
-            ox: (-snapshot.width * cell) / 2,
-            oy: (snapshot.height * cell) / 2,
-        };
+        const layout = opticalBoardLayout(snapshot.width, snapshot.height, OPTICAL_CELL_SIZE);
+        const playRoot = this.node.parent ?? this.node;
+        syncOpticalPlayBoardLayers(playRoot, layout);
+        return { cell: layout.cell, ox: layout.ox, oy: layout.oy };
     }
 
     /** 绘制目标指示灯（须在 BeamView.render 之后调用） */
@@ -314,10 +312,11 @@ export class OpticalPuzzleBoardView extends Component {
     }
 
     private _finishMoveAnim(): void {
-        if (this._moveAnim) {
-            this._settledSnapshot = this._moveAnim.snapshot;
-            this._moveAnim = null;
+        if (!this._moveAnim) {
+            return;
         }
+        this._settledSnapshot = this._moveAnim.snapshot;
+        this._moveAnim = null;
     }
 
     private _animRectForEntity(
