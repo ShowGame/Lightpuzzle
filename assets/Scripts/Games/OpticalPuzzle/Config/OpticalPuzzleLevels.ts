@@ -1836,7 +1836,54 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
     },
     {
         levelId: 38,//第38关
-        levelName: '关卡38（难度72）',
+        levelName: '关卡38（难度70）',
+        perfectSteps: 51,
+        threeStarSteps: 64,
+        twoStarSteps: 77,
+        oneStarSteps: 102,
+        bestSolution: [
+            'w', 'w', 'a', 'a', 'a', 'a', 's', 's', 'd', 's', 'd', 'w', 'a', 'a', 'w', 'w', 'd', 'd', 'd', 'd',
+            's', 's', 'a', 'a', 'a', 'd', 'd', 'd', 'w', 'w', 'a', 'a', 's', 'w', 'd', 'd', 's', 's', 'a', 'a',
+            's', 'a', 'a', 'w', 'd', 'd', 'w', 'w', 'a', 'a', 's',
+        ],
+        height: 6,
+        width: 8,
+        staticLayout: [
+            '########',
+            '##.....#',
+            '##.#...#',
+            '#......#',
+            '##....##',
+            '########',
+        ],
+        objects: [
+            '########',
+            '##.....#',
+            '##.#.S.#',
+            '#E..32@#',
+            '##...S##',
+            '########',
+        ],
+        colors: [
+            '########',
+            '##.....#',
+            '##.#.W.#',
+            '#C..WB.#',
+            '##...G##',
+            '########',
+        ],
+        directions: [
+            '########',
+            '##.....#',
+            '##.#.s.#',
+            '#...ad.#',
+            '##...w##',
+            '########',
+        ],
+    },
+    {
+        levelId: 39,//第39关
+        levelName: '关卡39（难度72）',
         perfectSteps: 34,
         threeStarSteps: 43,
         twoStarSteps: 51,
@@ -1885,8 +1932,8 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         ],
     },
     {
-        levelId: 39,//第39关
-        levelName: '关卡39（难度36）',
+        levelId: 40,//第40关
+        levelName: '关卡40（难度36）',
         perfectSteps: 11,
         threeStarSteps: 14,
         twoStarSteps: 17,
@@ -1934,8 +1981,8 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         ],
     },
     {
-        levelId: 40,//第40关
-        levelName: '关卡40（难度76）',
+        levelId: 41,//第41关
+        levelName: '关卡41（难度76）',
         perfectSteps: 58,
         threeStarSteps: 68,
         twoStarSteps: 88,
@@ -1985,8 +2032,8 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         ],
     },
     {
-        levelId: 41,//第41关
-        levelName: '关卡41（难度44）',
+        levelId: 42,//第42关
+        levelName: '关卡42（难度44）',
         perfectSteps: 11,
         threeStarSteps: 18,
         twoStarSteps: 26,
@@ -2030,8 +2077,8 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         ],
     },
     {
-        levelId: 42,//第42关
-        levelName: '关卡42（难度101）',
+        levelId: 43,//第43关
+        levelName: '关卡43（难度101）',
         perfectSteps: 70,
         threeStarSteps: 89,
         twoStarSteps: 105,
@@ -2086,8 +2133,59 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         ],
     },
     {
-        levelId: 43,//第43关
-        levelName: '关卡43（难度122）',
+        levelId: 44,//第44关
+        levelName: '关卡44（难度84）',
+        perfectSteps: 45,
+        threeStarSteps: 57,
+        twoStarSteps: 68,
+        oneStarSteps: 90,
+        bestSolution: [
+            'd', 'w', 'd', 'a', 's', 's', 'd', 'w', 'd', 'd', 'w', 'w', 'a', 's', 'd', 's', 's', 'a', 'a', 'w',
+            'a', 'w', 'd', 's', 's', 'd', 'd', 'w', 'a', 's', 'a', 'w', 'd', 'd', 'w', 'w', 'a', 's', 'a', 'd',
+            'd', 's', 'a', 'a', 'w',
+        ],
+        height: 7,
+        width: 8,
+        staticLayout: [
+            '########',
+            '##.#..##',
+            '#.....##',
+            '#......#',
+            '#......#',
+            '##.#####',
+            '########',
+        ],
+        objects: [
+            '########',
+            '##S#..##',
+            '#S.3..##',
+            '#@.1..E#',
+            '#S.3..E#',
+            '##S#####',
+            '########',
+        ],
+        colors: [
+            '########',
+            '##R#..##',
+            '#B.W..##',
+            '#..W..P#',
+            '#R.W..Y#',
+            '##G#####',
+            '########',
+        ],
+        directions: [
+            '########',
+            '##s#..##',
+            '#d.a..##',
+            '#..w...#',
+            '#d.s...#',
+            '##w#####',
+            '########',
+        ],
+    },
+    {
+        levelId: 45,//第45关
+        levelName: '关卡45（难度122）',
         perfectSteps: 104,
         threeStarSteps: 130,
         twoStarSteps: 156,
