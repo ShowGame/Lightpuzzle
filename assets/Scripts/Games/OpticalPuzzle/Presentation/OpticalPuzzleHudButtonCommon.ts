@@ -30,7 +30,7 @@ export const PRESSED_GLOW_LAYERS: ReadonlyArray<{ width: number; alpha: number }
     { width: 3, alpha: 255 },
 ];
 
-/** 第 1 关步数 0 时上方向键教程提示：黄框 + 黄呼吸光晕 */
+/** 教程关步数 0 时方向键提示：黄框 + 黄呼吸光晕 */
 export const TUTORIAL_HINT_GLOW_RGB = { r: 255, g: 220, b: 80 } as const;
 export const TUTORIAL_HINT_BORDER = new Color(255, 220, 80, 255);
 

@@ -64,7 +64,7 @@ export class OpticalPuzzleDirButtonView extends Component {
         this._redraw();
     }
 
-    /** 第 1 关步数 0 等教程态：黄框黄呼吸光晕；按下时仍走默认白描边/白光晕 */
+    /** 教程关步数 0 等提示态：黄框黄呼吸光晕；按下时仍走默认白描边/白光晕 */
     setTutorialHint(active: boolean): void {
         if (this._tutorialHint === active) {
             return;

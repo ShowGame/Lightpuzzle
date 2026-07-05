@@ -467,11 +467,18 @@ export class OpticalPuzzleInputHud extends Component {
         this._rebindAnswerVideoBadgeHit();
     }
 
-    /** 第 1 关且步数为 0：上方向键黄呼吸提示 */
+    /** 步数为 0 时各关方向键黄呼吸提示：第 1 关上、第 2 关左 */
     private _refreshDirTutorialHints(): void {
         const levelId = this._session?.getSnapshot().levelId ?? 0;
         const moveCount = this._session?.moveCount ?? 0;
-        const showUpHint = levelId === 1 && moveCount === 0;
+        let hintDirection: Direction | null = null;
+        if (moveCount === 0) {
+            if (levelId === 1) {
+                hintDirection = Direction.Up;
+            } else if (levelId === 2) {
+                hintDirection = Direction.Left;
+            }
+        }
         const dirPad = this.node.getChildByName('DirPad');
         if (!dirPad?.isValid) {
             return;
@@ -481,8 +488,7 @@ export class OpticalPuzzleInputHud extends Component {
             if (!view) {
                 continue;
             }
-            const isUp = view.direction === Direction.Up;
-            view.setTutorialHint(isUp && showUpHint);
+            view.setTutorialHint(hintDirection != null && view.direction === hintDirection);
         }
     }
 

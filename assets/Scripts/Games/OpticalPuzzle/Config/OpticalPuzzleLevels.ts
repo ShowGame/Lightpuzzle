@@ -137,12 +137,12 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
     },
     {
         levelId: 3,//第3关
-        levelName: '关卡3（难度23）',
-        perfectSteps: 7,
-        threeStarSteps: 9,
-        twoStarSteps: 15,
-        oneStarSteps: 30,
-        bestSolution: ['s', 'd', 'd', 'd', 's', 's', 'a'],
+        levelName: '关卡3（难度18）',
+        perfectSteps: 1,
+        threeStarSteps: 2,
+        twoStarSteps: 2,
+        oneStarSteps: 2,
+        bestSolution: ['a'],
         height: 6,
         width: 9,
         staticLayout: [
@@ -155,10 +155,10 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         ],
         objects: [
             '#########',
-            '#..S@E..#',
+            '#..S.E..#',
             '#.......#',
             '#.......#',
-            '#..1..1.#',
+            '#..1..1@#',
             '#########',
         ],
         colors: [
@@ -180,12 +180,12 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
     },
     {
         levelId: 4,//第4关
-        levelName: '关卡4（难度27）',
-        perfectSteps: 6,
+        levelName: '关卡4（难度26）',
+        perfectSteps: 5,
         threeStarSteps: 7,
-        twoStarSteps: 9,
-        oneStarSteps: 15,
-        bestSolution: ['d', 'd', 'w', 'd', 'w', 'a'],
+        twoStarSteps: 8,
+        oneStarSteps: 10,
+        bestSolution: ['d', 's', 'd', 'w', 'a'],
         height: 6,
         width: 9,
         staticLayout: [
@@ -199,8 +199,8 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         objects: [
             '#########',
             '#..1....#',
-            '#.....1.#',
-            '#...@...#',
+            '#....@1.#',
+            '#.......#',
             '#S.1#1.E#',
             '#########',
         ],
@@ -449,8 +449,8 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         colors: [
             '###########',
             '#W.......R#',
-            '#..#.W.#..#',
-            '#....R....#',
+            '#..#.R.#..#',
+            '#....W....#',
             '#....#....#',
             '###########',
         ],
