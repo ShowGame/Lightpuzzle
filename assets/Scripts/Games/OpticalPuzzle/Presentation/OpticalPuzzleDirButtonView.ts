@@ -85,6 +85,19 @@ export class OpticalPuzzleDirButtonView extends Component {
         this.scheduleOnce(this._releaseKeyboardFlash, durationSec);
     }
 
+    /** 第一关教学循环：长按按压态（切换方向时由 InputHud 释放） */
+    setTeachDemoPressed(pressed: boolean): void {
+        if (this._pressCtrl?.touchActive) {
+            return;
+        }
+        this.unschedule(this._releaseKeyboardFlash);
+        if (this._pressed === pressed) {
+            return;
+        }
+        this._pressed = pressed;
+        this._redraw();
+    }
+
     private _releaseKeyboardFlash = (): void => {
         if (this._pressCtrl?.touchActive) {
             return;

@@ -1,9 +1,12 @@
 import type { OpticalBoardSnapshot } from '../Core/OpticalPuzzleTypes';
-import { Direction } from '../Core/OpticalPuzzleTypes';
+import { Direction, normalizeDirection } from '../Core/OpticalPuzzleTypes';
 import { cellScreenRect } from './OpticalPuzzleWallDraw';
 
 /** 主角 / 元件滑格时长（秒） */
 export const MOVE_ANIM_DURATION = 0.1;
+
+/** 第一关教学演示：与正常滑格同速（秒） */
+export const TEACH_DEMO_ANIM_DURATION = MOVE_ANIM_DURATION;
 
 /** 挤压峰值：运动轴 1.06，垂直轴 0.8（中点达到） */
 const SQUASH_AXIS_PEAK = 1.06;
@@ -140,6 +143,40 @@ export function buildMoveAnimEntities(
     }
 
     return entities;
+}
+
+export interface TeachDemoAnimState {
+    elapsed: number;
+    snapshot: OpticalBoardSnapshot;
+    entity: MoveAnimEntity;
+}
+
+/** 与 OpticalPuzzleCore DIR_DX / DIR_DY 一致 */
+const TEACH_DIR_DX: ReadonlyArray<number> = [1, 0, -1, 0];
+const TEACH_DIR_DY: ReadonlyArray<number> = [0, -1, 0, 1];
+
+/** 第一关教学：从当前格向相邻格移动一步（纯表现，位置可跨多步累积） */
+export function buildTeachDemoPlayerEntity(
+    fromX: number,
+    fromY: number,
+    direction: Direction,
+): MoveAnimEntity {
+    const dir = normalizeDirection(direction);
+    const dx = TEACH_DIR_DX[dir] ?? 0;
+    const dy = TEACH_DIR_DY[dir] ?? 0;
+    return {
+        kind: 'player',
+        fromX,
+        fromY,
+        toX: fromX + dx,
+        toY: fromY + dy,
+        direction: directionFromGridDelta(dx, dy),
+    };
+}
+
+/** 教学滑格进度 0→1（与正常 move 相同，单程） */
+export function teachDemoMoveProgress(elapsed: number, duration: number): number {
+    return Math.min(1, Math.max(0, elapsed / duration));
 }
 
 /** 移动失败：主角原地挤压形变，元件不动 */

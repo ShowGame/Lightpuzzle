@@ -123,6 +123,8 @@ export class OpticalPuzzleRoot extends Component {
             console.warn('[OpticalPuzzleRoot] 未绑定 OpticalPuzzleInputHud');
         }
 
+        this._wireTeachScene2Presentation();
+
         setWeChatShareEntryRouteHandler((levelId) => this.enterFromShareLink(levelId));
 
         const shareLevelId = consumeShareEntryLevelId();
@@ -270,6 +272,23 @@ export class OpticalPuzzleRoot extends Component {
         this._beamImpactView?.render(beam);
     }
 
+    /** 教学第二幕：演示态光路与目标灯（结束演示时 onRestore 恢复 Session 态） */
+    private _wireTeachScene2Presentation(): void {
+        this.boardView?.setTeachScene2PresentationHooks({
+            onPresent: (snap, beam) => {
+                this.beamView?.render(beam);
+                this._beamImpactView?.render(beam);
+                this.boardView?.renderTargetsOverlay(snap);
+            },
+            onRestore: () => {
+                const snap = this._session.getSnapshot();
+                this._renderBeamFromSession();
+                this.boardView?.renderTargetsOverlay(snap);
+                this.boardView?.renderPiecesOverlay(snap);
+            },
+        });
+    }
+
     private _onSessionChanged(reason: OpticalSessionNotifyReason): void {
         const snap = this._session.getSnapshot();
 
@@ -293,6 +312,9 @@ export class OpticalPuzzleRoot extends Component {
         this._renderBeamFromSession();
         this.boardView?.renderTargetsOverlay(snap);
         this.boardView?.syncPlaySnapshot(snap, reason);
+        if (reason === 'load' || reason === 'reset') {
+            this.inputHud?.refreshTeachAct(true);
+        }
         this.inputHud?.refreshActionButtons();
         const notify: OpticalSnapshotNotify = {
             snapshot: snap,

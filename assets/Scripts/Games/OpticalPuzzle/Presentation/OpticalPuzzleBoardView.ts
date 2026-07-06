@@ -6,6 +6,8 @@ import {
     UITransform,
 } from 'cc';
 import type { OpticalSessionNotifyReason } from '../Application/OpticalPuzzleSession';
+import type { OpticalTeachScene2Plan } from '../Application/OpticalTeachScene2Plan';
+import type { OpticalBeamSnapshot } from '../Core/OpticalPuzzleCore';
 import type { OpticalBoardSnapshot } from '../Core/OpticalPuzzleTypes';
 import { Direction, TerrainKind } from '../Core/OpticalPuzzleTypes';
 import { drawConnectivityGlyph } from './OpticalPuzzlePieceGlyph';
@@ -13,11 +15,15 @@ import {
     animatedSquashedCellRect,
     buildMoveAnimEntities,
     buildFailedMovePlayerEntity,
+    buildTeachDemoPlayerEntity,
     MOVE_ANIM_DURATION,
     moveAnimProgress,
+    TEACH_DEMO_ANIM_DURATION,
+    teachDemoMoveProgress,
     type MoveAnimEntity,
     type MoveAnimState,
     type SquashedCellRect,
+    type TeachDemoAnimState,
 } from './OpticalPuzzleMoveAnim';
 import { drawPlayerEyes } from './OpticalPuzzlePlayerGlyph';
 import { drawSourceEmitter } from './OpticalPuzzleSourceGlyph';
@@ -35,6 +41,14 @@ const PLAYER_IDLE_CLOSE_AT = 10;
 const PLAYER_BLINK_DURATION = 0.25;
 /** 移动被阻拦时 >< 眼形保持时长（秒） */
 const PLAYER_BLOCKED_EYES_DURATION = 0.35;
+
+/** 教学第二幕：推箱点亮后停留时长（秒） */
+const TEACH_SCENE2_HOLD_SEC = 1.5;
+
+/** 教学第二幕：每次推动前停顿（秒） */
+const TEACH_SCENE2_PRE_PUSH_SEC = 1;
+
+type TeachScene2Phase = 'wait' | 'push' | 'hold';
 
 /** 主角眼部闲置状态 */
 enum PlayerEyeIdleState {
@@ -73,6 +87,24 @@ export class OpticalPuzzleBoardView extends Component {
     private _settledSnapshot: OpticalBoardSnapshot | null = null;
     /** 主角 / 元件滑格 + 挤压 */
     private _moveAnim: MoveAnimState | null = null;
+    /** 第一关教学：主角沿方向演示（不改规则层状态） */
+    private _teachDemoAnim: TeachDemoAnimState | null = null;
+    /** 第一关教学：演示路径上 @ 的累积格坐标（左→下→右→上 四步后回起点） */
+    private _teachVisualPlayer: { x: number; y: number } | null = null;
+    /** 教学第二幕：左推元件循环演示 */
+    private _teachScene2Active = false;
+    private _teachScene2Phase: TeachScene2Phase = 'wait';
+    private _teachScene2PhaseElapsed = 0;
+    private _teachScene2FromSnap: OpticalBoardSnapshot | null = null;
+    private _teachScene2ToSnap: OpticalBoardSnapshot | null = null;
+    private _teachScene2DisplaySnap: OpticalBoardSnapshot | null = null;
+    private _teachScene2BeamFrom: OpticalBeamSnapshot | null = null;
+    private _teachScene2BeamTo: OpticalBeamSnapshot | null = null;
+    private _teachScene2MoveAnim: MoveAnimState | null = null;
+    private _onTeachScene2Present: ((snap: OpticalBoardSnapshot, beam: OpticalBeamSnapshot) => void) | null =
+        null;
+    private _onTeachScene2Restore: (() => void) | null = null;
+    private _onTeachScene2PushStep: (() => void) | null = null;
 
     protected onLoad(): void {
         this._ensureGraphics();
@@ -264,6 +296,208 @@ export class OpticalPuzzleBoardView extends Component {
         this._animElapsed = 0;
     }
 
+    /** 第一关教学：@ 沿方向正常滑格（从当前演示位置再移一格，四步循环后回起点） */
+    playTeachDirectionDemo(direction: Direction, snapshot?: OpticalBoardSnapshot): void {
+        const snap = snapshot ?? this._settledSnapshot ?? this._lastPiecesSnapshot;
+        if (!snap) {
+            return;
+        }
+        this._finalizeTeachDemoAnimIfDone();
+        const fromX = this._teachVisualPlayer?.x ?? snap.player.x;
+        const fromY = this._teachVisualPlayer?.y ?? snap.player.y;
+        this._teachDemoAnim = {
+            elapsed: 0,
+            snapshot: snap,
+            entity: buildTeachDemoPlayerEntity(fromX, fromY, direction),
+        };
+        this.notifyPlayerDirectionInput();
+        this.renderPiecesOverlay(snap);
+    }
+
+    /** 重置教学演示位（新循环 / 关闭蒙层时从关卡起点开始） */
+    resetTeachVisualPosition(): void {
+        this._teachVisualPlayer = null;
+        this._teachDemoAnim = null;
+    }
+
+    stopTeachDirectionDemo(): void {
+        this.resetTeachVisualPosition();
+    }
+    setTeachVisualUpperLeftOfSpawn(snapshot: OpticalBoardSnapshot): void {
+        const { x, y } = snapshot.player;
+        this._teachDemoAnim = null;
+        this._teachVisualPlayer = { x: x - 1, y: y - 1 };
+        this.renderPiecesOverlay(snapshot);
+    }
+
+    /** 绑定第二幕光路/目标刷新与结束恢复（可多次调用，仅覆盖传入字段） */
+    setTeachScene2PresentationHooks(hooks: {
+        onPresent?: (snap: OpticalBoardSnapshot, beam: OpticalBeamSnapshot) => void;
+        onRestore?: () => void;
+        onPushStep?: () => void;
+    }): void {
+        if (hooks.onPresent) {
+            this._onTeachScene2Present = hooks.onPresent;
+        }
+        if (hooks.onRestore) {
+            this._onTeachScene2Restore = hooks.onRestore;
+        }
+        if (hooks.onPushStep) {
+            this._onTeachScene2PushStep = hooks.onPushStep;
+        }
+    }
+
+    /** 镂空到位后：左推元件 1 → 点亮 → 停顿 → 复位，循环演示 */
+    startTeachScene2PushLoop(plan: OpticalTeachScene2Plan, sessionSnap: OpticalBoardSnapshot): void {
+        this.stopTeachDirectionDemo();
+        this._teachVisualPlayer = null;
+        this._teachScene2Active = true;
+        this._teachScene2Phase = 'wait';
+        this._teachScene2PhaseElapsed = 0;
+        this._teachScene2MoveAnim = null;
+        this._teachScene2FromSnap = this._cloneBoardSnapshot(plan.fromSnap);
+        this._teachScene2ToSnap = this._cloneBoardSnapshot(plan.toSnap);
+        this._teachScene2DisplaySnap = this._cloneBoardSnapshot(plan.fromSnap);
+        this._teachScene2BeamFrom = plan.beamFrom;
+        this._teachScene2BeamTo = plan.beamTo;
+        this.notifyPlayerDirectionInput();
+        this._emitTeachScene2Presentation(plan.fromSnap, plan.beamFrom);
+        this.renderPiecesOverlay(sessionSnap);
+    }
+
+    stopTeachScene2PushLoop(): void {
+        if (!this._teachScene2Active) {
+            return;
+        }
+        this._teachScene2Active = false;
+        this._teachScene2MoveAnim = null;
+        this._teachScene2FromSnap = null;
+        this._teachScene2ToSnap = null;
+        this._teachScene2DisplaySnap = null;
+        this._teachScene2BeamFrom = null;
+        this._teachScene2BeamTo = null;
+        this._teachScene2Phase = 'wait';
+        this._teachScene2PhaseElapsed = 0;
+        this._onTeachScene2Restore?.();
+    }
+
+    /** 关闭教学蒙层后恢复 Session 棋盘、光路与目标灯 */
+    restoreSessionPresentationAfterTeach(): void {
+        this._onTeachScene2Restore?.();
+    }
+
+    private _beginTeachScene2Push(): void {
+        const from = this._teachScene2FromSnap;
+        const to = this._teachScene2ToSnap;
+        if (!from || !to || !this._teachScene2Active) {
+            return;
+        }
+        this._teachScene2DisplaySnap = this._cloneBoardSnapshot(from);
+        const entities = buildMoveAnimEntities(from, to);
+        if (entities.length === 0) {
+            return;
+        }
+        this._teachScene2MoveAnim = { elapsed: 0, snapshot: to, entities };
+        this._teachScene2Phase = 'push';
+        this.notifyPlayerDirectionInput();
+        this._onTeachScene2PushStep?.();
+    }
+
+    private _finishTeachScene2Push(): void {
+        const to = this._teachScene2ToSnap;
+        const beamTo = this._teachScene2BeamTo;
+        if (!to || !beamTo) {
+            this._teachScene2MoveAnim = null;
+            return;
+        }
+        this._teachScene2MoveAnim = null;
+        this._teachScene2DisplaySnap = this._cloneBoardSnapshot(to);
+        this._teachScene2Phase = 'hold';
+        this._teachScene2PhaseElapsed = 0;
+        this._emitTeachScene2Presentation(to, beamTo);
+        if (this._lastPiecesSnapshot) {
+            this.renderPiecesOverlay(this._lastPiecesSnapshot);
+        }
+    }
+
+    private _tickTeachScene2(dt: number): void {
+        if (!this._teachScene2Active || !this._teachScene2DisplaySnap) {
+            return;
+        }
+        if (this._teachScene2Phase === 'wait') {
+            this._teachScene2PhaseElapsed += dt;
+            if (this._teachScene2PhaseElapsed >= TEACH_SCENE2_PRE_PUSH_SEC) {
+                this._teachScene2PhaseElapsed = 0;
+                this._beginTeachScene2Push();
+            }
+            return;
+        }
+        if (this._teachScene2Phase === 'hold') {
+            this._teachScene2PhaseElapsed += dt;
+            if (this._teachScene2PhaseElapsed >= TEACH_SCENE2_HOLD_SEC) {
+                this._teachScene2PhaseElapsed = 0;
+                this._teachScene2Phase = 'wait';
+                const from = this._teachScene2FromSnap;
+                const beamFrom = this._teachScene2BeamFrom;
+                if (from && beamFrom) {
+                    this._teachScene2DisplaySnap = this._cloneBoardSnapshot(from);
+                    this._teachScene2MoveAnim = null;
+                    this._emitTeachScene2Presentation(from, beamFrom);
+                    if (this._lastPiecesSnapshot) {
+                        this.renderPiecesOverlay(this._lastPiecesSnapshot);
+                    }
+                }
+            }
+            return;
+        }
+        if (!this._teachScene2MoveAnim) {
+            return;
+        }
+        const wasDone = this._teachScene2MoveAnim.elapsed >= MOVE_ANIM_DURATION;
+        this._teachScene2MoveAnim.elapsed += dt;
+        if (!wasDone && this._teachScene2MoveAnim.elapsed >= MOVE_ANIM_DURATION) {
+            this._finishTeachScene2Push();
+        }
+        if (this._lastPiecesSnapshot) {
+            this.renderPiecesOverlay(this._lastPiecesSnapshot);
+        }
+    }
+
+    private _emitTeachScene2Presentation(
+        snap: OpticalBoardSnapshot,
+        beam: OpticalBeamSnapshot,
+    ): void {
+        this._onTeachScene2Present?.(snap, beam);
+    }
+
+    private _cloneBoardSnapshot(snap: OpticalBoardSnapshot): OpticalBoardSnapshot {
+        return {
+            ...snap,
+            terrain: snap.terrain.slice(),
+            player: { ...snap.player },
+            sources: snap.sources.map((s) => ({ ...s })),
+            targets: snap.targets.map((t) => ({ ...t })),
+            pieces: snap.pieces.map((p) => ({ ...p })),
+        };
+    }
+
+    private _finalizeTeachDemoAnimIfDone(): void {
+        if (!this._teachDemoAnim || this._teachDemoAnim.elapsed < TEACH_DEMO_ANIM_DURATION) {
+            return;
+        }
+        const { entity } = this._teachDemoAnim;
+        this._teachVisualPlayer = { x: entity.toX, y: entity.toY };
+        this._teachDemoAnim = null;
+    }
+
+    private _commitTeachDemoArrival(): void {
+        if (!this._teachDemoAnim) {
+            return;
+        }
+        const { entity } = this._teachDemoAnim;
+        this._teachVisualPlayer = { x: entity.toX, y: entity.toY };
+    }
+
     /** 滑格动画进行中（Presentation 输入锁） */
     isMoveAnimating(): boolean {
         return this._moveAnim !== null;
@@ -324,8 +558,10 @@ export class OpticalPuzzleBoardView extends Component {
         ox: number,
         oy: number,
         cell: number,
+        elapsed?: number,
     ): SquashedCellRect {
-        const progress = moveAnimProgress(this._moveAnim!.elapsed);
+        const animElapsed = elapsed ?? this._moveAnim!.elapsed;
+        const progress = moveAnimProgress(animElapsed);
         return animatedSquashedCellRect(
             ox,
             oy,
@@ -335,6 +571,25 @@ export class OpticalPuzzleBoardView extends Component {
             entity.toX,
             entity.toY,
             progress,
+            entity.direction,
+        );
+    }
+
+    private _teachDemoRect(ox: number, oy: number, cell: number): SquashedCellRect | null {
+        if (!this._teachDemoAnim) {
+            return null;
+        }
+        const { entity, elapsed } = this._teachDemoAnim;
+        const t = teachDemoMoveProgress(elapsed, TEACH_DEMO_ANIM_DURATION);
+        return animatedSquashedCellRect(
+            ox,
+            oy,
+            cell,
+            entity.fromX,
+            entity.fromY,
+            entity.toX,
+            entity.toY,
+            t,
             entity.direction,
         );
     }
@@ -351,7 +606,22 @@ export class OpticalPuzzleBoardView extends Component {
         );
     }
 
+    private _teachScene2PlayerAnimEntity(): MoveAnimEntity | null {
+        return this._teachScene2MoveAnim?.entities.find((e) => e.kind === 'player') ?? null;
+    }
+
+    private _teachScene2PieceAnimEntity(index: number): MoveAnimEntity | null {
+        return (
+            this._teachScene2MoveAnim?.entities.find(
+                (e) => e.kind === 'piece' && e.pieceIndex === index,
+            ) ?? null
+        );
+    }
+
     private _tickIdleTime(dt: number): void {
+        if (this._teachScene2Active) {
+            return;
+        }
         if (
             this._eyeState === PlayerEyeIdleState.Active ||
             this._eyeState === PlayerEyeIdleState.IdleAfterBlink ||
@@ -438,6 +708,20 @@ export class OpticalPuzzleBoardView extends Component {
             }
         }
 
+        if (this._teachDemoAnim) {
+            const wasDone = this._teachDemoAnim.elapsed >= TEACH_DEMO_ANIM_DURATION;
+            this._teachDemoAnim.elapsed += dt;
+            if (!wasDone && this._teachDemoAnim.elapsed >= TEACH_DEMO_ANIM_DURATION) {
+                this._commitTeachDemoArrival();
+            }
+            needRender = true;
+        }
+
+        if (this._teachScene2Active) {
+            this._tickTeachScene2(dt);
+            needRender = true;
+        }
+
         if (needRender && this._lastPiecesSnapshot) {
             this.renderPiecesOverlay(this._lastPiecesSnapshot);
         }
@@ -446,16 +730,27 @@ export class OpticalPuzzleBoardView extends Component {
     /** 绘制元件与主角（须在 BeamView.render 之后调用） */
     renderPiecesOverlay(snapshot: OpticalBoardSnapshot): void {
         this._lastPiecesSnapshot = snapshot;
+        const displaySnap =
+            this._teachScene2Active && this._teachScene2DisplaySnap
+                ? this._teachScene2DisplaySnap
+                : snapshot;
         const g = this._ensurePieceGraphics();
         if (!g) {
             return;
         }
         g.clear();
-        const { cell, ox, oy } = this._cellLayout(snapshot);
-        snapshot.pieces.forEach((piece, index) => {
-            const anim = this._pieceAnimEntity(index);
+        const { cell, ox, oy } = this._cellLayout(displaySnap);
+        const teachScene2Anim = this._teachScene2MoveAnim;
+        displaySnap.pieces.forEach((piece, index) => {
+            const teach2Anim = teachScene2Anim
+                ? this._teachScene2PieceAnimEntity(index)
+                : null;
+            const anim = teach2Anim ?? this._pieceAnimEntity(index);
             if (anim) {
-                const rect = this._animRectForEntity(anim, ox, oy, cell);
+                const elapsed = teach2Anim
+                    ? teachScene2Anim!.elapsed
+                    : this._moveAnim!.elapsed;
+                const rect = this._animRectForEntity(anim, ox, oy, cell, elapsed);
                 drawConnectivityGlyph(
                     g,
                     rect.left,
@@ -480,28 +775,57 @@ export class OpticalPuzzleBoardView extends Component {
             );
         });
 
-        const playerAnim = this._playerAnimEntity();
+        const teach2PlayerAnim = teachScene2Anim ? this._teachScene2PlayerAnimEntity() : null;
+        const playerAnim = teach2PlayerAnim ?? this._playerAnimEntity();
+        const teachDemoRect =
+            !playerAnim && !teach2PlayerAnim ? this._teachDemoRect(ox, oy, cell) : null;
         if (playerAnim) {
-            const rect = this._animRectForEntity(playerAnim, ox, oy, cell);
+            const elapsed = teach2PlayerAnim
+                ? teachScene2Anim!.elapsed
+                : this._moveAnim!.elapsed;
+            const rect = this._animRectForEntity(playerAnim, ox, oy, cell, elapsed);
             drawPlayerEyes(
                 g,
                 rect.left,
                 rect.bottom,
                 rect.width,
-                snapshot.playerFacing ?? Direction.Left,
+                displaySnap.playerFacing ?? Direction.Left,
                 this._blockedEyes ? 0 : this._currentBlinkAmount(),
                 this._blockedEyes,
                 rect.height,
             );
+        } else if (teachDemoRect) {
+            drawPlayerEyes(
+                g,
+                teachDemoRect.left,
+                teachDemoRect.bottom,
+                teachDemoRect.width,
+                this._teachDemoAnim!.entity.direction,
+                this._blockedEyes ? 0 : this._currentBlinkAmount(),
+                this._blockedEyes,
+                teachDemoRect.height,
+            );
+        } else if (this._teachVisualPlayer && !this._teachScene2Active) {
+            const vp = this._teachVisualPlayer;
+            const playerRect = cellScreenRect(ox, oy, vp.x, vp.y, cell);
+            drawPlayerEyes(
+                g,
+                playerRect.left,
+                playerRect.bottom,
+                playerRect.size,
+                displaySnap.playerFacing ?? Direction.Left,
+                this._blockedEyes ? 0 : this._currentBlinkAmount(),
+                this._blockedEyes,
+            );
         } else {
-            const { x: px, y: py } = snapshot.player;
+            const { x: px, y: py } = displaySnap.player;
             const playerRect = cellScreenRect(ox, oy, px, py, cell);
             drawPlayerEyes(
                 g,
                 playerRect.left,
                 playerRect.bottom,
                 playerRect.size,
-                snapshot.playerFacing ?? Direction.Left,
+                displaySnap.playerFacing ?? Direction.Left,
                 this._blockedEyes ? 0 : this._currentBlinkAmount(),
                 this._blockedEyes,
             );
