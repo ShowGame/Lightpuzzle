@@ -60,6 +60,14 @@ function getWx(): IWxAds | undefined {
 const REWARDED_PRELOAD_DELAY_MS = 2000;
 const REWARDED_RESUME_BGM_DELAY_MS = 200;
 
+/**
+ * 微信基础库在 createRewardedVideoAd / load 预载时，控制台常打印
+ * insertTextView·insertImageView parent not found（固定 id 约 32773–32783）。
+ * 属微信广告容器内部问题，与游戏 UI 无关，一般不影响广告展示。
+ * 设为 false 可取消进 Game 后自动预载，减少开局控制台噪音（首次点广告仍会 create）。
+ */
+let _enableGameSceneAdPreload = true;
+
 function scheduleResumeBgmAfterFullScreenAd(): void {
     setTimeout(() => {
         const scene = director.getScene()?.name;
@@ -128,9 +136,17 @@ export function initWeChatRewardedVideoAd(delayMs: number): void {
     _firstPreloadTimer = setTimeout(run, delayMs);
 }
 
-/** Game 场景：延迟预载，避开开局动画 */
+/** Game 场景：延迟约 2s 预载激励/插屏，避开开局动画 */
 export function scheduleWeChatRewardedVideoPreloadForGame(): void {
+    if (!_enableGameSceneAdPreload) {
+        return;
+    }
     initWeChatRewardedVideoAd(REWARDED_PRELOAD_DELAY_MS);
+}
+
+/** 开发调试：是否在进入 Game 约 2s 后预载激励/插屏（会触发微信 SDK 控制台噪音） */
+export function setWeChatGameSceneAdPreloadEnabled(enabled: boolean): void {
+    _enableGameSceneAdPreload = enabled;
 }
 
 /** 展示激励视频；完整观看返回 true，否则 false */

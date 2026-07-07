@@ -10,6 +10,7 @@ export {
     initWeChatRewardedVideoAd,
     cancelWeChatRewardedVideoPreloadSchedule,
     scheduleWeChatRewardedVideoPreloadForGame,
+    setWeChatGameSceneAdPreloadEnabled,
     showWeChatRewardedVideo,
     preloadWeChatRewardedVideo,
     isWeChatInterstitialAdConfigured,

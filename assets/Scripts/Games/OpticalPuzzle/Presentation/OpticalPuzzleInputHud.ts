@@ -55,7 +55,7 @@ const TEACH_SCENE1_HOLES: readonly TeachSpotlightHole[] = [
     { cx: 0, cy: -500, width: 360, height: 340 },
 ];
 
-/** 教学第二幕：仅保留上方镂空目标（取消下方镂空） */
+/** 教学第二幕：推箱演示镂空 */
 const TEACH_SCENE2_HOLE: TeachSpotlightHole = {
     cx: -65,
     cy: 290,
@@ -63,12 +63,46 @@ const TEACH_SCENE2_HOLE: TeachSpotlightHole = {
     height: 460,
 };
 
-/** 第一幕 → 第二幕：镂空缓动时长（秒） */
+/** 教学第三幕：撤回 / 重开 */
+const TEACH_SCENE3_HOLE: TeachSpotlightHole = {
+    cx: -275,
+    cy: -500,
+    width: 150,
+    height: 300,
+};
+
+/** 教学第四幕：参考解 */
+const TEACH_SCENE4_HOLE: TeachSpotlightHole = {
+    cx: 275,
+    cy: -575,
+    width: 150,
+    height: 150,
+}; 
+
+/** 教学第五幕：关卡选择 */
+const TEACH_SCENE5_HOLE: TeachSpotlightHole = {
+    cx: 325,
+    cy: 607,
+    width: 90,
+    height: 90,
+};
+
+/** 幕间镂空缓动时长（秒） */
 const TEACH_HOLE_TWEEN_DURATION = 0.55;
+
+/** 教学刚开启/切关后忽略点击推进，避免选关同一次 MOUSE_UP 误触下一幕 */
+const TEACH_TAP_GRACE_SEC = 0.5;
+
+/** 微信端 teachPanel 文案写入重试（原生 TextView 注册略晚于 active=true） */
+const TEACH_TEXT_FLUSH_RETRY_SEC = 0.05;
+const TEACH_TEXT_FLUSH_MAX_RETRIES = 6;
 
 const enum TeachActPhase {
     Scene1 = 1,
     Scene2 = 2,
+    Scene3 = 3,
+    Scene4 = 4,
+    Scene5 = 5,
 }
 
 const TEACH_BG_CHILD_NAME = 'bg';
@@ -96,7 +130,19 @@ const TEACH_SCENE1_TEXT2 = '继续 >';
 
 /** 第二幕 teachPanel 文案 */
 const TEACH_SCENE2_TEXT1 = '推动元件，点亮灯光，即可通关。';
-const TEACH_SCENE2_TEXT2 = '我学会了 >';
+const TEACH_SCENE2_TEXT2 = '继续 >';
+
+/** 第三幕 teachPanel 文案 */
+const TEACH_SCENE3_TEXT1 = '操作失误，可回撤一步或重开。';
+const TEACH_SCENE3_TEXT2 = '继续 >';
+
+/** 第四幕 teachPanel 文案 */
+const TEACH_SCENE4_TEXT1 = '遇到难关，可查看参考解。';
+const TEACH_SCENE4_TEXT2 = '继续 >';
+
+/** 第五幕 teachPanel 文案 */
+const TEACH_SCENE5_TEXT1 = '此处可进行关卡选择。';
+const TEACH_SCENE5_TEXT2 = '我学会了 >';
 
 /** 挖孔描边层（叠在 dimMask 之上） */
 const TEACH_HOLE_BORDER_CHILD_NAME = 'holeBorder';
@@ -158,7 +204,7 @@ export class OpticalPuzzleInputHud extends Component {
     private _teachHoleBreathPhase = 0;
     /** 第一关步数 0 教学幕是否激活 */
     private _teachActActive = false;
-    /** 用户已在第二幕点击关闭教学，本局不再自动弹出（重置关卡后清除） */
+    /** 用户已在第五幕点击关闭教学，本局不再自动弹出（重置关卡后清除） */
     private _teachActUserDismissed = false;
     private _teachDirCycleElapsed = 0;
     private _teachDirCycleIndex = 0;
@@ -168,13 +214,33 @@ export class OpticalPuzzleInputHud extends Component {
     private _teachHoleTweenActive = false;
     private _teachHoleTweenElapsed = 0;
     private _teachHoleTweenFrom: TeachSpotlightHole | null = null;
+    private _teachHoleTweenTo: TeachSpotlightHole | null = null;
     /** 已绑定点击的节点（teachPanel / bg） */
     private _teachTapNodes: Node[] = [];
     private _teachGlobalTapBound = false;
     private _teachTapConsumed = false;
+    /** 开启教学后短暂忽略点击（吞掉选关/进关同帧的 MOUSE_UP） */
+    private _teachTapGraceActive = false;
+    /** 待写入 teachPanel 文案（微信端须等节点 activeInHierarchy 后再改 Label） */
+    private _pendingTeachText1 = '';
+    private _pendingTeachText2 = '';
+    private _teachTextFlushRetries = 0;
 
     protected onLoad(): void {
         this._autoBindButtons();
+        this._prepareTeachPanelForWeChat();
+    }
+
+    /** 微信：teachPanel 默认 inactive 时先隐藏文案节点，避免引擎为 inactive 父节点创建 TextView */
+    private _prepareTeachPanelForWeChat(): void {
+        if (sys.platform !== sys.Platform.WECHAT_GAME) {
+            return;
+        }
+        const panel = this._resolveTeachPanelNode();
+        if (!panel?.isValid || panel.activeInHierarchy) {
+            return;
+        }
+        this._setTeachPanelContentVisible(false);
     }
 
     /** 未在检查器拖引用时，按 DirPad / ActionPad 子节点名自动绑定并补 Button */
@@ -234,7 +300,6 @@ export class OpticalPuzzleInputHud extends Component {
         this._bindAnswerVideoBadgeHit();
         input.on(Input.EventType.KEY_DOWN, this._onKeyDown, this);
         this.refreshActionButtons();
-        this._ensureTeachSpotlightNodes();
         this._teachHoleBreathPhase = 0;
         this.refreshTeachAct();
     }
@@ -267,30 +332,60 @@ export class OpticalPuzzleInputHud extends Component {
 
     private _tickTeachHoleTween(dt: number): void {
         const from = this._teachHoleTweenFrom;
-        if (!from) {
+        const to = this._teachHoleTweenTo;
+        if (!from || !to) {
             return;
         }
         this._teachHoleTweenElapsed += dt;
         const t = Math.min(1, this._teachHoleTweenElapsed / TEACH_HOLE_TWEEN_DURATION);
         const eased = easeOutCubic(t);
-        this._teachHoles = [lerpTeachHole(from, TEACH_SCENE2_HOLE, eased)];
+        this._teachHoles = [lerpTeachHole(from, to, eased)];
         if (t >= 1) {
             this._teachHoleTweenActive = false;
             this._teachHoleTweenFrom = null;
-            this._teachHoles = [{ ...TEACH_SCENE2_HOLE }];
-            if (this._teachPhase === TeachActPhase.Scene2) {
-                const snap = this._session?.getSnapshot();
-                if (snap) {
-                    const plan = buildTeachScene2PushPlan(snap);
-                    if (plan) {
-                        this._boardView?.startTeachScene2PushLoop(plan, snap);
-                    }
-                }
-            }
+            this._teachHoleTweenTo = null;
+            this._teachHoles = [{ ...to }];
+            this._onTeachHoleTweenComplete();
         }
     }
 
-    /** 点击屏幕任意处：第一幕 → 第二幕；第二幕 → 关闭教学 */
+    private _onTeachHoleTweenComplete(): void {
+        if (this._teachPhase !== TeachActPhase.Scene2) {
+            return;
+        }
+        const snap = this._session?.getSnapshot();
+        if (!snap) {
+            return;
+        }
+        const plan = buildTeachScene2PushPlan(snap);
+        if (plan) {
+            this._boardView?.startTeachScene2PushLoop(plan, snap);
+        }
+    }
+
+    private _startTeachHoleTween(from: TeachSpotlightHole, to: TeachSpotlightHole): void {
+        this._teachHoleTweenFrom = { ...from };
+        this._teachHoleTweenTo = { ...to };
+        this._teachHoleTweenElapsed = 0;
+        this._teachHoleTweenActive = true;
+    }
+
+    private _currentTeachHole(): TeachSpotlightHole {
+        return { ...(this._teachHoles[0] ?? TEACH_SCENE1_HOLES[0]) };
+    }
+
+    private _enterTeachSpotlightScene(
+        phase: TeachActPhase,
+        targetHole: TeachSpotlightHole,
+        text1: string,
+        text2: string,
+    ): void {
+        this._teachPhase = phase;
+        this._queueTeachPanelTexts(text1, text2);
+        this._startTeachHoleTween(this._currentTeachHole(), targetHole);
+    }
+
+    /** 点击屏幕任意处：逐幕推进；第五幕关闭教学 */
     private _onTeachScreenTap(_e: EventTouch): void {
         this._handleTeachScreenAdvance();
     }
@@ -300,7 +395,7 @@ export class OpticalPuzzleInputHud extends Component {
     }
 
     private _handleTeachScreenAdvance(): void {
-        if (!this._teachActActive) {
+        if (!this._teachActActive || this._teachTapGraceActive) {
             return;
         }
         if (this._teachTapConsumed) {
@@ -308,12 +403,24 @@ export class OpticalPuzzleInputHud extends Component {
         }
         this._teachTapConsumed = true;
         this.scheduleOnce(this._resetTeachTapConsumed, 0.2);
-        if (this._teachPhase === TeachActPhase.Scene1) {
-            this._enterTeachScene2();
-            return;
-        }
-        if (this._teachPhase === TeachActPhase.Scene2) {
-            this._dismissTeachActByUser();
+        switch (this._teachPhase) {
+            case TeachActPhase.Scene1:
+                this._enterTeachScene2();
+                break;
+            case TeachActPhase.Scene2:
+                this._enterTeachScene3();
+                break;
+            case TeachActPhase.Scene3:
+                this._enterTeachScene4();
+                break;
+            case TeachActPhase.Scene4:
+                this._enterTeachScene5();
+                break;
+            case TeachActPhase.Scene5:
+                this._dismissTeachActByUser();
+                break;
+            default:
+                break;
         }
     }
 
@@ -322,27 +429,58 @@ export class OpticalPuzzleInputHud extends Component {
     };
 
     private _enterTeachScene2(): void {
-        this._teachPhase = TeachActPhase.Scene2;
         this._teachDirCycleElapsed = 0;
         this._releaseAllTeachDirButtonPress();
         this._resetDirPadButtonScale();
         this._boardView?.stopTeachDirectionDemo();
-        this._updateTeachPanelTexts(TEACH_SCENE2_TEXT1, TEACH_SCENE2_TEXT2);
 
         const snap = this._session?.getSnapshot();
         if (snap) {
             this._boardView?.setTeachVisualUpperLeftOfSpawn(snap);
         }
 
-        const topHole = this._teachHoles[0] ?? { ...TEACH_SCENE1_HOLES[0] };
-        this._teachHoleTweenFrom = { ...topHole };
-        this._teachHoleTweenElapsed = 0;
-        this._teachHoleTweenActive = true;
+        this._enterTeachSpotlightScene(
+            TeachActPhase.Scene2,
+            TEACH_SCENE2_HOLE,
+            TEACH_SCENE2_TEXT1,
+            TEACH_SCENE2_TEXT2,
+        );
+    }
+
+    private _enterTeachScene3(): void {
+        this._boardView?.stopTeachScene2PushLoop();
+        this._boardView?.restoreSessionPresentationAfterTeach();
+        this._enterTeachSpotlightScene(
+            TeachActPhase.Scene3,
+            TEACH_SCENE3_HOLE,
+            TEACH_SCENE3_TEXT1,
+            TEACH_SCENE3_TEXT2,
+        );
+    }
+
+    private _enterTeachScene4(): void {
+        this._enterTeachSpotlightScene(
+            TeachActPhase.Scene4,
+            TEACH_SCENE4_HOLE,
+            TEACH_SCENE4_TEXT1,
+            TEACH_SCENE4_TEXT2,
+        );
+    }
+
+    private _enterTeachScene5(): void {
+        this._enterTeachSpotlightScene(
+            TeachActPhase.Scene5,
+            TEACH_SCENE5_HOLE,
+            TEACH_SCENE5_TEXT1,
+            TEACH_SCENE5_TEXT2,
+        );
     }
 
     private _bindTeachScreenTap(): void {
-        this._ensureTeachSpotlightNodes();
         const panel = this._resolveTeachPanelNode();
+        if (panel?.isValid && !this._teachBgNode?.isValid) {
+            this._teachBgNode = panel.getChildByName(TEACH_BG_CHILD_NAME);
+        }
         const candidates: Node[] = [];
         if (panel?.isValid) {
             candidates.push(panel);
@@ -380,7 +518,38 @@ export class OpticalPuzzleInputHud extends Component {
             this._teachGlobalTapBound = false;
         }
         this.unschedule(this._resetTeachTapConsumed);
+        this.unschedule(this._clearTeachTapGrace);
         this._teachTapConsumed = false;
+        this._teachTapGraceActive = false;
+    }
+
+    private _clearTeachTapGrace = (): void => {
+        this._teachTapGraceActive = false;
+    };
+
+    private _armTeachTapGrace(): void {
+        this._teachTapGraceActive = true;
+        this.unschedule(this._clearTeachTapGrace);
+        this.scheduleOnce(this._clearTeachTapGrace, TEACH_TAP_GRACE_SEC);
+    }
+
+    /** 从第一幕完整开启教学（进第一关 / 重置关卡时调用） */
+    private _startTeachActScene1(): void {
+        this._boardView?.stopTeachScene2PushLoop();
+        this._boardView?.stopTeachDirectionDemo();
+        this._boardView?.restoreSessionPresentationAfterTeach();
+        this._releaseAllTeachDirButtonPress();
+        this._resetDirPadButtonScale();
+        this._teachActActive = true;
+        this._teachHoleBreathPhase = 0;
+        this._teachDirCycleElapsed = 0;
+        this._teachDirCycleIndex = 0;
+        this._initTeachScene1State();
+        this._bindTeachScreenTap();
+        this._scheduleTeachPanelWarmup();
+        this._boardView?.resetTeachVisualPosition();
+        this._applyTeachDirDemoStep(0);
+        this._armTeachTapGrace();
     }
 
     private _initTeachScene1State(): void {
@@ -389,7 +558,8 @@ export class OpticalPuzzleInputHud extends Component {
         this._teachHoleTweenActive = false;
         this._teachHoleTweenElapsed = 0;
         this._teachHoleTweenFrom = null;
-        this._updateTeachPanelTexts(TEACH_SCENE1_TEXT1, TEACH_SCENE1_TEXT2);
+        this._teachHoleTweenTo = null;
+        this._queueTeachPanelTexts(TEACH_SCENE1_TEXT1, TEACH_SCENE1_TEXT2);
     }
 
     /** 第一关步数 0：显示 teachPanel、刷新挖孔，并启动方向键 + @ 循环演示 */
@@ -403,17 +573,8 @@ export class OpticalPuzzleInputHud extends Component {
             panelNode.active = shouldShow;
         }
 
-        if (shouldShow && !this._teachActActive) {
-            this._teachActActive = true;
-            this._teachHoleBreathPhase = 0;
-            this._teachDirCycleElapsed = 0;
-            this._teachDirCycleIndex = 0;
-            this._initTeachScene1State();
-            this._ensureTeachSpotlightNodes();
-            this._bindTeachScreenTap();
-            this.refreshTeachSpotlight();
-            this._boardView?.resetTeachVisualPosition();
-            this._applyTeachDirDemoStep(0);
+        if (shouldShow && (clearDismissed || !this._teachActActive)) {
+            this._startTeachActScene1();
             return;
         }
 
@@ -444,7 +605,7 @@ export class OpticalPuzzleInputHud extends Component {
         return this._session.moveCount === 0;
     }
 
-    /** 第二幕：点击「学会了」关闭教学，恢复本关正常局面 */
+    /** 第五幕：点击「我学会了」关闭教学，恢复本关正常局面 */
     private _dismissTeachActByUser(): void {
         this._teachActUserDismissed = true;
         this._stopTeachAct();
@@ -455,8 +616,13 @@ export class OpticalPuzzleInputHud extends Component {
         this._teachDirCycleElapsed = 0;
         this._teachDirCycleIndex = 0;
         this._unbindTeachScreenTap();
+        this.unschedule(this._flushTeachPanelTexts);
+        this.unschedule(this._deferredTeachPanelWarmup);
+        this.unschedule(this._clearTeachTapGrace);
+        this._teachTapGraceActive = false;
         this._teachHoleTweenActive = false;
         this._teachHoleTweenFrom = null;
+        this._teachHoleTweenTo = null;
         this._teachHoles = [];
         this._teachPhase = TeachActPhase.Scene1;
         this._releaseAllTeachDirButtonPress();
@@ -467,23 +633,92 @@ export class OpticalPuzzleInputHud extends Component {
         const panelNode = this._resolveTeachPanelNode();
         if (panelNode?.isValid) {
             panelNode.active = false;
+            if (sys.platform === sys.Platform.WECHAT_GAME) {
+                this._setTeachPanelContentVisible(false);
+            }
         }
     }
 
-    private _updateTeachPanelTexts(text1: string, text2: string): void {
+    private _setTeachPanelContentVisible(visible: boolean): void {
         const panel = this._resolveTeachPanelNode();
         if (!panel?.isValid) {
             return;
         }
-        const label1 = panel.getChildByName('text1')?.getComponent(Label);
-        const label2 = panel.getChildByName('text2')?.getComponent(Label);
-        if (label1) {
-            label1.string = text1;
-        }
-        if (label2) {
-            label2.string = text2;
+        for (const name of [TEACH_BG_CHILD_NAME, 'text1', 'text2']) {
+            const node = panel.getChildByName(name);
+            if (node?.isValid) {
+                node.active = visible;
+            }
         }
     }
+
+    /** 微信小游戏：Label 须在 teachPanel 已进入层级后再写入，否则 insertTextView parent not found */
+    private _queueTeachPanelTexts(text1: string, text2: string): void {
+        this._pendingTeachText1 = text1;
+        this._pendingTeachText2 = text2;
+        this._teachTextFlushRetries = 0;
+        this.unschedule(this._flushTeachPanelTexts);
+        this.scheduleOnce(this._flushTeachPanelTexts, 0);
+    }
+
+    private _flushTeachPanelTexts = (): void => {
+        const panel = this._resolveTeachPanelNode();
+        if (!panel?.isValid || !panel.activeInHierarchy) {
+            this._retryTeachPanelTextFlush();
+            return;
+        }
+        if (sys.platform === sys.Platform.WECHAT_GAME) {
+            this._setTeachPanelContentVisible(true);
+        }
+        const text1Node = panel.getChildByName('text1');
+        const text2Node = panel.getChildByName('text2');
+        if (!text1Node?.activeInHierarchy || !text2Node?.activeInHierarchy) {
+            this._retryTeachPanelTextFlush();
+            return;
+        }
+        const label1 = text1Node.getComponent(Label);
+        const label2 = text2Node.getComponent(Label);
+        if (label1 && label1.string !== this._pendingTeachText1) {
+            label1.string = this._pendingTeachText1;
+        }
+        if (label2 && label2.string !== this._pendingTeachText2) {
+            label2.string = this._pendingTeachText2;
+        }
+        this._teachTextFlushRetries = 0;
+    };
+
+    private _retryTeachPanelTextFlush(): void {
+        if (!this._teachActActive || this._teachTextFlushRetries >= TEACH_TEXT_FLUSH_MAX_RETRIES) {
+            return;
+        }
+        this._teachTextFlushRetries += 1;
+        this.unschedule(this._flushTeachPanelTexts);
+        this.scheduleOnce(this._flushTeachPanelTexts, TEACH_TEXT_FLUSH_RETRY_SEC);
+    };
+
+    /** teachPanel 激活后下一帧再建 Mask/Graphics 与刷新挖孔，避免微信原生视图父节点未就绪 */
+    private _scheduleTeachPanelWarmup(): void {
+        this.unschedule(this._deferredTeachPanelWarmup);
+        this.scheduleOnce(this._deferredTeachPanelWarmup, 0);
+    }
+
+    private _deferredTeachPanelWarmup = (): void => {
+        if (!this._teachActActive) {
+            return;
+        }
+        const panelNode = this._resolveTeachPanelNode();
+        if (!panelNode?.isValid || !panelNode.activeInHierarchy) {
+            this.unschedule(this._deferredTeachPanelWarmup);
+            this.scheduleOnce(this._deferredTeachPanelWarmup, TEACH_TEXT_FLUSH_RETRY_SEC);
+            return;
+        }
+        if (sys.platform === sys.Platform.WECHAT_GAME) {
+            this._setTeachPanelContentVisible(true);
+        }
+        this._ensureTeachSpotlightNodes();
+        this._flushTeachPanelTexts();
+        this.refreshTeachSpotlight();
+    };
 
     /** 第二幕：左方向键按压反馈（与推箱演示同步） */
     private _applyTeachScene2LeftPress(): void {
@@ -1081,7 +1316,7 @@ export class OpticalPuzzleInputHud extends Component {
 
     private _ensureTeachSpotlightNodes(): void {
         const panelNode = this._resolveTeachPanelNode();
-        if (!panelNode?.isValid) {
+        if (!panelNode?.isValid || !panelNode.activeInHierarchy) {
             return;
         }
         if (!this._teachBgNode?.isValid) {
