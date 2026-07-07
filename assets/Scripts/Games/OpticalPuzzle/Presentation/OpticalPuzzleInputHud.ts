@@ -97,6 +97,9 @@ const TEACH_TAP_GRACE_SEC = 0.5;
 const TEACH_TEXT_FLUSH_RETRY_SEC = 0.05;
 const TEACH_TEXT_FLUSH_MAX_RETRIES = 6;
 
+/** 教学文案打字机：每字间隔（秒）；text1 打完后再停顿同等时长才开始 text2 */
+const TEACH_TYPEWRITER_CHAR_SEC = 0.08;
+
 const enum TeachActPhase {
     Scene1 = 1,
     Scene2 = 2,
@@ -125,7 +128,7 @@ const TEACH_DIR_STEP_SEC = 1;
 const TEACH_DIR_PRESS_SEC = 0.3;
 
 /** 第一幕 teachPanel 文案 */
-const TEACH_SCENE1_TEXT1 = '方向按钮可控制小咪运动。';
+const TEACH_SCENE1_TEXT1 = '方向按钮可以控制小咪运动。';
 const TEACH_SCENE1_TEXT2 = '继续 >';
 
 /** 第二幕 teachPanel 文案 */
@@ -141,8 +144,8 @@ const TEACH_SCENE4_TEXT1 = '遇到难关，可查看参考解。';
 const TEACH_SCENE4_TEXT2 = '继续 >';
 
 /** 第五幕 teachPanel 文案 */
-const TEACH_SCENE5_TEXT1 = '此处可进行关卡选择。';
-const TEACH_SCENE5_TEXT2 = '我学会了 >';
+const TEACH_SCENE5_TEXT1 = '点击此处可进行关卡选择。';
+const TEACH_SCENE5_TEXT2 = '关闭 >';
 
 /** 挖孔描边层（叠在 dimMask 之上） */
 const TEACH_HOLE_BORDER_CHILD_NAME = 'holeBorder';
@@ -222,9 +225,17 @@ export class OpticalPuzzleInputHud extends Component {
     /** 开启教学后短暂忽略点击（吞掉选关/进关同帧的 MOUSE_UP） */
     private _teachTapGraceActive = false;
     /** 待写入 teachPanel 文案（微信端须等节点 activeInHierarchy 后再改 Label） */
-    private _pendingTeachText1 = '';
-    private _pendingTeachText2 = '';
     private _teachTextFlushRetries = 0;
+    /** 教学打字机：完整文案与逐字进度 */
+    private _teachTypewriterTarget1 = '';
+    private _teachTypewriterTarget2 = '';
+    private _teachTypewriterChars1: string[] = [];
+    private _teachTypewriterChars2: string[] = [];
+    private _teachTypewriterIndex1 = 0;
+    private _teachTypewriterIndex2 = 0;
+    private _teachTypewriterPhase: 'idle' | 'text1' | 'pause_before_text2' | 'text2' | 'done' = 'idle';
+    private _teachTypewriterElapsed = 0;
+    private _teachTypewriterDone = true;
 
     protected onLoad(): void {
         this._autoBindButtons();
@@ -328,6 +339,7 @@ export class OpticalPuzzleInputHud extends Component {
         }
 
         this._redrawTeachSpotlightGraphics();
+        this._tickTeachTypewriter(dt);
     }
 
     private _tickTeachHoleTween(dt: number): void {
@@ -401,8 +413,12 @@ export class OpticalPuzzleInputHud extends Component {
         if (this._teachTapConsumed) {
             return;
         }
-        this._teachTapConsumed = true;
-        this.scheduleOnce(this._resetTeachTapConsumed, 0.2);
+        if (!this._teachTypewriterDone) {
+            this._completeTeachTypewriterInstantly();
+            this._consumeTeachScreenTap();
+            return;
+        }
+        this._consumeTeachScreenTap();
         switch (this._teachPhase) {
             case TeachActPhase.Scene1:
                 this._enterTeachScene2();
@@ -427,6 +443,13 @@ export class OpticalPuzzleInputHud extends Component {
     private _resetTeachTapConsumed = (): void => {
         this._teachTapConsumed = false;
     };
+
+    /** 吞掉同一次物理点击的重复回调（节点 TOUCH_END + 全局 input 会各触发一次） */
+    private _consumeTeachScreenTap(): void {
+        this._teachTapConsumed = true;
+        this.unschedule(this._resetTeachTapConsumed);
+        this.scheduleOnce(this._resetTeachTapConsumed, 0.2);
+    }
 
     private _enterTeachScene2(): void {
         this._teachDirCycleElapsed = 0;
@@ -619,6 +642,7 @@ export class OpticalPuzzleInputHud extends Component {
         this.unschedule(this._flushTeachPanelTexts);
         this.unschedule(this._deferredTeachPanelWarmup);
         this.unschedule(this._clearTeachTapGrace);
+        this._resetTeachTypewriter();
         this._teachTapGraceActive = false;
         this._teachHoleTweenActive = false;
         this._teachHoleTweenFrom = null;
@@ -652,40 +676,146 @@ export class OpticalPuzzleInputHud extends Component {
         }
     }
 
-    /** 微信小游戏：Label 须在 teachPanel 已进入层级后再写入，否则 insertTextView parent not found */
+    /** 启动本幕打字机：text1 打完再打 text2 */
     private _queueTeachPanelTexts(text1: string, text2: string): void {
-        this._pendingTeachText1 = text1;
-        this._pendingTeachText2 = text2;
+        this._teachTypewriterTarget1 = text1;
+        this._teachTypewriterTarget2 = text2;
+        this._teachTypewriterChars1 = Array.from(text1);
+        this._teachTypewriterChars2 = Array.from(text2);
+        this._teachTypewriterIndex1 = 0;
+        this._teachTypewriterIndex2 = 0;
+        this._teachTypewriterPhase = 'text1';
+        this._teachTypewriterElapsed = 0;
+        this._teachTypewriterDone = false;
         this._teachTextFlushRetries = 0;
         this.unschedule(this._flushTeachPanelTexts);
         this.scheduleOnce(this._flushTeachPanelTexts, 0);
     }
 
-    private _flushTeachPanelTexts = (): void => {
+    private _resetTeachTypewriter(): void {
+        this._teachTypewriterPhase = 'idle';
+        this._teachTypewriterElapsed = 0;
+        this._teachTypewriterDone = true;
+        this._teachTypewriterIndex1 = 0;
+        this._teachTypewriterIndex2 = 0;
+        this._teachTypewriterChars1 = [];
+        this._teachTypewriterChars2 = [];
+        this._teachTypewriterTarget1 = '';
+        this._teachTypewriterTarget2 = '';
+    }
+
+    private _resolveTeachPanelLabels(): { label1: Label; label2: Label } | null {
         const panel = this._resolveTeachPanelNode();
         if (!panel?.isValid || !panel.activeInHierarchy) {
+            return null;
+        }
+        const text1Node = panel.getChildByName('text1');
+        const text2Node = panel.getChildByName('text2');
+        if (!text1Node?.activeInHierarchy || !text2Node?.activeInHierarchy) {
+            return null;
+        }
+        const label1 = text1Node.getComponent(Label);
+        const label2 = text2Node.getComponent(Label);
+        if (!label1?.isValid || !label2?.isValid) {
+            return null;
+        }
+        return { label1, label2 };
+    }
+
+    /** 面板就绪后清空 Label 并等待 update 逐字打出 */
+    private _flushTeachPanelTexts = (): void => {
+        const labels = this._resolveTeachPanelLabels();
+        if (!labels) {
             this._retryTeachPanelTextFlush();
             return;
         }
         if (sys.platform === sys.Platform.WECHAT_GAME) {
             this._setTeachPanelContentVisible(true);
         }
-        const text1Node = panel.getChildByName('text1');
-        const text2Node = panel.getChildByName('text2');
-        if (!text1Node?.activeInHierarchy || !text2Node?.activeInHierarchy) {
-            this._retryTeachPanelTextFlush();
-            return;
-        }
-        const label1 = text1Node.getComponent(Label);
-        const label2 = text2Node.getComponent(Label);
-        if (label1 && label1.string !== this._pendingTeachText1) {
-            label1.string = this._pendingTeachText1;
-        }
-        if (label2 && label2.string !== this._pendingTeachText2) {
-            label2.string = this._pendingTeachText2;
-        }
+        labels.label1.string = '';
+        labels.label2.string = '';
+        this._teachTypewriterIndex1 = 0;
+        this._teachTypewriterIndex2 = 0;
+        this._teachTypewriterPhase = 'text1';
+        this._teachTypewriterElapsed = 0;
+        this._teachTypewriterDone = false;
         this._teachTextFlushRetries = 0;
     };
+
+    private _tickTeachTypewriter(dt: number): void {
+        if (this._teachTypewriterDone || this._teachTypewriterPhase === 'idle') {
+            return;
+        }
+        if (this._teachTypewriterPhase === 'pause_before_text2') {
+            this._teachTypewriterElapsed += dt;
+            if (this._teachTypewriterElapsed >= TEACH_TYPEWRITER_CHAR_SEC) {
+                this._teachTypewriterPhase = 'text2';
+                this._teachTypewriterElapsed = 0;
+            }
+            return;
+        }
+        const labels = this._resolveTeachPanelLabels();
+        if (!labels) {
+            return;
+        }
+        this._teachTypewriterElapsed += dt;
+        while (this._teachTypewriterElapsed >= TEACH_TYPEWRITER_CHAR_SEC) {
+            this._teachTypewriterElapsed -= TEACH_TYPEWRITER_CHAR_SEC;
+            if (!this._advanceTeachTypewriterChar(labels)) {
+                break;
+            }
+        }
+    }
+
+    private _advanceTeachTypewriterChar(labels: { label1: Label; label2: Label }): boolean {
+        if (this._teachTypewriterPhase === 'text1') {
+            if (this._teachTypewriterIndex1 < this._teachTypewriterChars1.length) {
+                this._teachTypewriterIndex1 += 1;
+                labels.label1.string = this._teachTypewriterChars1
+                    .slice(0, this._teachTypewriterIndex1)
+                    .join('');
+                if (this._teachTypewriterIndex1 >= this._teachTypewriterChars1.length) {
+                    this._teachTypewriterPhase = 'pause_before_text2';
+                    this._teachTypewriterElapsed = 0;
+                }
+                return true;
+            }
+            this._teachTypewriterPhase = 'pause_before_text2';
+            this._teachTypewriterElapsed = 0;
+            return true;
+        }
+        if (this._teachTypewriterPhase === 'text2') {
+            if (this._teachTypewriterIndex2 < this._teachTypewriterChars2.length) {
+                this._teachTypewriterIndex2 += 1;
+                labels.label2.string = this._teachTypewriterChars2
+                    .slice(0, this._teachTypewriterIndex2)
+                    .join('');
+                if (this._teachTypewriterIndex2 >= this._teachTypewriterChars2.length) {
+                    this._teachTypewriterPhase = 'done';
+                    this._teachTypewriterDone = true;
+                }
+                return true;
+            }
+            this._teachTypewriterPhase = 'done';
+            this._teachTypewriterDone = true;
+            return false;
+        }
+        return false;
+    }
+
+    /** 点击跳过打字：立即展示本幕全文，不推进幕次 */
+    private _completeTeachTypewriterInstantly(): void {
+        const labels = this._resolveTeachPanelLabels();
+        if (labels) {
+            labels.label1.string = this._teachTypewriterTarget1;
+            labels.label2.string = this._teachTypewriterTarget2;
+        }
+        this._teachTypewriterIndex1 = this._teachTypewriterChars1.length;
+        this._teachTypewriterIndex2 = this._teachTypewriterChars2.length;
+        this._teachTypewriterPhase = 'done';
+        this._teachTypewriterDone = true;
+        this._teachTypewriterElapsed = 0;
+    }
 
     private _retryTeachPanelTextFlush(): void {
         if (!this._teachActActive || this._teachTextFlushRetries >= TEACH_TEXT_FLUSH_MAX_RETRIES) {
