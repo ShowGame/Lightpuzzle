@@ -1442,7 +1442,58 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
     },
     {
         levelId: 30,//第30关
-        levelName: '关卡30（难度70）',
+        levelName: '关卡30（难度64）',
+        perfectSteps: 42,
+        threeStarSteps: 53,
+        twoStarSteps: 63,
+        oneStarSteps: 84,
+        bestSolution: [
+            's', 'd', 'd', 'd', 'd', 'w', 'w', 'w', 'a', 'a', 's', 's', 'a', 's', 'a', 'a', 'w', 'd', 'd',
+            's', 'd', 'd', 'd', 's', 'd', 'w', 'w', 'w', 'a', 'w', 'a', 'a', 's', 's', 'a', 's', 'd', 'd',
+            'd', 's', 'd', 'w',
+        ],
+        height: 7,
+        width: 9,
+        staticLayout: [
+            '#########',
+            '###.....#',
+            '####.#..#',
+            '#.......#',
+            '#.......#',
+            '######..#',
+            '#########',
+        ],
+        objects: [
+            '#########',
+            '###E....#',
+            '####.#..#',
+            '#.@11S..#',
+            '#.......#',
+            '######..#',
+            '#########',
+        ],
+        colors: [
+            '#########',
+            '###P....#',
+            '####.#..#',
+            '#..BRW..#',
+            '#.......#',
+            '######..#',
+            '#########',
+        ],
+        directions: [
+            '#########',
+            '###.....#',
+            '####.#..#',
+            '#..asd..#',
+            '#.......#',
+            '######..#',
+            '#########',
+        ],
+    },
+    {
+        levelId: 31,//第31关
+        levelName: '关卡31（难度70）',
         perfectSteps: 24,
         threeStarSteps: 30,
         twoStarSteps: 36,
@@ -1486,8 +1537,8 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         ],
     },
     {
-        levelId: 31,//第31关
-        levelName: '关卡31（难度78）',
+        levelId: 32,//第32关
+        levelName: '关卡32（难度78）',
         perfectSteps: 58,
         threeStarSteps: 73,
         twoStarSteps: 87,
@@ -1533,8 +1584,8 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         ],
     },
     {
-        levelId: 32,//第32关
-        levelName: '关卡32（难度73）',
+        levelId: 33,//第33关
+        levelName: '关卡33（难度73）',
         perfectSteps: 54,
         threeStarSteps: 68,
         twoStarSteps: 81,
@@ -1580,8 +1631,8 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         ],
     },
     {
-        levelId: 33,//第33关
-        levelName: '关卡33（难度77）',
+        levelId: 34,//第34关
+        levelName: '关卡34（难度77）',
         perfectSteps: 32,
         threeStarSteps: 40,
         twoStarSteps: 48,
@@ -1630,8 +1681,8 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         ],
     },
     {
-        levelId: 34,//第34关
-        levelName: '关卡34（难度77）',
+        levelId: 35,//第35关
+        levelName: '关卡35（难度77）',
         perfectSteps: 42,
         threeStarSteps: 53,
         twoStarSteps: 63,
@@ -1681,8 +1732,8 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         ],
     },
     {
-        levelId: 35,//第35关
-        levelName: '关卡35（难度108）',
+        levelId: 36,//第36关
+        levelName: '关卡36（难度108）',
         perfectSteps: 53,
         threeStarSteps: 67,
         twoStarSteps: 80,
@@ -1732,8 +1783,8 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         ],
     },
     {
-        levelId: 36,//第36关
-        levelName: '关卡36（难度70）',
+        levelId: 37,//第37关
+        levelName: '关卡37（难度70）',
         perfectSteps: 49,
         threeStarSteps: 62,
         twoStarSteps: 74,
@@ -1779,8 +1830,59 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         ],
     },
     {
-        levelId: 37,//第37关
-        levelName: '关卡37（难度98）',
+        levelId: 38,//第38关
+        levelName: '关卡38（难度77）',
+        perfectSteps: 41,
+        threeStarSteps: 52,
+        twoStarSteps: 62,
+        oneStarSteps: 82,
+        bestSolution: [
+            'd', 'w', 'd', 'd', 's', 'a', 'd', 'w', 'd', 'd', 's', 'a', 'a', 's', 's', 'd', 'w', 'a', 'w', 'w',
+            'd', 'd', 's', 'a', 'w', 'a', 's', 'w', 'a', 'a', 'a', 's', 's', 'd', 'w', 'd', 'a', 'a', 'w', 'd',
+            'd',
+        ],
+        height: 7,
+        width: 9,
+        staticLayout: [
+            '#########',
+            '#.......#',
+            '#.......#',
+            '#......##',
+            '####..###',
+            '####.####',
+            '#########',
+        ],
+        objects: [
+            '#########',
+            '#......E#',
+            '#@.3.3.E#',
+            '#..S.4S##',
+            '####..###',
+            '####E####',
+            '#########',
+        ],
+        colors: [
+            '#########',
+            '#......R#',
+            '#..R.B.W#',
+            '#..R.WG##',
+            '####..###',
+            '####Y####',
+            '#########',
+        ],
+        directions: [
+            '#########',
+            '#.......#',
+            '#..d.d..#',
+            '#..d.wa##',
+            '####..###',
+            '####.####',
+            '#########',
+        ],
+    },
+    {
+        levelId: 39,//第39关
+        levelName: '关卡39（难度98）',
         perfectSteps: 66,
         threeStarSteps: 83,
         twoStarSteps: 99,
@@ -1831,8 +1933,8 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         ],
     },
     {
-        levelId: 38,//第38关
-        levelName: '关卡38（难度67）',
+        levelId: 40,//第40关
+        levelName: '关卡40（难度67）',
         perfectSteps: 37,
         threeStarSteps: 47,
         twoStarSteps: 56,
@@ -1881,8 +1983,8 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         ],
     },
     {
-        levelId: 39,//第39关
-        levelName: '关卡39（难度82）',
+        levelId: 41,//第41关
+        levelName: '关卡41（难度82）',
         perfectSteps: 68,
         threeStarSteps: 85,
         twoStarSteps: 102,
@@ -1937,8 +2039,8 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         ],
     },
     {
-        levelId: 40,//第40关
-        levelName: '关卡40（难度70）',
+        levelId: 42,//第42关
+        levelName: '关卡42（难度70）',
         perfectSteps: 51,
         threeStarSteps: 64,
         twoStarSteps: 77,
@@ -1984,8 +2086,8 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         ],
     },
     {
-        levelId: 41,//第41关
-        levelName: '关卡41（难度72）',
+        levelId: 43,//第43关
+        levelName: '关卡43（难度72）',
         perfectSteps: 34,
         threeStarSteps: 43,
         twoStarSteps: 51,
@@ -2034,8 +2136,8 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         ],
     },
     {
-        levelId: 42,//第42关
-        levelName: '关卡42（难度36）',
+        levelId: 44,//第44关
+        levelName: '关卡44（难度36）',
         perfectSteps: 11,
         threeStarSteps: 14,
         twoStarSteps: 17,
@@ -2083,8 +2185,8 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         ],
     },
     {
-        levelId: 43,//第43关
-        levelName: '关卡43（难度76）',
+        levelId: 45,//第45关
+        levelName: '关卡45（难度76）',
         perfectSteps: 58,
         threeStarSteps: 68,
         twoStarSteps: 88,
@@ -2134,8 +2236,8 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         ],
     },
     {
-        levelId: 44,//第44关
-        levelName: '关卡44（难度44）',
+        levelId: 46,//第46关
+        levelName: '关卡46（难度44）',
         perfectSteps: 11,
         threeStarSteps: 18,
         twoStarSteps: 26,
@@ -2179,8 +2281,8 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         ],
     },
     {
-        levelId: 45,//第45关
-        levelName: '关卡45（难度101）',
+        levelId: 47,//第47关
+        levelName: '关卡47（难度101）',
         perfectSteps: 70,
         threeStarSteps: 89,
         twoStarSteps: 105,
@@ -2235,8 +2337,8 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         ],
     },
     {
-        levelId: 46,//第46关
-        levelName: '关卡46（难度84）',
+        levelId: 48,//第48关
+        levelName: '关卡48（难度84）',
         perfectSteps: 45,
         threeStarSteps: 57,
         twoStarSteps: 68,
@@ -2286,8 +2388,8 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
         ],
     },
     {
-        levelId: 47,//第47关
-        levelName: '关卡47（难度122）',
+        levelId: 49,//第49关
+        levelName: '关卡49（难度122）',
         perfectSteps: 104,
         threeStarSteps: 130,
         twoStarSteps: 156,

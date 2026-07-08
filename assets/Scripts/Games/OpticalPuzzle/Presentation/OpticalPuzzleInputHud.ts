@@ -144,7 +144,7 @@ const TEACH_SCENE4_TEXT1 = '遇到难关，可查看参考解。';
 const TEACH_SCENE4_TEXT2 = '继续 >';
 
 /** 第五幕 teachPanel 文案 */
-const TEACH_SCENE5_TEXT1 = '点击此处可进行关卡选择。';
+const TEACH_SCENE5_TEXT1 = '可查看整体通关进度和选择关卡。';
 const TEACH_SCENE5_TEXT2 = '关闭 >';
 
 /** 挖孔描边层（叠在 dimMask 之上） */
