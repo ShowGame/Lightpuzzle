@@ -69,6 +69,7 @@ const REWARDED_RESUME_BGM_DELAY_MS = 200;
 let _enableGameSceneAdPreload = true;
 
 function scheduleResumeBgmAfterFullScreenAd(): void {
+    // 仅激励视频会打断游戏 BGM；插屏不播广告音，关闭后无需重启 BGM
     setTimeout(() => {
         const scene = director.getScene()?.name;
         if (scene === SCENE_ENUM.MENU || scene === SCENE_ENUM.GAME) {
@@ -290,7 +291,6 @@ export function showWeChatInterstitialAd(): Promise<boolean> {
     return showWithRetry()
         .then(() => {
             preloadWeChatInterstitialAd();
-            bindInterstitialCloseForBgmResume(ad);
             return true;
         })
         .catch((err: unknown) => {
@@ -300,18 +300,6 @@ export function showWeChatInterstitialAd(): Promise<boolean> {
         .finally(() => {
             _interstitialShowInFlight = false;
         });
-}
-
-function bindInterstitialCloseForBgmResume(ad: IInterstitialAd): void {
-    if (typeof ad.onClose !== 'function') {
-        scheduleResumeBgmAfterFullScreenAd();
-        return;
-    }
-    const onClose = (): void => {
-        ad.offClose?.(onClose);
-        scheduleResumeBgmAfterFullScreenAd();
-    };
-    ad.onClose(onClose);
 }
 
 export function preloadWeChatInterstitialAd(): void {

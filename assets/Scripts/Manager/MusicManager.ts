@@ -148,14 +148,14 @@ export class MusicManager extends Component {
         this._currentBgmClip = null;
     }
 
-    /** 从广告/后台回到前台时恢复 BGM（与 PLAY_BGM 事件、广告 onClose 互补） */
+    /** 切回前台：若 BGM 仍在播则不打断（插屏不打断 BGM）；激励视频由广告 onClose 发 PLAY_BGM 强制恢复 */
     private scheduleResumeBgmAfterForeground(): void {
         this._clearResumeBgmTimer();
         this._resumeBgmTimer = setTimeout(() => {
             this._resumeBgmTimer = null;
             const sceneName = director.getScene()?.name ?? '';
             if (sceneName === SCENE_ENUM.MENU || sceneName === SCENE_ENUM.GAME) {
-                this.playGlobalBgm(true);
+                this.playGlobalBgm(false);
             }
         }, 150);
     }
