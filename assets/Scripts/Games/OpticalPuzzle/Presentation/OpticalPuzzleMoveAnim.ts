@@ -5,6 +5,13 @@ import { cellScreenRect } from './OpticalPuzzleWallDraw';
 /** 主角 / 元件滑格时长（秒） */
 export const MOVE_ANIM_DURATION = 0.1;
 
+/**
+ * 滑格动画单帧 elapsed 推进上限。
+ * 微信小游戏卡顿 / 切后台恢复时 dt 可能远大于 MOVE_ANIM_DURATION，
+ * 若一帧内 progress 从 0→1，挤压缩放 sin(0)=sin(π)=0 不可见，表现为瞬移。
+ */
+export const MOVE_ANIM_MAX_DT = MOVE_ANIM_DURATION * 0.5;
+
 /** 第一关教学演示：与正常滑格同速（秒） */
 export const TEACH_DEMO_ANIM_DURATION = MOVE_ANIM_DURATION;
 
@@ -37,6 +44,12 @@ export interface MoveAnimState {
 
 export function moveAnimProgress(elapsed: number): number {
     return Math.min(1, Math.max(0, elapsed / MOVE_ANIM_DURATION));
+}
+
+/** 推进滑格 elapsed（限制单帧步长，保证至少跨 2 帧可见） */
+export function advanceMoveAnimElapsed(elapsed: number, dt: number): number {
+    const safeDt = Math.min(Math.max(0, dt), MOVE_ANIM_MAX_DT);
+    return elapsed + safeDt;
 }
 
 /** 0→1→0，t=0.5 时为 1 */

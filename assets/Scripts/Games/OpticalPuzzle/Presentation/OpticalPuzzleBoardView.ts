@@ -12,6 +12,7 @@ import type { OpticalBoardSnapshot } from '../Core/OpticalPuzzleTypes';
 import { Direction, TerrainKind } from '../Core/OpticalPuzzleTypes';
 import { drawConnectivityGlyph } from './OpticalPuzzlePieceGlyph';
 import {
+    advanceMoveAnimElapsed,
     animatedSquashedCellRect,
     buildMoveAnimEntities,
     buildFailedMovePlayerEntity,
@@ -454,7 +455,10 @@ export class OpticalPuzzleBoardView extends Component {
             return;
         }
         const wasDone = this._teachScene2MoveAnim.elapsed >= MOVE_ANIM_DURATION;
-        this._teachScene2MoveAnim.elapsed += dt;
+        this._teachScene2MoveAnim.elapsed = advanceMoveAnimElapsed(
+            this._teachScene2MoveAnim.elapsed,
+            dt,
+        );
         if (!wasDone && this._teachScene2MoveAnim.elapsed >= MOVE_ANIM_DURATION) {
             this._finishTeachScene2Push();
         }
@@ -521,6 +525,9 @@ export class OpticalPuzzleBoardView extends Component {
     }
 
     private _beginMoveAnim(snapshot: OpticalBoardSnapshot): void {
+        if (this._moveAnim) {
+            this._finishMoveAnim();
+        }
         if (!this._settledSnapshot) {
             this._settledSnapshot = snapshot;
             return;
@@ -535,6 +542,9 @@ export class OpticalPuzzleBoardView extends Component {
 
     /** 推墙 / 推不动：仅主角原地挤压，元件不参与 */
     private _beginFailedMoveAnim(snapshot: OpticalBoardSnapshot): void {
+        if (this._moveAnim) {
+            this._finishMoveAnim();
+        }
         if (!this._settledSnapshot) {
             this._settledSnapshot = snapshot;
         }
@@ -701,7 +711,7 @@ export class OpticalPuzzleBoardView extends Component {
         }
 
         if (this._moveAnim) {
-            this._moveAnim.elapsed += dt;
+            this._moveAnim.elapsed = advanceMoveAnimElapsed(this._moveAnim.elapsed, dt);
             needRender = true;
             if (this._moveAnim.elapsed >= MOVE_ANIM_DURATION) {
                 this._finishMoveAnim();
@@ -710,7 +720,7 @@ export class OpticalPuzzleBoardView extends Component {
 
         if (this._teachDemoAnim) {
             const wasDone = this._teachDemoAnim.elapsed >= TEACH_DEMO_ANIM_DURATION;
-            this._teachDemoAnim.elapsed += dt;
+            this._teachDemoAnim.elapsed = advanceMoveAnimElapsed(this._teachDemoAnim.elapsed, dt);
             if (!wasDone && this._teachDemoAnim.elapsed >= TEACH_DEMO_ANIM_DURATION) {
                 this._commitTeachDemoArrival();
             }

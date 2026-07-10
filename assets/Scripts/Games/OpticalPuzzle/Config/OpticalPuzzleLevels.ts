@@ -2491,7 +2491,7 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
             '########',
         ],
     },
-    {
+    /*{
         // 测试关：左 11 列原 L99（十字网+纵向锯齿+L28）+ col11 中间墙 + 右 9 列 L31
         levelId: 99,
         levelName: '测试光路（十字网+L31+L28）',
@@ -2561,7 +2561,7 @@ export const OPTICAL_LEVEL_LAYERED_SOURCES: IOpticalLevelLayeredSource[] = [
             '#........############',
             '#####################',
         ],
-    },
+    },*/
     /*{
         levelId: 7,
         levelName: '双目标',

@@ -3,13 +3,13 @@
  * false：完全读本地已有存档，不写 mock。
  * 发版前请改为 false。
  */
-export const USE_DEBUG_MOCK_SAVE = true;
+export const USE_DEBUG_MOCK_SAVE = false;
 
 /**
  * true：跳过所有微信广告（激励视频 / 插屏均视为成功，局内参考解与撤回不展示广告角标）。
  * 发版前请改为 false。
  */
-export const DEBUG_SKIP_ALL_ADS = true;
+export const DEBUG_SKIP_ALL_ADS = false;
 
 /** 可只写关心的字段；其余在 restore 时与默认存档合并。仅当 USE_DEBUG_MOCK_SAVE 为 true 时写入本地 */
 export const MOCK_PLAYER_DATA: {
