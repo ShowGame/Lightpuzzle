@@ -713,7 +713,23 @@ export class OpticalPuzzleLevelSelectPanel extends Component {
                 visualState = LevelSelectItemVisualState.Current;
             }
             view?.applyVisualState(visualState);
-            view?.refresh();
+        }
+    }
+
+    /** 仅重绘指定关卡项缩略图（如同关通关后刷新星级） */
+    refreshLevelItemThumbnail(levelId: number): void {
+        if (levelId <= 0 || !this.isLevelListReady()) {
+            return;
+        }
+        for (const itemNode of this._itemNodes) {
+            if (!itemNode?.isValid) {
+                continue;
+            }
+            const view = itemNode.getComponent(OpticalPuzzleLevelSelectItemView);
+            if (view?.getLevelId() === levelId) {
+                view.refreshThumbnail();
+                return;
+            }
         }
     }
 
@@ -866,6 +882,11 @@ export function openLevelSelectPanel(panelNode: Node | null): void {
 /** 同步当前关 / 解锁高亮（换关、通关后调用） */
 export function syncLevelSelectPanelVisuals(panelNode: Node | null): void {
     panelNode?.getComponent(OpticalPuzzleLevelSelectPanel)?.syncLevelListVisuals();
+}
+
+/** 仅重绘某一关缩略图（通关刷新星级；不解锁相邻关时由 sync 处理高亮） */
+export function refreshLevelSelectItemThumbnail(panelNode: Node | null, levelId: number): void {
+    panelNode?.getComponent(OpticalPuzzleLevelSelectPanel)?.refreshLevelItemThumbnail(levelId);
 }
 
 /** 自场景根解析 layerOverlay 下选关面板（兼容 levelSelectPanel / LevelSelectPanel 命名） */

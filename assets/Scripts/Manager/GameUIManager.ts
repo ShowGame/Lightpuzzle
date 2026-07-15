@@ -11,6 +11,7 @@ import {
     ensureLevelSelectPanel,
     openLevelSelectPanel,
     prewarmLevelSelectPanel,
+    refreshLevelSelectItemThumbnail,
     syncLevelSelectPanelVisuals,
 } from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleLevelSelectPanel';
 import { ensureStepViews } from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleStepView';
@@ -232,6 +233,15 @@ export class GameUIManager extends Component {
         if (snap.levelId !== this._displayedLevelId) {
             this.refreshLevelLabel(snap.levelId);
         }
-        syncLevelSelectPanelVisuals(this.levelSelectPanel);
+        const reason = payload?.notifyReason;
+        // 普通移动/推箱/撤回不改变选关高亮或解锁态，避免每步重绘全部关卡缩略图
+        if (reason === 'load') {
+            syncLevelSelectPanelVisuals(this.levelSelectPanel);
+            return;
+        }
+        if (reason === 'complete') {
+            syncLevelSelectPanelVisuals(this.levelSelectPanel);
+            refreshLevelSelectItemThumbnail(this.levelSelectPanel, snap.levelId);
+        }
     }
 }

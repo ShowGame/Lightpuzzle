@@ -111,13 +111,17 @@ export class OpticalPuzzleLevelSelectItemView extends Component {
         if (btn) {
             btn.interactable = visualState !== LevelSelectItemVisualState.Locked;
         }
-        if (forceRedraw || stateChanged || this._pressed) {
+        if (!forceRedraw && !stateChanged) {
+            return;
+        }
+        if (this._pressed) {
             this._pressed = false;
         }
         this._redraw();
     }
 
-    refresh(): void {
+    /** 强制重绘缩略图（通关后刷新星级等，与解锁高亮无关） */
+    refreshThumbnail(): void {
         this._redraw();
     }
 
