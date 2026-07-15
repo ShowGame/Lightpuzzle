@@ -104,6 +104,11 @@ export class OpticalPuzzleWinPanelNextLevelButtonView extends Component {
         btn.zoomScale = NEXT_LEVEL_BUTTON_ZOOM_SCALE;
     }
 
+    /** 录屏回放：模拟点击下一关（跳转 id 须事先写入 DataManager.opticalCurrentLevelId） */
+    triggerRecordReplayClick(): void {
+        this._onClick();
+    }
+
     private _onClick(): void {
         PLAY_AUDIO.emit(EVENT_ENUM.PLAY_AUDIO, AUDIO_EFFECT_ENUM.CLICK_BUTTON);
 

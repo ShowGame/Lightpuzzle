@@ -21,7 +21,7 @@ import { OpticalPuzzleSession } from '../Application/OpticalPuzzleSession';
 import { buildTeachScene2PushPlan } from '../Application/OpticalTeachScene2Plan';
 import { OpticalGameFlowState } from '../Application/OpticalPuzzleStateMachine';
 import { getFirstOpticalLevelId } from '../Config/OpticalPuzzleLevels';
-import { Direction } from '../Core/OpticalPuzzleTypes';
+import { Direction, MoveAttemptResult } from '../Core/OpticalPuzzleTypes';
 import { DEBUG_SKIP_ALL_ADS } from '../../../Config/DebugMockSave';
 import { AUDIO_EFFECT_ENUM, EVENT_ENUM } from '../../../Utils/Enum';
 import { PLAY_AUDIO } from '../../../Utils/Event';
@@ -632,6 +632,41 @@ export class OpticalPuzzleInputHud extends Component {
     private _dismissTeachActByUser(): void {
         this._teachActUserDismissed = true;
         this._stopTeachAct();
+    }
+
+    /** 录屏自动回放：关闭教学蒙层，可选隐藏 HUD */
+    prepareForRecordReplay(hideHud: boolean): void {
+        this._dismissTeachActByUser();
+        if (hideHud && this.node?.isValid) {
+            this.node.active = false;
+        }
+    }
+
+    /**
+     * 录屏自动回放：走子并同步方向键缩放/发光（与键盘输入一致）。
+     * 输入被锁（动画中/非 RUNNING）时返回 null，调用方勿计步。
+     */
+    applyReplayDirection(dir: Direction): MoveAttemptResult | null {
+        if (this._isPlayInputLocked()) {
+            return null;
+        }
+        this._pulseDirButton(dir);
+        const result = this._session.applyDirection(dir);
+        if (result !== null) {
+            this._playUiClick();
+        }
+        return result;
+    }
+
+    /** 录屏自动回放：点重开并同步重开钮缩放/发光 */
+    applyReplayReset(): boolean {
+        if (this._isPlayInputLocked()) {
+            return false;
+        }
+        this._pulseActionButton(this.btnReset);
+        this._playUiClick();
+        this._session.resetLevel();
+        return true;
     }
 
     private _stopTeachAct(): void {

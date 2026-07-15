@@ -1,4 +1,10 @@
 import { _decorator, Component, director, find, Node, SpriteFrame, UITransform, Vec3 } from 'cc';
+import {
+    RECORD_REPLAY_ACTIVE_SCRIPT,
+    RECORD_REPLAY_ENABLED,
+    RECORD_REPLAY_SCRIPTS,
+    RECORD_REPLAY_WIN_PRE_PANEL_DELAY_SEC,
+} from '../../../Config/OpticalRecordReplayConfig';
 import { DataManager } from '../../../Manager/DataManager';
 import { ToastManager } from '../../../Manager/ToastManager';
 import { AUDIO_EFFECT_ENUM, EVENT_ENUM } from '../../../Utils/Enum';
@@ -85,6 +91,10 @@ export class OpticalPuzzleRoot extends Component {
 
     private readonly _session = new OpticalPuzzleSession();
     private _beamImpactView: IBeamImpactView | null = null;
+    /** 录屏自动回放：自动化进行中（隐藏通关面板等） */
+    private _recordReplayMode = false;
+    /** 录屏自动回放：通关时不弹 winPanel、不写存档 */
+    private _suppressWinOnComplete = false;
 
     protected onLoad(): void {
         DataManager.instance.init();
@@ -131,9 +141,40 @@ export class OpticalPuzzleRoot extends Component {
         if (shareLevelId != null) {
             DataManager.instance.applyShareLinkEntry(shareLevelId);
             this.loadLevelById(shareLevelId);
+        } else if (RECORD_REPLAY_ENABLED) {
+            const firstSeg = RECORD_REPLAY_SCRIPTS[RECORD_REPLAY_ACTIVE_SCRIPT]?.[0];
+            this.loadLevelById(firstSeg?.levelId ?? DataManager.instance.opticalCurrentLevelId);
         } else {
             this.reloadCurrentLevel();
         }
+
+        if (RECORD_REPLAY_ENABLED && !this.getComponent('OpticalPuzzleRecordReplayer')) {
+            this.addComponent('OpticalPuzzleRecordReplayer');
+        }
+    }
+
+    /** 录屏自动回放模式（由 OpticalPuzzleRecordReplayer 开关） */
+    setRecordReplayMode(active: boolean): void {
+        this._recordReplayMode = active;
+        if (active) {
+            this._cancelWinRevealSchedule();
+            this._setPreWinPanelVisible(false);
+            this._setWinPanelVisible(false);
+        }
+    }
+
+    /** 录屏段内是否抑制通关 UI / 存档（showWinPanel 段须为 false） */
+    setRecordReplaySuppressWin(suppress: boolean): void {
+        this._suppressWinOnComplete = suppress;
+    }
+
+    isRecordReplayMode(): boolean {
+        return this._recordReplayMode;
+    }
+
+    /** 局内 Session（录屏回放等开发工具使用） */
+    getSession(): OpticalPuzzleSession {
+        return this._session;
     }
 
     /** 分享链接热启动：解锁占位 + 加载对应关（不写 opticalCurrentLevelId） */
@@ -220,7 +261,10 @@ export class OpticalPuzzleRoot extends Component {
         this._setWinPanelVisible(false);
         this._setPreWinPanelVisible(true);
         this._cancelWinRevealSchedule();
-        this.scheduleOnce(this._revealWinPanelAfterPreWin, PRE_WIN_PANEL_DELAY_SEC);
+        const preWinDelay = this._recordReplayMode
+            ? RECORD_REPLAY_WIN_PRE_PANEL_DELAY_SEC
+            : PRE_WIN_PANEL_DELAY_SEC;
+        this.scheduleOnce(this._revealWinPanelAfterPreWin, preWinDelay);
     }
 
     private _revealWinPanelAfterPreWin = (): void => {
@@ -293,11 +337,13 @@ export class OpticalPuzzleRoot extends Component {
         const snap = this._session.getSnapshot();
 
         if (reason === 'complete') {
-            DataManager.instance.recordOpticalLevelClear(
-                this.getCurrentLevelId(),
-                this._session.moveCount,
-            );
-            this._beginWinRevealSequence();
+            if (!this._suppressWinOnComplete) {
+                DataManager.instance.recordOpticalLevelClear(
+                    this.getCurrentLevelId(),
+                    this._session.moveCount,
+                );
+                this._beginWinRevealSequence();
+            }
         }
         if (reason === 'face') {
             this.boardView?.notifyPlayerMoveBlocked();
