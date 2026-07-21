@@ -1,0 +1,4 @@
+.campaign.lock
+campaign_*.log
+_search_*.txt
+__pycache__/
