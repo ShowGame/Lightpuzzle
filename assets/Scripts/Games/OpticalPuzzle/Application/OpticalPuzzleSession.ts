@@ -163,13 +163,12 @@ export class OpticalPuzzleSession {
         return r;
     }
 
-    /** 移动成功音；若本步有新亮灯则与点亮音同帧叠播（无先后顺序） */
+    /** 本步有新亮灯时播放点亮音 */
     private _emitMoveSuccessSounds(prevLit: boolean[]): void {
-        const sfx: AUDIO_EFFECT_ENUM[] = [AUDIO_EFFECT_ENUM.OPTICAL_MOVE_SUCCESS];
-        if (this._hasNewlyLitTarget(prevLit)) {
-            sfx.push(AUDIO_EFFECT_ENUM.OPTICAL_TARGET_LIT);
+        if (!this._hasNewlyLitTarget(prevLit)) {
+            return;
         }
-        PLAY_AUDIO.emit(EVENT_ENUM.PLAY_AUDIO, sfx);
+        PLAY_AUDIO.emit(EVENT_ENUM.PLAY_AUDIO, AUDIO_EFFECT_ENUM.OPTICAL_TARGET_LIT);
     }
 
     private _hasNewlyLitTarget(prevLit: boolean[]): boolean {

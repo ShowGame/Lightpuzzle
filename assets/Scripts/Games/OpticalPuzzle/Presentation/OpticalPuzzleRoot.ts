@@ -21,10 +21,15 @@ import {
     setWeChatShareContext,
     setWeChatShareEntryRouteHandler,
 } from '../../../Utils/WeChatShare';
+import { syncWinPanelActionButtonsLayout } from './OpticalPuzzleWinPanelActionButtonsLayout';
 import {
     OpticalPuzzleWinPanelNextLevelButtonView,
     resolveWinPanelNextLevelNode,
 } from './OpticalPuzzleWinPanelNextLevelButtonView';
+import {
+    OpticalPuzzleWinPanelRetryButtonView,
+    resolveWinPanelRetryNode,
+} from './OpticalPuzzleWinPanelRetryButtonView';
 import {
     resolvePreWinPanelNode,
     resolveWinPanelNode,
@@ -230,15 +235,21 @@ export class OpticalPuzzleRoot extends Component {
 
     private _showWinPanel(): void {
         const gameRoot = this._resolveGameRoot();
+        const levelId = this.getCurrentLevelId();
+        const moveCount = this._session.moveCount;
         this._setWinPanelVisible(true);
         PLAY_AUDIO.emit(EVENT_ENUM.PLAY_AUDIO, AUDIO_EFFECT_ENUM.OPTICAL_LEVEL_COMPLETE);
         // winPanel 默认 inactive，子组件 onLoad 晚于 complete 事件；展示后补发一次同步步数/星级
         this._replayWinPanelSnapshotNotify();
+        syncWinPanelActionButtonsLayout(gameRoot, levelId, moveCount);
         const nextLevelBtn = resolveWinPanelNextLevelNode(gameRoot)?.getComponent(
             OpticalPuzzleWinPanelNextLevelButtonView,
         );
-        nextLevelBtn?.setLabelForLevel(this.getCurrentLevelId());
+        nextLevelBtn?.setLabelForLevel(levelId);
         nextLevelBtn?.refresh();
+        resolveWinPanelRetryNode(gameRoot)
+            ?.getComponent(OpticalPuzzleWinPanelRetryButtonView)
+            ?.refresh();
     }
 
     /** winPanel 首次激活时其监听尚未注册，需用最近一次通关快照刷新 winds 内 UI */

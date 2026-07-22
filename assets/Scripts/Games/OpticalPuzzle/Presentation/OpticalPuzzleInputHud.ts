@@ -26,6 +26,7 @@ import { DEBUG_SKIP_ALL_ADS } from '../../../Config/DebugMockSave';
 import { AUDIO_EFFECT_ENUM, EVENT_ENUM } from '../../../Utils/Enum';
 import { PLAY_AUDIO } from '../../../Utils/Event';
 import { showWeChatInterstitialAd, showWeChatRewardedVideo } from '../../../Utils/WeChatRewardedVideoAd';
+import { playLightTapHaptic } from '../../../Utils/Utils';
 import { invokeWeChatFriendShare } from '../../../Utils/WeChatShare';
 import { openAnswerPanel, resolveAnswerPanelNode } from './OpticalPuzzleAnswerPanel';
 import { ensureActionButtonViews, OpticalPuzzleActionButtonView } from './OpticalPuzzleActionButtonView';
@@ -1117,7 +1118,8 @@ export class OpticalPuzzleInputHud extends Component {
     }
 
     private _onDirectionClick(dir: Direction): void {
-        this._applyDirection(dir, true);
+        playLightTapHaptic();
+        this._applyDirection(dir, false);
     }
 
     private _onUp(): void {

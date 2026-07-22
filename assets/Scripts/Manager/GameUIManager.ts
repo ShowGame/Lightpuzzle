@@ -16,6 +16,7 @@ import {
 } from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleLevelSelectPanel';
 import { ensureStepViews } from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleStepView';
 import { ensureWinPanelNextLevelButtonView } from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleWinPanelNextLevelButtonView';
+import { ensureWinPanelRetryButtonView } from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleWinPanelRetryButtonView';
 import { ensureWinPanelStarsView } from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleWinPanelStarsView';
 import { ensureWinPanelStepViews } from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleWinPanelStepView';
 import { ensureWinPanelTitleView } from '../Games/OpticalPuzzle/Presentation/OpticalPuzzleWinPanelTitleView';
@@ -63,6 +64,7 @@ export class GameUIManager extends Component {
         ensureWinPanelStarsView(this.node);
         ensureWinPanelStepViews(this.node);
         ensureWinPanelNextLevelButtonView(this.node);
+        ensureWinPanelRetryButtonView(this.node);
         this._resolveAnswerPanel();
         this._hidePreWinPanel();
         ensureLevelSelectPanel(this.levelSelectPanel);
