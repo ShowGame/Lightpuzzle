@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>推箱子关卡回放（静态）</title>
+  <style>
+    :root {
+      --bg: #1a1d23;
+      --panel: #252932;
+      --text: #e8eaed;
+      --muted: #9aa0a6;
+      --wall: #3d4450;
+      --wall-edge: #565d6a;
+      --floor: #2f3540;
+      --target: #2d5a3d;
+      --target-dot: #6fcf97;
+      --box: #e89b4a;
+      --box-on-target: #c9e265;
+      --player: #5b9cf5;
+      --accent: #7c9cff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: radial-gradient(circle at top, #2a3140 0%, var(--bg) 55%);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px 40px;
+    }
+    h1 { margin: 0 0 6px; font-size: 1.5rem; font-weight: 600; }
+    .subtitle { color: var(--muted); margin-bottom: 20px; font-size: 0.95rem; }
+    .layout {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      justify-content: center;
+      align-items: flex-start;
+      width: min(960px, 100%);
+    }
+    .board-wrap {
+      background: var(--panel);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+    }
+    canvas { display: block; border-radius: 8px; image-rendering: pixelated; }
+    .panel {
+      flex: 1;
+      min-width: 280px;
+      max-width: 360px;
+      background: var(--panel);
+      border-radius: 16px;
+      padding: 18px 20px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+    }
+    .panel h2 { margin: 0 0 12px; font-size: 1rem; }
+    .stat {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      font-size: 0.92rem;
+    }
+    .stat span:last-child { color: var(--accent); font-variant-numeric: tabular-nums; }
+    .controls { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+    button {
+      border: none;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      background: #3a4250;
+      color: var(--text);
+      transition: background 0.15s;
+    }
+    button:hover { background: #4a5364; }
+    button.primary { background: var(--accent); color: #111; font-weight: 600; }
+    button.primary:hover { filter: brightness(1.08); }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+    label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+    input[type="range"] { flex: 1; }
+    .legend {
+      display: grid;
+      grid-template-columns: 18px 1fr;
+      gap: 6px 10px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 16px;
+    }
+    .swatch { width: 18px; height: 18px; border-radius: 4px; }
+    .msg {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: rgba(124, 156, 255, 0.12);
+      color: #b8c9ff;
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+    .msg.error { background: rgba(255, 100, 100, 0.12); color: #ffb4b4; }
+  </style>
+</head>
+<body>
+  <h1 id="title">推箱子关卡回放</h1>
+  <p class="subtitle">单文件静态页，关卡与最佳解法已内嵌，双击即可打开</p>
+
+  <div class="layout">
+    <div class="board-wrap">
+      <canvas id="board" width="450" height="400"></canvas>
+    </div>
+
+    <div class="panel">
+      <h2>控制</h2>
+      <div class="stat"><span>关卡</span><span id="levelName">-</span></div>
+      <div class="stat"><span>尺寸</span><span id="sizeInfo">-</span></div>
+      <div class="stat"><span>箱子 / 目标</span><span id="countInfo">-</span></div>
+      <div class="stat"><span>解法步数</span><span id="solutionLen">-</span></div>
+      <div class="stat"><span>当前步</span><span id="stepInfo">0 / 0</span></div>
+
+      <div class="controls">
+        <button class="primary" id="btnPlay">▶ 播放</button>
+        <button id="btnPause" disabled>⏸ 暂停</button>
+        <button id="btnStep">⏭ 单步</button>
+        <button id="btnReset">↺ 重置</button>
+      </div>
+
+      <label>
+        速度（毫秒/步）
+        <input type="range" id="speed" min="50" max="800" step="10" value="180" />
+        <span id="speedVal">180</span>
+      </label>
+
+      <div class="legend">
+        <div class="swatch" style="background:var(--wall)"></div><div>墙</div>
+        <div class="swatch" style="background:var(--target)"></div><div>目标格</div>
+        <div class="swatch" style="background:var(--box)"></div><div>箱子</div>
+        <div class="swatch" style="background:var(--player)"></div><div>玩家 @</div>
+      </div>
+
+      <div class="msg" id="status">准备就绪</div>
+    </div>
+  </div>
+
+  <script>
+    /** 关卡与最佳解法（写死在页面内，无外部依赖） */
+    const LEVEL_DATA = {
+      levelName: "示例-单箱",
+      height: 8,
+      width: 9,
+      bestsolution:
+        "左左上左右下右下下左上右上右上右上上左左左左左下下右右右左左左上上右右下上左左下下下左下下右上右右下右右上左上上左上上右右右下下左下上右上上左左左左左下下下左下下右上右右上右右上右上上左左左左左下下下左下右上上上上右右右右右下下左下左左上左右下右右上右上上左左左左左下下右右下下下右上左上上左左下左下下右上右右上上左左下左下右上上上上右右右右右下下左左左左右右右右上上左左左左左下下右右下下下右右上上左上左左左上上右右右右右下下左下下下左上右上上右上上左左左左左下下下左下下右上右右下右右上上上右上上左左左下上左左下下下左下右右",
+      terrain: [
+        "#########",
+        "##......#",
+        "##.#.##.#",
+        "##......#",
+        "#..#...##",
+        "#......##",
+        "#..#...##",
+        "#########",
+      ],
+      objects: [
+        "#########",
+        "##......#",
+        "##.#.##.#",
+        "##.SSS..#",
+        "#..#..@##",
+        "#..SS.S##",
+        "#..#...##",
+        "#########",
+      ],
+      targets: [
+        "#########",
+        "##......#",
+        "##.#.##.#",
+        "##..EE..#",
+        "#..#EE.##",
+        "#...EE.##",
+        "#..#...##",
+        "#########",
+      ],
+    };
+
+    const DIR = {
+      "上": { dx: 0, dy: -1 },
+      "下": { dx: 0, dy: 1 },
+      "左": { dx: -1, dy: 0 },
+      "右": { dx: 1, dy: 0 },
+    };
+
+    const canvas = document.getElementById("board");
+    const ctx = canvas.getContext("2d");
+    const ui = {
+      title: document.getElementById("title"),
+      levelName: document.getElementById("levelName"),
+      sizeInfo: document.getElementById("sizeInfo"),
+      countInfo: document.getElementById("countInfo"),
+      solutionLen: document.getElementById("solutionLen"),
+      stepInfo: document.getElementById("stepInfo"),
+      status: document.getElementById("status"),
+      btnPlay: document.getElementById("btnPlay"),
+      btnPause: document.getElementById("btnPause"),
+      btnStep: document.getElementById("btnStep"),
+      btnReset: document.getElementById("btnReset"),
+      speed: document.getElementById("speed"),
+      speedVal: document.getElementById("speedVal"),
+    };
+
+    let walkable = [];
+    let targetSet = new Set();
+    let width = 0;
+    let height = 0;
+    let cellSize = 40;
+    let initial = null;
+    let state = null;
+    let moves = [];
+    let stepIndex = 0;
+    let timer = null;
+    let playing = false;
+
+    function idx(x, y) { return y * width + x; }
+    function inBounds(x, y) { return x >= 0 && y >= 0 && x < width && y < height; }
+
+    function parseLevel(raw) {
+      width = raw.width || raw.terrain[0].length;
+      height = raw.height || raw.terrain.length;
+      walkable = new Array(width * height).fill(false);
+      targetSet = new Set();
+
+      let player = null;
+      const boxes = [];
+
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          const t = raw.terrain[y][x];
+          if (t !== "#" && t !== " ") walkable[idx(x, y)] = true;
+          if (raw.targets[y][x] === "E") targetSet.add(idx(x, y));
+          const o = raw.objects[y][x];
+          if (o === "@") player = { x, y };
+          if (o === "S") boxes.push({ x, y });
+        }
+      }
+
+      if (!player) throw new Error("objects 层缺少 @");
+      if (boxes.length === 0) throw new Error("objects 层缺少 S");
+      if (targetSet.size === 0) throw new Error("targets 层缺少 E");
+
+      boxes.sort((a, b) => a.y - b.y || a.x - b.x);
+
+      return {
+        levelName: raw.levelName || "未命名",
+        player: { ...player },
+        boxes: boxes.map((b) => ({ ...b })),
+      };
+    }
+
+    function parseSolution(str) {
+      const out = [];
+      for (const ch of str.trim()) {
+        if (DIR[ch]) out.push(ch);
+        else throw new Error("解法含非法字符: " + ch);
+      }
+      return out;
+    }
+
+    function cloneState(s) {
+      return {
+        player: { ...s.player },
+        boxes: s.boxes.map((b) => ({ ...b })),
+      };
+    }
+
+    function boxAt(x, y, boxes) {
+      return boxes.findIndex((b) => b.x === x && b.y === y);
+    }
+
+    function applyMove(s, dirChar) {
+      const { dx, dy } = DIR[dirChar];
+      const nx = s.player.x + dx;
+      const ny = s.player.y + dy;
+      if (!inBounds(nx, ny) || !walkable[idx(nx, ny)]) return false;
+
+      const bi = boxAt(nx, ny, s.boxes);
+      if (bi < 0) {
+        s.player.x = nx;
+        s.player.y = ny;
+        return true;
+      }
+
+      const bx = nx + dx;
+      const by = ny + dy;
+      if (!inBounds(bx, by) || !walkable[idx(bx, by)]) return false;
+      if (boxAt(bx, by, s.boxes) >= 0) return false;
+
+      s.player.x = nx;
+      s.player.y = ny;
+      s.boxes[bi].x = bx;
+      s.boxes[bi].y = by;
+      return true;
+    }
+
+    function allOnTarget(s) {
+      return s.boxes.every((b) => targetSet.has(idx(b.x, b.y)));
+    }
+
+    function setupCanvas() {
+      cellSize = Math.floor(Math.min(450 / width, 400 / height));
+      canvas.width = width * cellSize;
+      canvas.height = height * cellSize;
+    }
+
+    function css(name) {
+      return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          const i = idx(x, y);
+          const px = x * cellSize;
+          const py = y * cellSize;
+          const pad = 1;
+
+          if (!walkable[i]) {
+            ctx.fillStyle = css("--wall");
+            ctx.fillRect(px, py, cellSize, cellSize);
+            ctx.strokeStyle = css("--wall-edge");
+            ctx.strokeRect(px + 0.5, py + 0.5, cellSize - 1, cellSize - 1);
+            continue;
+          }
+
+          const onTarget = targetSet.has(i);
+          ctx.fillStyle = onTarget ? css("--target") : css("--floor");
+          ctx.fillRect(px + pad, py + pad, cellSize - pad * 2, cellSize - pad * 2);
+
+          if (onTarget) {
+            ctx.fillStyle = css("--target-dot");
+            ctx.beginPath();
+            ctx.arc(px + cellSize / 2, py + cellSize / 2, cellSize * 0.12, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+      }
+
+      for (const b of state.boxes) {
+        const px = b.x * cellSize;
+        const py = b.y * cellSize;
+        const onT = targetSet.has(idx(b.x, b.y));
+        const margin = cellSize * 0.14;
+        ctx.fillStyle = onT ? css("--box-on-target") : css("--box");
+        roundRect(ctx, px + margin, py + margin, cellSize - margin * 2, cellSize - margin * 2, 6);
+        ctx.fill();
+        ctx.strokeStyle = "rgba(0,0,0,0.25)";
+        ctx.stroke();
+      }
+
+      const px = state.player.x * cellSize;
+      const py = state.player.y * cellSize;
+      ctx.fillStyle = css("--player");
+      ctx.beginPath();
+      ctx.arc(px + cellSize / 2, py + cellSize / 2, cellSize * 0.28, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "#fff";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    function roundRect(c, x, y, w, h, r) {
+      c.beginPath();
+      c.moveTo(x + r, y);
+      c.lineTo(x + w - r, y);
+      c.quadraticCurveTo(x + w, y, x + w, y + r);
+      c.lineTo(x + w, y + h - r);
+      c.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      c.lineTo(x + r, y + h);
+      c.quadraticCurveTo(x, y + h, x, y + h - r);
+      c.lineTo(x, y + r);
+      c.quadraticCurveTo(x, y, x + r, y);
+      c.closePath();
+    }
+
+    function updateStepInfo() {
+      ui.stepInfo.textContent = stepIndex + " / " + moves.length;
+    }
+
+    function setStatus(text, isError) {
+      ui.status.textContent = text;
+      ui.status.className = isError ? "msg error" : "msg";
+    }
+
+    function stopPlay() {
+      playing = false;
+      if (timer) {
+        clearTimeout(timer);
+        timer = null;
+      }
+      ui.btnPlay.disabled = false;
+      ui.btnPause.disabled = true;
+    }
+
+    function resetPlayback() {
+      stopPlay();
+      stepIndex = 0;
+      state = cloneState(initial);
+      updateStepInfo();
+      draw();
+      setStatus("已重置。点击播放或单步，共 " + moves.length + " 步");
+    }
+
+    function stepOnce() {
+      if (stepIndex >= moves.length) {
+        stopPlay();
+        setStatus(
+          allOnTarget(state)
+            ? "完成！共 " + moves.length + " 步，全部箱子到位"
+            : "解法已播完，但箱子未全部到位",
+          !allOnTarget(state),
+        );
+        return false;
+      }
+
+      const dir = moves[stepIndex];
+      if (!applyMove(state, dir)) {
+        stopPlay();
+        setStatus("第 " + (stepIndex + 1) + " 步「" + dir + "」无法执行", true);
+        return false;
+      }
+
+      stepIndex += 1;
+      updateStepInfo();
+      draw();
+
+      if (stepIndex >= moves.length) {
+        stopPlay();
+        setStatus(
+          allOnTarget(state)
+            ? "完成！共 " + moves.length + " 步，全部箱子到位"
+            : "解法播完但未达成目标",
+          !allOnTarget(state),
+        );
+      } else {
+        setStatus("第 " + stepIndex + " 步：" + dir + " → 下一步 " + moves[stepIndex]);
+      }
+      return true;
+    }
+
+    function startPlay() {
+      if (stepIndex >= moves.length) resetPlayback();
+      playing = true;
+      ui.btnPlay.disabled = true;
+      ui.btnPause.disabled = false;
+
+      (function tick() {
+        if (!playing) return;
+        if (!stepOnce()) return;
+        if (playing && stepIndex < moves.length) {
+          timer = setTimeout(tick, Number(ui.speed.value));
+        } else {
+          stopPlay();
+        }
+      })();
+    }
+
+    function init() {
+      try {
+        initial = parseLevel(LEVEL_DATA);
+        moves = parseSolution(LEVEL_DATA.bestsolution);
+        state = cloneState(initial);
+        setupCanvas();
+
+        ui.title.textContent = "推箱子 · " + initial.levelName;
+        ui.levelName.textContent = initial.levelName;
+        ui.sizeInfo.textContent = width + " × " + height;
+        ui.countInfo.textContent = initial.boxes.length + " / " + targetSet.size;
+        ui.solutionLen.textContent = String(moves.length);
+        resetPlayback();
+      } catch (e) {
+        setStatus(e.message || String(e), true);
+      }
+    }
+
+    ui.btnPlay.addEventListener("click", startPlay);
+    ui.btnPause.addEventListener("click", stopPlay);
+    ui.btnStep.addEventListener("click", function () {
+      stopPlay();
+      stepOnce();
+    });
+    ui.btnReset.addEventListener("click", resetPlayback);
+    ui.speed.addEventListener("input", function () {
+      ui.speedVal.textContent = ui.speed.value;
+    });
+
+    init();
+  </script>
+</body>
+</html>

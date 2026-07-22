@@ -1,0 +1,2041 @@
+[log-file] D:\Baoyu\包宇的cocos\LightPuzzle\宣传素材\小红书评论\campaign_2026-07-18_225915.log
+[rate-status] hourly=6/off daily=59/100 ok=True 
+[start] target=41 dry_run=False max_age_days=60 min_relevance=2 history_posts=59 search_tasks=42 search_scrolls=4
+[step] check-login
+[cdp] spawn timeout=90s cmd=check-login
+[cdp] done exit=0 elapsed=0.3s stdout=330 stderr=0
+[cdp] phase=check-login-ok exit=0
+[cdp] cmd=check-login
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/465E15AF9F15B0CED54F0EAFFEC109D7
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (creator, age=457m, ttl=12h).
+[cdp]   [cdp_publish] Login confirmed (cached).
+[limits] interval=2-4min posts/hour=off posts/day=100 circuit=24h
+[queue] empty refilling keyword=益智小游戏 sort=综合 task=1/42 empty_streak=0 seen_feeds=0
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 益智小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=12.3s stdout=418641 stderr=0
+[search-filter] keyword=益智小游戏 sort=综合 scrolls=4 {'already_commented': 25, 'low_relevance': 57, 'bad_title': 9, 'not_note': 6, 'too_old': 21}
+[search] keyword=益智小游戏 sort=综合 raw=126 skipped=118 usable=8 queued=8 rate_limited=False
+[queue] loaded 8 candidates, will post one-by-one before next search
+[queue] pop feedId=6a54f17c000000000702aa11 remaining=7 title=脑洞大开的寻物解谜小游戏🐰
+[plan] #1 keyword=益智小游戏 title=脑洞大开的寻物解谜小游戏🐰 comments=7 age=4d score=6 msg=13/微信小游戏 match=5
+[post] attempt feedId=6a54f17c000000000702aa11 contentLen=39
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a54f17c000000000702aa11 --xsec-token(46chars) --content(39chars)
+[cdp] done exit=0 elapsed=8.1s stdout=1122 stderr=0
+[post] success feedId=6a54f17c000000000702aa11
+[cdp] phase=post-ok exit=0 feedId=6a54f17c000000000702aa11
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a54f17c000000000702aa11 --xsec-token(46chars) --content(39chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/search_result?keyword=%E7%9B%8A%E6%99%BA%E5%B0%8F%E6%B8%B8%E6%88%8F&source=web_explore_feed&type=51
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/465E15AF9F15B0CED54F0EAFFEC109D7
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=457m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a54f17c000000000702aa11?xsec_token=ABdaTAdFTlq1Ntqy8uPL7hJVfm4KwqSbCaijR5PrMBRk8=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (800, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (993, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a54f17c000000000702aa11, length=39
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (1/41)
+[wait] 128s (~2.1min, random 2-4min)
+[queue] pop feedId=6a560297000000001603d4da remaining=6 title=新手友好，越玩越聪明，解谜类游戏推荐😍
+[plan] #2 keyword=益智小游戏 title=新手友好，越玩越聪明，解谜类游戏推荐😍 comments=4 age=4d score=6 msg=1/求推荐 match=7
+[post] attempt feedId=6a560297000000001603d4da contentLen=55
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a560297000000001603d4da --xsec-token(46chars) --content(55chars)
+[cdp] done exit=0 elapsed=8.2s stdout=1133 stderr=0
+[post] success feedId=6a560297000000001603d4da
+[cdp] phase=post-ok exit=0 feedId=6a560297000000001603d4da
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a560297000000001603d4da --xsec-token(46chars) --content(55chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a54f17c000000000702aa11?xsec_token=ABdaTAdFTlq1Ntqy8uPL7hJVfm4KwqSbCaijR5PrMBRk8=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/465E15AF9F15B0CED54F0EAFFEC109D7
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=459m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a560297000000001603d4da?xsec_token=AB3iCyiC3fQH_A59fln8paEpkl0osfqFqv39BSG0uonSM=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (770, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (981, 1282)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a560297000000001603d4da, length=55
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (2/41)
+[wait] 149s (~2.5min, random 2-4min)
+[queue] pop feedId=6a4c789e000000000702ad38 remaining=5 title=所有intp都玩单机益智小游戏的吗？
+[plan] #3 keyword=益智小游戏 title=所有intp都玩单机益智小游戏的吗？ comments=132 age=11d score=6 msg=11/微信小游戏 match=5
+[post] attempt feedId=6a4c789e000000000702ad38 contentLen=42
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a4c789e000000000702ad38 --xsec-token(46chars) --content(42chars)
+[cdp] done exit=0 elapsed=7.4s stdout=1134 stderr=0
+[post] success feedId=6a4c789e000000000702ad38
+[cdp] phase=post-ok exit=0 feedId=6a4c789e000000000702ad38
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a4c789e000000000702ad38 --xsec-token(46chars) --content(42chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a560297000000001603d4da?xsec_token=AB3iCyiC3fQH_A59fln8paEpkl0osfqFqv39BSG0uonSM=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/465E15AF9F15B0CED54F0EAFFEC109D7
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=462m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a4c789e000000000702ad38?xsec_token=ABfYhvE6IT6q7RRstf797MNCMpUzyC3xCCcQ5w5eikr7M=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (834, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1045, 1282)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a4c789e000000000702ad38, length=42
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (3/41)
+[wait] 234s (~3.9min, random 2-4min)
+[queue] pop feedId=6a0d5a5e0000000038037d35 remaining=4 title=千万别点错，被名字耽误的推理小游戏
+[plan] #4 keyword=益智小游戏 title=千万别点错，被名字耽误的推理小游戏 comments=49 age=59d score=6 msg=14/微信小游戏 match=2
+[post] attempt feedId=6a0d5a5e0000000038037d35 contentLen=43
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a0d5a5e0000000038037d35 --xsec-token(46chars) --content(43chars)
+[cdp] done exit=0 elapsed=7.8s stdout=1133 stderr=0
+[post] success feedId=6a0d5a5e0000000038037d35
+[cdp] phase=post-ok exit=0 feedId=6a0d5a5e0000000038037d35
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a0d5a5e0000000038037d35 --xsec-token(46chars) --content(43chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a4c789e000000000702ad38?xsec_token=ABfYhvE6IT6q7RRstf797MNCMpUzyC3xCCcQ5w5eikr7M=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/465E15AF9F15B0CED54F0EAFFEC109D7
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=466m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a0d5a5e0000000038037d35?xsec_token=ABTyT0VA6rIbRvzhFqKgU74BGY-RPQ1_NLVTUv25DITU8=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (776, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (987, 1282)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a0d5a5e0000000038037d35, length=43
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (4/41)
+[wait] 167s (~2.8min, random 2-4min)
+[queue] pop feedId=6a544f760000000011005ab0 remaining=3 title=喜欢推理游戏但不想社交的朋友有福了
+[plan] #5 keyword=益智小游戏 title=喜欢推理游戏但不想社交的朋友有福了 comments=8 age=5d score=4 msg=15/微信小游戏 match=2
+[post] attempt feedId=6a544f760000000011005ab0 contentLen=35
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a544f760000000011005ab0 --xsec-token(46chars) --content(35chars)
+[cdp] done exit=0 elapsed=8.0s stdout=1133 stderr=0
+[post] success feedId=6a544f760000000011005ab0
+[cdp] phase=post-ok exit=0 feedId=6a544f760000000011005ab0
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a544f760000000011005ab0 --xsec-token(46chars) --content(35chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a0d5a5e0000000038037d35?xsec_token=ABTyT0VA6rIbRvzhFqKgU74BGY-RPQ1_NLVTUv25DITU8=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/465E15AF9F15B0CED54F0EAFFEC109D7
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=468m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a544f760000000011005ab0?xsec_token=ABdaTAdFTlq1Ntqy8uPL7hJWgXtfxKi3bvxuIKSyc9CiE=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (779, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (990, 1282)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a544f760000000011005ab0, length=35
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (5/41)
+[wait] 210s (~3.5min, random 2-4min)
+[queue] pop feedId=6a44cb59000000002200bd57 remaining=2 title=24点小游戏
+[plan] #6 keyword=益智小游戏 title=24点小游戏 comments=17 age=8d score=4 msg=12/微信小游戏 match=2
+[post] attempt feedId=6a44cb59000000002200bd57 contentLen=41
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a44cb59000000002200bd57 --xsec-token(46chars) --content(41chars)
+[cdp] done exit=0 elapsed=8.4s stdout=1133 stderr=0
+[post] success feedId=6a44cb59000000002200bd57
+[cdp] phase=post-ok exit=0 feedId=6a44cb59000000002200bd57
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a44cb59000000002200bd57 --xsec-token(46chars) --content(41chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a544f760000000011005ab0?xsec_token=ABdaTAdFTlq1Ntqy8uPL7hJWgXtfxKi3bvxuIKSyc9CiE=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/465E15AF9F15B0CED54F0EAFFEC109D7
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=472m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a44cb59000000002200bd57?xsec_token=ABz5qyJXIwFL-2gjvqVE5IKTnIV_8g1hrILvN_ME3YMXE=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (774, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (985, 1282)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a44cb59000000002200bd57, length=41
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (6/41)
+[wait] 128s (~2.1min, random 2-4min)
+[queue] pop feedId=6a1cfe2000000000060365c0 remaining=1 title=一个神仙小游戏，解压➕学习
+[skip-low] 一个神仙小游戏，解压➕学习 comments=4
+[queue] pop feedId=6a264631000000001603ee50 remaining=0 title=烧脑来袭猜猜我是谁！
+[plan] #7 keyword=益智小游戏 title=烧脑来袭猜猜我是谁！ comments=22 age=40d score=2 msg=19/烧脑卡关 match=5
+[post] attempt feedId=6a264631000000001603ee50 contentLen=42
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a264631000000001603ee50 --xsec-token(46chars) --content(42chars)
+[cdp] done exit=0 elapsed=7.3s stdout=1134 stderr=0
+[post] success feedId=6a264631000000001603ee50
+[cdp] phase=post-ok exit=0 feedId=6a264631000000001603ee50
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a264631000000001603ee50 --xsec-token(46chars) --content(42chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a44cb59000000002200bd57?xsec_token=ABz5qyJXIwFL-2gjvqVE5IKTnIV_8g1hrILvN_ME3YMXE=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/465E15AF9F15B0CED54F0EAFFEC109D7
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=474m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a264631000000001603ee50?xsec_token=ABDBDs6vhNgX5vxkpSuXbLUcuRPT-WdPuSPrUE0ejT2XM=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (834, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1045, 1282)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a264631000000001603ee50, length=43
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (7/41)
+[wait] 129s (~2.1min, random 2-4min)
+[queue] empty refilling keyword=益智小游戏 sort=最新 task=2/42 empty_streak=0 seen_feeds=120
+[search-wait] 6s before keyword=益智小游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 益智小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=34.2s stdout=155565 stderr=0
+[search-filter] keyword=益智小游戏 sort=最新 scrolls=4 {'too_old': 7, 'dup_or_empty_id': 24, 'not_note': 2, 'bad_title': 2, 'low_relevance': 6, 'already_commented': 1}
+[search] keyword=益智小游戏 sort=最新 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=烧脑小游戏 sort=综合 task=3/42 empty_streak=1 seen_feeds=136
+[search-wait] 10s before keyword=烧脑小游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 烧脑小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=33.9s stdout=163402 stderr=0
+[search-filter] keyword=烧脑小游戏 sort=综合 scrolls=4 {'dup_or_empty_id': 30, 'not_note': 2, 'already_commented': 1, 'too_old': 3, 'bad_title': 1, 'low_relevance': 5}
+[search] keyword=烧脑小游戏 sort=综合 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=烧脑小游戏 sort=最新 task=4/42 empty_streak=2 seen_feeds=146
+[search-wait] 7s before keyword=烧脑小游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 烧脑小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=29.1s stdout=163175 stderr=0
+[search-filter] keyword=烧脑小游戏 sort=最新 scrolls=4 {'dup_or_empty_id': 40, 'not_note': 2}
+[search] keyword=烧脑小游戏 sort=最新 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=推箱子 sort=综合 task=5/42 empty_streak=3 seen_feeds=146
+[search-wait] 14s before keyword=推箱子 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 推箱子 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=34.1s stdout=147692 stderr=0
+[search-filter] keyword=推箱子 sort=综合 scrolls=4 {'already_commented': 7, 'too_old': 19, 'low_relevance': 10, 'not_note': 2, 'bad_title': 2, 'bad_publish_date': 1}
+[search] keyword=推箱子 sort=综合 raw=42 skipped=41 usable=1 queued=1 rate_limited=False
+[queue] loaded 1 candidates, will post one-by-one before next search
+[queue] pop feedId=6a1c31df000000003701e9f6 remaining=0 title=不是推箱子，而是推倒你脑子里的墙 🧱
+[skip-low] 不是推箱子，而是推倒你脑子里的墙 🧱 comments=4
+[queue] empty refilling keyword=推箱子 sort=最新 task=6/42 empty_streak=0 seen_feeds=186
+[search-wait] 11s before keyword=推箱子 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 推箱子 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=28.9s stdout=147481 stderr=0
+[search-filter] keyword=推箱子 sort=最新 scrolls=4 {'dup_or_empty_id': 40, 'not_note': 2}
+[search] keyword=推箱子 sort=最新 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=解谜游戏 sort=综合 task=7/42 empty_streak=1 seen_feeds=186
+[search-wait] 12s before keyword=解谜游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 解谜游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=32.9s stdout=177296 stderr=0
+[search-filter] keyword=解谜游戏 sort=综合 scrolls=4 {'already_commented': 7, 'low_relevance': 7, 'dup_or_empty_id': 18, 'not_note': 2, 'too_old': 4, 'bad_title': 4}
+[search] keyword=解谜游戏 sort=综合 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=解谜游戏 sort=最新 task=8/42 empty_streak=2 seen_feeds=208
+[search-wait] 10s before keyword=解谜游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 解谜游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=29.0s stdout=177095 stderr=0
+[search-filter] keyword=解谜游戏 sort=最新 scrolls=4 {'dup_or_empty_id': 40, 'not_note': 2}
+[search] keyword=解谜游戏 sort=最新 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=游戏推荐 sort=综合 task=9/42 empty_streak=3 seen_feeds=208
+[search-wait] 8s before keyword=游戏推荐 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 游戏推荐 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=33.5s stdout=119600 stderr=0
+[search-filter] keyword=游戏推荐 sort=综合 scrolls=4 {'bad_publish_date': 6, 'dup_or_empty_id': 8, 'low_relevance': 8, 'not_note': 2, 'already_commented': 9, 'bad_title': 9}
+[search] keyword=游戏推荐 sort=综合 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=游戏推荐 sort=最新 task=10/42 empty_streak=4 seen_feeds=240
+[search-wait] 9s before keyword=游戏推荐 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 游戏推荐 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=28.5s stdout=119390 stderr=0
+[search-filter] keyword=游戏推荐 sort=最新 scrolls=4 {'dup_or_empty_id': 40, 'not_note': 2}
+[search] keyword=游戏推荐 sort=最新 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=微信小游戏 sort=综合 task=11/42 empty_streak=5 seen_feeds=240
+[search-wait] 5s before keyword=微信小游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 微信小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=34.3s stdout=154618 stderr=0
+[search-filter] keyword=微信小游戏 sort=综合 scrolls=4 {'already_commented': 5, 'too_old': 13, 'dup_or_empty_id': 10, 'low_relevance': 10, 'not_note': 2, 'bad_title': 2}
+[search] keyword=微信小游戏 sort=综合 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=微信小游戏 sort=最新 task=12/42 empty_streak=6 seen_feeds=270
+[search-wait] 6s before keyword=微信小游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 微信小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=28.7s stdout=154400 stderr=0
+[search-filter] keyword=微信小游戏 sort=最新 scrolls=4 {'dup_or_empty_id': 40, 'not_note': 2}
+[search] keyword=微信小游戏 sort=最新 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=迷宫游戏 sort=综合 task=13/42 empty_streak=7 seen_feeds=270
+[search-wait] 8s before keyword=迷宫游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 迷宫游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=33.3s stdout=185490 stderr=0
+[search-filter] keyword=迷宫游戏 sort=综合 scrolls=4 {'dup_or_empty_id': 13, 'too_old': 11, 'low_relevance': 9, 'not_note': 2, 'bad_title': 4}
+[search] keyword=迷宫游戏 sort=综合 raw=42 skipped=39 usable=3 queued=3 rate_limited=False
+[queue] loaded 3 candidates, will post one-by-one before next search
+[queue] pop feedId=6a53c32700000000070133dc remaining=2 title=『迷宫』收集星星能量（可下载）
+[skip-low] 『迷宫』收集星星能量（可下载） comments=0
+[queue] pop feedId=6a5070cd000000002100809d remaining=1 title=发现个迷宫网站挺有意思
+[skip-low] 发现个迷宫网站挺有意思 comments=0
+[queue] pop feedId=6a453754000000001702a704 remaining=0 title=『迷宫』简单好玩版（可下载）
+[skip-low] 『迷宫』简单好玩版（可下载） comments=4
+[queue] empty refilling keyword=迷宫游戏 sort=最新 task=14/42 empty_streak=0 seen_feeds=297
+[search-wait] 13s before keyword=迷宫游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 迷宫游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=28.3s stdout=185271 stderr=0
+[search-filter] keyword=迷宫游戏 sort=最新 scrolls=4 {'dup_or_empty_id': 40, 'not_note': 2}
+[search] keyword=迷宫游戏 sort=最新 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=逻辑游戏 sort=综合 task=15/42 empty_streak=1 seen_feeds=297
+[search-wait] 15s before keyword=逻辑游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 逻辑游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=34.8s stdout=143334 stderr=0
+[search-filter] keyword=逻辑游戏 sort=综合 scrolls=4 {'dup_or_empty_id': 30, 'too_old': 2, 'not_note': 2, 'low_relevance': 5, 'bad_title': 2, 'already_commented': 1}
+[search] keyword=逻辑游戏 sort=综合 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=逻辑游戏 sort=最新 task=16/42 empty_streak=2 seen_feeds=307
+[search-wait] 10s before keyword=逻辑游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 逻辑游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=28.8s stdout=143124 stderr=0
+[search-filter] keyword=逻辑游戏 sort=最新 scrolls=4 {'dup_or_empty_id': 40, 'not_note': 2}
+[search] keyword=逻辑游戏 sort=最新 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=休闲小游戏 sort=综合 task=17/42 empty_streak=3 seen_feeds=307
+[search-wait] 14s before keyword=休闲小游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 休闲小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=33.2s stdout=75762 stderr=0
+[search-filter] keyword=休闲小游戏 sort=综合 scrolls=4 {'dup_or_empty_id': 18, 'not_note': 5, 'bad_title': 1, 'low_relevance': 1}
+[search] keyword=休闲小游戏 sort=综合 raw=25 skipped=25 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=休闲小游戏 sort=最新 task=18/42 empty_streak=4 seen_feeds=309
+[search-wait] 9s before keyword=休闲小游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 休闲小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=28.6s stdout=75544 stderr=0
+[search-filter] keyword=休闲小游戏 sort=最新 scrolls=4 {'dup_or_empty_id': 20, 'not_note': 5}
+[search] keyword=休闲小游戏 sort=最新 raw=25 skipped=25 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=单机小游戏 sort=综合 task=19/42 empty_streak=5 seen_feeds=309
+[search-wait] 11s before keyword=单机小游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 单机小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=34.0s stdout=150080 stderr=0
+[search-filter] keyword=单机小游戏 sort=综合 scrolls=4 {'dup_or_empty_id': 31, 'bad_publish_date': 1, 'already_commented': 3, 'not_note': 2, 'low_relevance': 2, 'bad_title': 1, 'too_old': 1}
+[search] keyword=单机小游戏 sort=综合 raw=42 skipped=41 usable=1 queued=1 rate_limited=False
+[queue] loaded 1 candidates, will post one-by-one before next search
+[queue] pop feedId=6a54c834000000000c003000 remaining=0 title=下个雪给大家降温！复古小游戏破本条纪录了！
+[skip-low] 下个雪给大家降温！复古小游戏破本条纪录了！ comments=7
+[queue] empty refilling keyword=单机小游戏 sort=最新 task=20/42 empty_streak=0 seen_feeds=318
+[search-wait] 6s before keyword=单机小游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 单机小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=28.8s stdout=149853 stderr=0
+[search-filter] keyword=单机小游戏 sort=最新 scrolls=4 {'dup_or_empty_id': 40, 'not_note': 2}
+[search] keyword=单机小游戏 sort=最新 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=解谜小游戏 sort=综合 task=21/42 empty_streak=1 seen_feeds=318
+[search-wait] 7s before keyword=解谜小游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 解谜小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=34.6s stdout=157264 stderr=0
+[search-filter] keyword=解谜小游戏 sort=综合 scrolls=4 {'dup_or_empty_id': 34, 'not_note': 2, 'bad_publish_date': 1, 'bad_title': 1, 'too_old': 2, 'low_relevance': 1}
+[search] keyword=解谜小游戏 sort=综合 raw=42 skipped=41 usable=1 queued=1 rate_limited=False
+[queue] loaded 1 candidates, will post one-by-one before next search
+[queue] pop feedId=6a1f6585000000003700eb84 remaining=0 title=游戏安利 ｜策略解谜神作《魔塔50层》
+[skip-low] 游戏安利 ｜策略解谜神作《魔塔50层》 comments=2
+[queue] empty refilling keyword=解谜小游戏 sort=最新 task=22/42 empty_streak=0 seen_feeds=324
+[search-wait] 13s before keyword=解谜小游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 解谜小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=28.5s stdout=157037 stderr=0
+[search-filter] keyword=解谜小游戏 sort=最新 scrolls=4 {'dup_or_empty_id': 40, 'not_note': 2}
+[search] keyword=解谜小游戏 sort=最新 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=益智游戏推荐 sort=综合 task=23/42 empty_streak=1 seen_feeds=324
+[search-wait] 8s before keyword=益智游戏推荐 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 益智游戏推荐 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=33.4s stdout=154043 stderr=0
+[search-filter] keyword=益智游戏推荐 sort=综合 scrolls=4 {'dup_or_empty_id': 39, 'not_note': 2, 'bad_title': 1}
+[search] keyword=益智游戏推荐 sort=综合 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=益智游戏推荐 sort=最新 task=24/42 empty_streak=2 seen_feeds=325
+[search-wait] 6s before keyword=益智游戏推荐 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 益智游戏推荐 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=28.4s stdout=153808 stderr=0
+[search-filter] keyword=益智游戏推荐 sort=最新 scrolls=4 {'dup_or_empty_id': 40, 'not_note': 2}
+[search] keyword=益智游戏推荐 sort=最新 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=烧脑游戏推荐 sort=综合 task=25/42 empty_streak=3 seen_feeds=325
+[search-wait] 15s before keyword=烧脑游戏推荐 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 烧脑游戏推荐 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=33.8s stdout=158945 stderr=0
+[search-filter] keyword=烧脑游戏推荐 sort=综合 scrolls=4 {'dup_or_empty_id': 37, 'not_note': 2, 'low_relevance': 1, 'already_commented': 2}
+[search] keyword=烧脑游戏推荐 sort=综合 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=烧脑游戏推荐 sort=最新 task=26/42 empty_streak=4 seen_feeds=328
+[search-wait] 7s before keyword=烧脑游戏推荐 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 烧脑游戏推荐 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=28.2s stdout=158701 stderr=0
+[search-filter] keyword=烧脑游戏推荐 sort=最新 scrolls=4 {'dup_or_empty_id': 40, 'not_note': 2}
+[search] keyword=烧脑游戏推荐 sort=最新 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=打发时间小游戏 sort=综合 task=27/42 empty_streak=5 seen_feeds=328
+[search-wait] 6s before keyword=打发时间小游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 打发时间小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=34.7s stdout=147327 stderr=0
+[search-filter] keyword=打发时间小游戏 sort=综合 scrolls=4 {'dup_or_empty_id': 31, 'low_relevance': 3, 'not_note': 2, 'bad_title': 3, 'already_commented': 1, 'too_old': 2}
+[search] keyword=打发时间小游戏 sort=综合 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=打发时间小游戏 sort=最新 task=28/42 empty_streak=6 seen_feeds=337
+[search-wait] 13s before keyword=打发时间小游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 打发时间小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=28.3s stdout=147075 stderr=0
+[search-filter] keyword=打发时间小游戏 sort=最新 scrolls=4 {'dup_or_empty_id': 40, 'not_note': 2}
+[search] keyword=打发时间小游戏 sort=最新 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=闯关游戏 sort=综合 task=29/42 empty_streak=7 seen_feeds=337
+[search-wait] 13s before keyword=闯关游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 闯关游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=34.3s stdout=163386 stderr=0
+[search-filter] keyword=闯关游戏 sort=综合 scrolls=4 {'already_commented': 1, 'low_relevance': 7, 'dup_or_empty_id': 29, 'not_note': 2, 'too_old': 2, 'bad_title': 1}
+[search] keyword=闯关游戏 sort=综合 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=闯关游戏 sort=最新 task=30/42 empty_streak=8 seen_feeds=348
+[search-wait] 6s before keyword=闯关游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 闯关游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=28.2s stdout=163149 stderr=0
+[search-filter] keyword=闯关游戏 sort=最新 scrolls=4 {'dup_or_empty_id': 40, 'not_note': 2}
+[search] keyword=闯关游戏 sort=最新 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=推理游戏 sort=综合 task=31/42 empty_streak=9 seen_feeds=348
+[search-wait] 10s before keyword=推理游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 推理游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=33.0s stdout=143535 stderr=0
+[search-filter] keyword=推理游戏 sort=综合 scrolls=4 {'dup_or_empty_id': 36, 'too_old': 2, 'not_note': 2, 'low_relevance': 2}
+[search] keyword=推理游戏 sort=综合 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=推理游戏 sort=最新 task=32/42 empty_streak=10 seen_feeds=352
+[search-wait] 5s before keyword=推理游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 推理游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=28.4s stdout=143325 stderr=0
+[search-filter] keyword=推理游戏 sort=最新 scrolls=4 {'dup_or_empty_id': 40, 'not_note': 2}
+[search] keyword=推理游戏 sort=最新 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=脑力游戏 sort=综合 task=33/42 empty_streak=11 seen_feeds=352
+[search-wait] 10s before keyword=脑力游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 脑力游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=32.9s stdout=144397 stderr=0
+[search-filter] keyword=脑力游戏 sort=综合 scrolls=4 {'dup_or_empty_id': 36, 'not_note': 2, 'too_old': 1, 'low_relevance': 2, 'bad_publish_date': 1}
+[search] keyword=脑力游戏 sort=综合 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=脑力游戏 sort=最新 task=34/42 empty_streak=12 seen_feeds=356
+[search-wait] 10s before keyword=脑力游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 脑力游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=28.7s stdout=144187 stderr=0
+[search-filter] keyword=脑力游戏 sort=最新 scrolls=4 {'dup_or_empty_id': 40, 'not_note': 2}
+[search] keyword=脑力游戏 sort=最新 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=光学解谜 sort=综合 task=35/42 empty_streak=13 seen_feeds=356
+[search-wait] 10s before keyword=光学解谜 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 光学解谜 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=34.9s stdout=186765 stderr=0
+[search-filter] keyword=光学解谜 sort=综合 scrolls=4 {'dup_or_empty_id': 10, 'already_commented': 3, 'low_relevance': 16, 'not_note': 2, 'too_old': 9}
+[search] keyword=光学解谜 sort=综合 raw=42 skipped=40 usable=2 queued=2 rate_limited=False
+[queue] loaded 2 candidates, will post one-by-one before next search
+[queue] pop feedId=6a2e9c9100000000220272b6 remaining=1 title=🎓不正经博士读推理｜《 神之光》
+[skip-low] 🎓不正经博士读推理｜《 神之光》 comments=0
+[queue] pop feedId=6a24743f0000000007022e7c remaining=0 title=puzzleduel每日谜题20260603
+[skip-low] puzzleduel每日谜题20260603 comments=0
+[queue] empty refilling keyword=光学解谜 sort=最新 task=36/42 empty_streak=0 seen_feeds=386
+[search-wait] 6s before keyword=光学解谜 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 光学解谜 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=28.7s stdout=186555 stderr=0
+[search-filter] keyword=光学解谜 sort=最新 scrolls=4 {'dup_or_empty_id': 40, 'not_note': 2}
+[search] keyword=光学解谜 sort=最新 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=光线迷宫 sort=综合 task=37/42 empty_streak=1 seen_feeds=386
+[search-wait] 9s before keyword=光线迷宫 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 光线迷宫 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=34.4s stdout=140795 stderr=0
+[search-filter] keyword=光线迷宫 sort=综合 scrolls=4 {'too_old': 17, 'bad_title': 4, 'low_relevance': 9, 'not_note': 2, 'dup_or_empty_id': 6}
+[search] keyword=光线迷宫 sort=综合 raw=42 skipped=38 usable=4 queued=4 rate_limited=False
+[queue] loaded 4 candidates, will post one-by-one before next search
+[queue] pop feedId=6a452e480000000008000db8 remaining=3 title=迷宫 ⚠️第二张是答案⚠️
+[skip-low] 迷宫 ⚠️第二张是答案⚠️ comments=5
+[queue] pop feedId=6a424e1b000000001102c769 remaining=2 title=《Maze》🌠橘色梦境迷宫装置
+[skip-low] 《Maze》🌠橘色梦境迷宫装置 comments=0
+[queue] pop feedId=6a3bb9880000000016024809 remaining=1 title=每日 Puzzle 037｜深夜灯光谜题
+[plan] #8 keyword=光线迷宫 title=每日 Puzzle 037｜深夜灯光谜题 comments=15 age=24d score=2 msg=8/推箱子 match=0
+[post] attempt feedId=6a3bb9880000000016024809 contentLen=47
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a3bb9880000000016024809 --xsec-token(46chars) --content(47chars)
+[cdp] done exit=0 elapsed=7.7s stdout=1114 stderr=0
+[post] success feedId=6a3bb9880000000016024809
+[cdp] phase=post-ok exit=0 feedId=6a3bb9880000000016024809
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a3bb9880000000016024809 --xsec-token(46chars) --content(47chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/search_result?keyword=%E5%85%89%E7%BA%BF%E8%BF%B7%E5%AE%AB&source=web_explore_feed&type=51
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/465E15AF9F15B0CED54F0EAFFEC109D7
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=501m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a3bb9880000000016024809?xsec_token=ABQq10_BYWx7o0hXX9fzhd7dJ5uSeM0cP_70SbAgTMOwk=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (834, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1045, 1282)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a3bb9880000000016024809, length=47
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (8/41)
+[wait] 156s (~2.6min, random 2-4min)
+[queue] pop feedId=6a13b3fc000000003601fb77 remaining=0 title=理科生的浪漫：用物理反射定律打造弹珠迷宫
+[skip-low] 理科生的浪漫：用物理反射定律打造弹珠迷宫 comments=2
+[queue] empty refilling keyword=光线迷宫 sort=最新 task=38/42 empty_streak=0 seen_feeds=420
+[search-wait] 11s before keyword=光线迷宫 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 光线迷宫 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=33.9s stdout=127834 stderr=0
+[search-filter] keyword=光线迷宫 sort=最新 scrolls=4 {'dup_or_empty_id': 19, 'too_old': 18, 'not_note': 2, 'low_relevance': 2}
+[search] keyword=光线迷宫 sort=最新 raw=42 skipped=41 usable=1 queued=1 rate_limited=False
+[queue] loaded 1 candidates, will post one-by-one before next search
+[queue] pop feedId=6a544eba00000000150263a4 remaining=0 title=三色光竟然有65种组合❗最后迷宫到底咋过❓
+[skip-low] 三色光竟然有65种组合❗最后迷宫到底咋过❓ comments=6
+[queue] empty refilling keyword=微信游戏推荐 sort=综合 task=39/42 empty_streak=0 seen_feeds=441
+[search-wait] 14s before keyword=微信游戏推荐 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 微信游戏推荐 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=34.0s stdout=141393 stderr=0
+[search-filter] keyword=微信游戏推荐 sort=综合 scrolls=4 {'dup_or_empty_id': 32, 'already_commented': 3, 'not_note': 2, 'low_relevance': 2, 'too_old': 2}
+[search] keyword=微信游戏推荐 sort=综合 raw=42 skipped=41 usable=1 queued=1 rate_limited=False
+[queue] loaded 1 candidates, will post one-by-one before next search
+[queue] pop feedId=6a4f20620000000011017682 remaining=0 title=26年6月微信小游戏投放排行榜TOP100！
+[skip-low] 26年6月微信小游戏投放排行榜TOP100！ comments=0
+[queue] empty refilling keyword=微信游戏推荐 sort=最新 task=40/42 empty_streak=0 seen_feeds=449
+[search-wait] 11s before keyword=微信游戏推荐 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 微信游戏推荐 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=29.1s stdout=141167 stderr=0
+[search-filter] keyword=微信游戏推荐 sort=最新 scrolls=4 {'dup_or_empty_id': 40, 'not_note': 2}
+[search] keyword=微信游戏推荐 sort=最新 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=小游戏安利 sort=综合 task=41/42 empty_streak=1 seen_feeds=449
+[search-wait] 12s before keyword=小游戏安利 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 小游戏安利 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=34.1s stdout=162824 stderr=0
+[search-filter] keyword=小游戏安利 sort=综合 scrolls=4 {'dup_or_empty_id': 31, 'not_note': 2, 'too_old': 1, 'low_relevance': 5, 'bad_title': 1, 'already_commented': 1}
+[search] keyword=小游戏安利 sort=综合 raw=42 skipped=41 usable=1 queued=1 rate_limited=False
+[queue] loaded 1 candidates, will post one-by-one before next search
+[queue] pop feedId=6a561708000000001101ec8c remaining=0 title=有没有珍藏小游戏安利呀
+[plan] #9 keyword=小游戏安利 title=有没有珍藏小游戏安利呀 comments=16 age=4d score=4 msg=2/求推荐 match=4
+[post] attempt feedId=6a561708000000001101ec8c contentLen=42
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a561708000000001101ec8c --xsec-token(46chars) --content(42chars)
+[cdp] done exit=0 elapsed=7.5s stdout=1123 stderr=0
+[post] success feedId=6a561708000000001101ec8c
+[cdp] phase=post-ok exit=0 feedId=6a561708000000001101ec8c
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a561708000000001101ec8c --xsec-token(46chars) --content(42chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/search_result?keyword=%E5%B0%8F%E6%B8%B8%E6%88%8F%E5%AE%89%E5%88%A9&source=web_explore_feed&type=51
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/465E15AF9F15B0CED54F0EAFFEC109D7
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=507m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a561708000000001101ec8c?xsec_token=AB3iCyiC3fQH_A59fln8paEu2L3xJEi46aEYmQtfwfeoI=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (834, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1045, 1282)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a561708000000001101ec8c, length=42
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (9/41)
+[wait] 183s (~3.0min, random 2-4min)
+[queue] empty refilling keyword=小游戏安利 sort=最新 task=42/42 empty_streak=0 seen_feeds=458
+[search-wait] 9s before keyword=小游戏安利 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 小游戏安利 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=34.6s stdout=165907 stderr=0
+[search-filter] keyword=小游戏安利 sort=最新 scrolls=4 {'dup_or_empty_id': 37, 'not_note': 2, 'bad_publish_date': 1, 'low_relevance': 1, 'already_commented': 1}
+[search] keyword=小游戏安利 sort=最新 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=益智小游戏 sort=综合 task=43/42 empty_streak=1 seen_feeds=461
+[search-wait] 13s before keyword=益智小游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 益智小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=33.4s stdout=162619 stderr=0
+[search-filter] keyword=益智小游戏 sort=综合 scrolls=4 {'dup_or_empty_id': 40, 'not_note': 2}
+[search] keyword=益智小游戏 sort=综合 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=益智小游戏 sort=最新 task=44/42 empty_streak=2 seen_feeds=461
+[search-wait] 8s before keyword=益智小游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 益智小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=28.6s stdout=162392 stderr=0
+[search-filter] keyword=益智小游戏 sort=最新 scrolls=4 {'dup_or_empty_id': 40, 'not_note': 2}
+[search] keyword=益智小游戏 sort=最新 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=烧脑小游戏 sort=综合 task=45/42 empty_streak=3 seen_feeds=461
+[search-wait] 14s before keyword=烧脑小游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 烧脑小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=33.3s stdout=165926 stderr=0
+[search-filter] keyword=烧脑小游戏 sort=综合 scrolls=4 {'dup_or_empty_id': 40, 'not_note': 2}
+[search] keyword=烧脑小游戏 sort=综合 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=烧脑小游戏 sort=最新 task=46/42 empty_streak=4 seen_feeds=461
+[search-wait] 7s before keyword=烧脑小游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 烧脑小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=28.5s stdout=165699 stderr=0
+[search-filter] keyword=烧脑小游戏 sort=最新 scrolls=4 {'dup_or_empty_id': 40, 'not_note': 2}
+[search] keyword=烧脑小游戏 sort=最新 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=推箱子 sort=综合 task=47/42 empty_streak=5 seen_feeds=461
+[search-wait] 8s before keyword=推箱子 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 推箱子 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=34.2s stdout=151928 stderr=0
+[search-filter] keyword=推箱子 sort=综合 scrolls=4 {'dup_or_empty_id': 39, 'not_note': 2, 'too_old': 1}
+[search] keyword=推箱子 sort=综合 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=推箱子 sort=最新 task=48/42 empty_streak=6 seen_feeds=462
+[search-wait] 5s before keyword=推箱子 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 推箱子 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=28.4s stdout=151717 stderr=0
+[search-filter] keyword=推箱子 sort=最新 scrolls=4 {'dup_or_empty_id': 40, 'not_note': 2}
+[search] keyword=推箱子 sort=最新 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=解谜游戏 sort=综合 task=49/42 empty_streak=7 seen_feeds=462
+[search-wait] 6s before keyword=解谜游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 解谜游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=34.3s stdout=173787 stderr=0
+[search-filter] keyword=解谜游戏 sort=综合 scrolls=4 {'dup_or_empty_id': 39, 'not_note': 2}
+[search] keyword=解谜游戏 sort=综合 raw=42 skipped=41 usable=1 queued=1 rate_limited=False
+[queue] loaded 1 candidates, will post one-by-one before next search
+[queue] pop feedId=6a4e39f800000000170293b0 remaining=0 title=有无类似的解谜游戏推荐
+[plan] #10 keyword=解谜游戏 title=有无类似的解谜游戏推荐 comments=83 age=10d score=6 msg=3/求推荐 match=6
+[post] attempt feedId=6a4e39f800000000170293b0 contentLen=55
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a4e39f800000000170293b0 --xsec-token(46chars) --content(55chars)
+[cdp] done exit=0 elapsed=8.3s stdout=1114 stderr=0
+[post] success feedId=6a4e39f800000000170293b0
+[cdp] phase=post-ok exit=0 feedId=6a4e39f800000000170293b0
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a4e39f800000000170293b0 --xsec-token(46chars) --content(55chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/search_result?keyword=%E8%A7%A3%E8%B0%9C%E6%B8%B8%E6%88%8F&source=web_explore_feed&type=51
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/465E15AF9F15B0CED54F0EAFFEC109D7
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=515m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a4e39f800000000170293b0?xsec_token=ABa3QG7-NGBN7DoHsb1kCY4jUE6klzBM8RVW7cBDFWDi4=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (834, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1045, 1282)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a4e39f800000000170293b0, length=55
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (10/41)
+[wait] 213s (~3.5min, random 2-4min)
+[queue] empty refilling keyword=解谜游戏 sort=最新 task=50/42 empty_streak=0 seen_feeds=463
+[search-wait] 10s before keyword=解谜游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 解谜游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=35.0s stdout=173699 stderr=0
+[search-filter] keyword=解谜游戏 sort=最新 scrolls=4 {'dup_or_empty_id': 40, 'not_note': 2}
+[search] keyword=解谜游戏 sort=最新 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=游戏推荐 sort=综合 task=51/42 empty_streak=1 seen_feeds=463
+[search-wait] 8s before keyword=游戏推荐 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 游戏推荐 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=33.0s stdout=110821 stderr=0
+[search-filter] keyword=游戏推荐 sort=综合 scrolls=4 {'dup_or_empty_id': 30, 'not_note': 2, 'low_relevance': 3, 'bad_title': 5, 'bad_publish_date': 2}
+[search] keyword=游戏推荐 sort=综合 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=游戏推荐 sort=最新 task=52/42 empty_streak=2 seen_feeds=473
+[search-wait] 8s before keyword=游戏推荐 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 游戏推荐 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=28.4s stdout=110611 stderr=0
+[search-filter] keyword=游戏推荐 sort=最新 scrolls=4 {'dup_or_empty_id': 40, 'not_note': 2}
+[search] keyword=游戏推荐 sort=最新 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=微信小游戏 sort=综合 task=53/42 empty_streak=3 seen_feeds=473
+[search-wait] 9s before keyword=微信小游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 微信小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=32.6s stdout=143292 stderr=0
+[search-filter] keyword=微信小游戏 sort=综合 scrolls=4 {'dup_or_empty_id': 37, 'too_old': 2, 'not_note': 2, 'low_relevance': 1}
+[search] keyword=微信小游戏 sort=综合 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=微信小游戏 sort=最新 task=54/42 empty_streak=4 seen_feeds=476
+[search-wait] 11s before keyword=微信小游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 微信小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=28.7s stdout=143074 stderr=0
+[search-filter] keyword=微信小游戏 sort=最新 scrolls=4 {'dup_or_empty_id': 40, 'not_note': 2}
+[search] keyword=微信小游戏 sort=最新 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=迷宫游戏 sort=综合 task=55/42 empty_streak=5 seen_feeds=476
+[search-wait] 10s before keyword=迷宫游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 迷宫游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=33.2s stdout=184844 stderr=0
+[search-filter] keyword=迷宫游戏 sort=综合 scrolls=4 {'dup_or_empty_id': 36, 'not_note': 2, 'bad_title': 1, 'too_old': 2, 'low_relevance': 1}
+[search] keyword=迷宫游戏 sort=综合 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=迷宫游戏 sort=最新 task=56/42 empty_streak=6 seen_feeds=480
+[search-wait] 5s before keyword=迷宫游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 迷宫游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=28.4s stdout=184625 stderr=0
+[search-filter] keyword=迷宫游戏 sort=最新 scrolls=4 {'dup_or_empty_id': 40, 'not_note': 2}
+[search] keyword=迷宫游戏 sort=最新 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=逻辑游戏 sort=综合 task=57/42 empty_streak=7 seen_feeds=480
+[search-wait] 7s before keyword=逻辑游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 逻辑游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=34.0s stdout=137579 stderr=0
+[search-filter] keyword=逻辑游戏 sort=综合 scrolls=4 {'dup_or_empty_id': 38, 'not_note': 2, 'too_old': 1, 'already_commented': 1}
+[search] keyword=逻辑游戏 sort=综合 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=逻辑游戏 sort=最新 task=58/42 empty_streak=8 seen_feeds=482
+[search-wait] 5s before keyword=逻辑游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 逻辑游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=28.9s stdout=137369 stderr=0
+[search-filter] keyword=逻辑游戏 sort=最新 scrolls=4 {'dup_or_empty_id': 40, 'not_note': 2}
+[search] keyword=逻辑游戏 sort=最新 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=休闲小游戏 sort=综合 task=59/42 empty_streak=9 seen_feeds=482
+[search-wait] 11s before keyword=休闲小游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 休闲小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=33.8s stdout=75378 stderr=0
+[search-filter] keyword=休闲小游戏 sort=综合 scrolls=4 {'dup_or_empty_id': 19, 'not_note': 5, 'too_old': 1}
+[search] keyword=休闲小游戏 sort=综合 raw=25 skipped=25 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=休闲小游戏 sort=最新 task=60/42 empty_streak=10 seen_feeds=483
+[search-wait] 14s before keyword=休闲小游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 休闲小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=28.4s stdout=75160 stderr=0
+[search-filter] keyword=休闲小游戏 sort=最新 scrolls=4 {'dup_or_empty_id': 20, 'not_note': 5}
+[search] keyword=休闲小游戏 sort=最新 raw=25 skipped=25 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=单机小游戏 sort=综合 task=61/42 empty_streak=11 seen_feeds=483
+[search-wait] 6s before keyword=单机小游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 单机小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=33.5s stdout=148338 stderr=0
+[search-filter] keyword=单机小游戏 sort=综合 scrolls=4 {'dup_or_empty_id': 38, 'not_note': 2, 'low_relevance': 1}
+[search] keyword=单机小游戏 sort=综合 raw=42 skipped=41 usable=1 queued=1 rate_limited=False
+[queue] loaded 1 candidates, will post one-by-one before next search
+[queue] pop feedId=6a57456e0000000008009c00 remaining=0 title=好久不见经典小游戏！和我一起摸鱼解压吧
+[skip-low] 好久不见经典小游戏！和我一起摸鱼解压吧 comments=6
+[queue] empty refilling keyword=单机小游戏 sort=最新 task=62/42 empty_streak=0 seen_feeds=485
+[search-wait] 8s before keyword=单机小游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 单机小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=28.9s stdout=148111 stderr=0
+[search-filter] keyword=单机小游戏 sort=最新 scrolls=4 {'dup_or_empty_id': 40, 'not_note': 2}
+[search] keyword=单机小游戏 sort=最新 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=解谜小游戏 sort=综合 task=63/42 empty_streak=1 seen_feeds=485
+[search-wait] 15s before keyword=解谜小游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 解谜小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=33.7s stdout=166362 stderr=0
+[search-filter] keyword=解谜小游戏 sort=综合 scrolls=4 {'dup_or_empty_id': 37, 'not_note': 2, 'bad_title': 3}
+[search] keyword=解谜小游戏 sort=综合 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=解谜小游戏 sort=最新 task=64/42 empty_streak=2 seen_feeds=488
+[search-wait] 13s before keyword=解谜小游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 解谜小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=28.4s stdout=166135 stderr=0
+[search-filter] keyword=解谜小游戏 sort=最新 scrolls=4 {'dup_or_empty_id': 40, 'not_note': 2}
+[search] keyword=解谜小游戏 sort=最新 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=益智游戏推荐 sort=综合 task=65/42 empty_streak=3 seen_feeds=488
+[search-wait] 11s before keyword=益智游戏推荐 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 益智游戏推荐 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=33.8s stdout=158551 stderr=0
+[search-filter] keyword=益智游戏推荐 sort=综合 scrolls=4 {'dup_or_empty_id': 39, 'not_note': 2, 'too_old': 1}
+[search] keyword=益智游戏推荐 sort=综合 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=益智游戏推荐 sort=最新 task=66/42 empty_streak=4 seen_feeds=489
+[search-wait] 8s before keyword=益智游戏推荐 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 益智游戏推荐 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=28.4s stdout=158316 stderr=0
+[search-filter] keyword=益智游戏推荐 sort=最新 scrolls=4 {'dup_or_empty_id': 40, 'not_note': 2}
+[search] keyword=益智游戏推荐 sort=最新 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=烧脑游戏推荐 sort=综合 task=67/42 empty_streak=5 seen_feeds=489
+[search-wait] 6s before keyword=烧脑游戏推荐 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 烧脑游戏推荐 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=33.7s stdout=166849 stderr=0
+[search-filter] keyword=烧脑游戏推荐 sort=综合 scrolls=4 {'dup_or_empty_id': 40, 'not_note': 2}
+[search] keyword=烧脑游戏推荐 sort=综合 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=烧脑游戏推荐 sort=最新 task=68/42 empty_streak=6 seen_feeds=489
+[search-wait] 15s before keyword=烧脑游戏推荐 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 烧脑游戏推荐 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=29.1s stdout=166605 stderr=0
+[search-filter] keyword=烧脑游戏推荐 sort=最新 scrolls=4 {'dup_or_empty_id': 40, 'not_note': 2}
+[search] keyword=烧脑游戏推荐 sort=最新 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=打发时间小游戏 sort=综合 task=69/42 empty_streak=7 seen_feeds=489
+[search-wait] 15s before keyword=打发时间小游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 打发时间小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=34.3s stdout=137849 stderr=0
+[search-filter] keyword=打发时间小游戏 sort=综合 scrolls=4 {'dup_or_empty_id': 39, 'not_note': 2, 'low_relevance': 1}
+[search] keyword=打发时间小游戏 sort=综合 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=打发时间小游戏 sort=最新 task=70/42 empty_streak=8 seen_feeds=490
+[search-wait] 14s before keyword=打发时间小游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 打发时间小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=28.9s stdout=137597 stderr=0
+[search-filter] keyword=打发时间小游戏 sort=最新 scrolls=4 {'dup_or_empty_id': 40, 'not_note': 2}
+[search] keyword=打发时间小游戏 sort=最新 raw=42 skipped=42 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=闯关游戏 sort=综合 task=71/42 empty_streak=9 seen_feeds=490
+[search-wait] 12s before keyword=闯关游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 闯关游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=12.5s stdout=479463 stderr=0
+[search-filter] keyword=闯关游戏 sort=综合 scrolls=4 {'dup_or_empty_id': 62, 'low_relevance': 39, 'not_note': 6, 'bad_title': 3, 'too_old': 6, 'already_commented': 2}
+[search] keyword=闯关游戏 sort=综合 raw=126 skipped=118 usable=8 queued=8 rate_limited=False
+[queue] loaded 8 candidates, will post one-by-one before next search
+[queue] pop feedId=6a38d49c000000002103ff08 remaining=7 title=花生800高频成语闯关小游戏已发布
+[skip-low] 花生800高频成语闯关小游戏已发布 comments=5
+[queue] pop feedId=6a533ae70000000021008879 remaining=6 title=如题，找一款解谜游戏
+[skip-low] 如题，找一款解谜游戏 comments=7
+[queue] pop feedId=6a4c82460000000015025c3b remaining=5 title=游戏人生｜一口气肝完3款胖布丁解谜🎮
+[plan] #11 keyword=闯关游戏 title=游戏人生｜一口气肝完3款胖布丁解谜🎮 comments=27 age=12d score=4 msg=20/烧脑卡关 match=5
+[post] attempt feedId=6a4c82460000000015025c3b contentLen=46
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a4c82460000000015025c3b --xsec-token(46chars) --content(46chars)
+[cdp] done exit=0 elapsed=7.4s stdout=1114 stderr=0
+[post] success feedId=6a4c82460000000015025c3b
+[cdp] phase=post-ok exit=0 feedId=6a4c82460000000015025c3b
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a4c82460000000015025c3b --xsec-token(46chars) --content(46chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/search_result?keyword=%E9%97%AF%E5%85%B3%E6%B8%B8%E6%88%8F&source=web_explore_feed&type=51
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/465E15AF9F15B0CED54F0EAFFEC109D7
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=534m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a4c82460000000015025c3b?xsec_token=ABfYhvE6IT6q7RRstf797MNOeIaQfNuzFUNLcC43zkico=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (818, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1010, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a4c82460000000015025c3b, length=47
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (11/41)
+[wait] 234s (~3.9min, random 2-4min)
+[queue] pop feedId=6a3d06f2000000000702c834 remaining=4 title=亲亲男友给我设计了考研闯关游戏
+[plan] #12 keyword=闯关游戏 title=亲亲男友给我设计了考研闯关游戏 comments=164 age=24d score=4 msg=7/推箱子 match=0
+[post] attempt feedId=6a3d06f2000000000702c834 contentLen=46
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a3d06f2000000000702c834 --xsec-token(46chars) --content(46chars)
+[cdp] done exit=0 elapsed=7.7s stdout=1134 stderr=0
+[post] success feedId=6a3d06f2000000000702c834
+[cdp] phase=post-ok exit=0 feedId=6a3d06f2000000000702c834
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a3d06f2000000000702c834 --xsec-token(46chars) --content(46chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a4c82460000000015025c3b?xsec_token=ABfYhvE6IT6q7RRstf797MNOeIaQfNuzFUNLcC43zkico=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/465E15AF9F15B0CED54F0EAFFEC109D7
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=538m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a3d06f2000000000702c834?xsec_token=ABNO-mE0NWL3GkbjEFeDXVHYeKEYUtAiMVlThMslut7zg=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (853, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1045, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a3d06f2000000000702c834, length=46
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (12/41)
+[wait] 215s (~3.6min, random 2-4min)
+[queue] pop feedId=6a3cdc10000000001102fdb1 remaining=3 title=🎮｜爽玩！不用下载的5款治愈小游戏
+[skip-low] 🎮｜爽玩！不用下载的5款治愈小游戏 comments=2
+[queue] pop feedId=6a3abe73000000001101c05c remaining=2 title=推荐15款ios游戏
+[plan] #13 keyword=闯关游戏 title=推荐15款ios游戏 comments=18 age=25d score=4 msg=5/求推荐 match=2
+[post] attempt feedId=6a3abe73000000001101c05c contentLen=38
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a3abe73000000001101c05c --xsec-token(46chars) --content(38chars)
+[cdp] done exit=0 elapsed=7.2s stdout=1134 stderr=0
+[post] success feedId=6a3abe73000000001101c05c
+[cdp] phase=post-ok exit=0 feedId=6a3abe73000000001101c05c
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a3abe73000000001101c05c --xsec-token(46chars) --content(38chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a3d06f2000000000702c834?xsec_token=ABNO-mE0NWL3GkbjEFeDXVHYeKEYUtAiMVlThMslut7zg=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/465E15AF9F15B0CED54F0EAFFEC109D7
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=542m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a3abe73000000001101c05c?xsec_token=ABLdNQ9-IuwBfSC7STvFz1Amd4-Km4IK41ome7gSx2Meo=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (853, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1045, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a3abe73000000001101c05c, length=38
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (13/41)
+[wait] 206s (~3.4min, random 2-4min)
+[queue] pop feedId=6a26ffb0000000000e021800 remaining=1 title=iPad有没有什么游戏推荐
+[plan] #14 keyword=闯关游戏 title=iPad有没有什么游戏推荐 comments=394 age=40d score=4 msg=4/求推荐 match=8
+[post] attempt feedId=6a26ffb0000000000e021800 contentLen=51
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a26ffb0000000000e021800 --xsec-token(46chars) --content(51chars)
+[cdp] done exit=0 elapsed=7.3s stdout=1134 stderr=0
+[post] success feedId=6a26ffb0000000000e021800
+[cdp] phase=post-ok exit=0 feedId=6a26ffb0000000000e021800
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a26ffb0000000000e021800 --xsec-token(46chars) --content(51chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a3abe73000000001101c05c?xsec_token=ABLdNQ9-IuwBfSC7STvFz1Amd4-Km4IK41ome7gSx2Meo=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/465E15AF9F15B0CED54F0EAFFEC109D7
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=545m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a26ffb0000000000e021800?xsec_token=ABDBDs6vhNgX5vxkpSuXbLUeRgGZGD23OAUhImWjGY5-Q=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (853, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1045, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a26ffb0000000000e021800, length=51
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (14/41)
+[wait] 192s (~3.2min, random 2-4min)
+[queue] pop feedId=6a1bca270000000008024197 remaining=0 title=用Python做了何啾啾闯关游戏
+[skip-low] 用Python做了何啾啾闯关游戏 comments=9
+[queue] empty refilling keyword=闯关游戏 sort=最新 task=72/42 empty_streak=0 seen_feeds=548
+[search-wait] 11s before keyword=闯关游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 闯关游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=12.1s stdout=511833 stderr=0
+[search-filter] keyword=闯关游戏 sort=最新 scrolls=4 {'low_relevance': 35, 'bad_title': 8, 'not_note': 6, 'dup_or_empty_id': 34, 'too_old': 15, 'already_commented': 1}
+[search] keyword=闯关游戏 sort=最新 raw=125 skipped=99 usable=26 queued=26 rate_limited=False
+[queue] loaded 26 candidates, will post one-by-one before next search
+[queue] pop feedId=6a2ff5b5000000001603f0e5 remaining=25 title=第一款微信小游戏《脑洞大闯关2》上线了！
+[skip-low] 第一款微信小游戏《脑洞大闯关2》上线了！ comments=3
+[queue] pop feedId=6a5a0c3a000000001002a089 remaining=24 title=🐹小仓鼠迷宫闯关游戏挑战大冒险
+[skip-low] 🐹小仓鼠迷宫闯关游戏挑战大冒险 comments=3
+[queue] pop feedId=6a588046000000000101fb47 remaining=23 title=课堂闯关互动小游戏🔥提升孩子积极性
+[skip-low] 课堂闯关互动小游戏🔥提升孩子积极性 comments=5
+[queue] pop feedId=6a51a5ec0000000022018e9f remaining=22 title=闯关小游戏
+[skip-low] 闯关小游戏 comments=3
+[queue] pop feedId=6a438df5000000001503dea9 remaining=21 title=可爱风解谜游戏推荐❗误入迷途手游已上线❗
+[skip-low] 可爱风解谜游戏推荐❗误入迷途手游已上线❗ comments=0
+[queue] pop feedId=69be07eb00000000210109f2 remaining=20 title=锈湖平替❗烧脑解谜游戏隐藏小镇全系列❗
+[skip-low] 锈湖平替❗烧脑解谜游戏隐藏小镇全系列❗ comments=0
+[queue] pop feedId=6a4793460000000011012c04 remaining=19 title=消除类小游戏推荐
+[skip-low] 消除类小游戏推荐 comments=2
+[queue] pop feedId=6a324502000000002200a995 remaining=18 title=Steam5款冒险闯关类游戏推荐
+[skip-low] Steam5款冒险闯关类游戏推荐 comments=0
+[queue] pop feedId=6a31afba000000002101b578 remaining=17 title=Unity横板吃水果闯关大挑战小游戏
+[skip-low] Unity横板吃水果闯关大挑战小游戏 comments=0
+[queue] pop feedId=6a1e9cb6000000003502c4ce remaining=16 title=花生700词/顾斐 成语闯关小游戏已发布
+[skip-low] 花生700词/顾斐 成语闯关小游戏已发布 comments=10
+[queue] pop feedId=6a59d6f1000000002201948a remaining=15 title=✅3岁娃智勇大闯关游戏、在家解救好朋友
+[skip-low] ✅3岁娃智勇大闯关游戏、在家解救好朋友 comments=1
+[queue] pop feedId=6a597421000000000f030d7f remaining=14 title=情侣宅家不冷战💞16款合作闯关双人游戏
+[skip-low] 情侣宅家不冷战💞16款合作闯关双人游戏 comments=0
+[queue] pop feedId=6a55edf2000000001603fe06 remaining=13 title=课前小游戏：记忆大挑战，趣味互动游戏
+[skip-low] 课前小游戏：记忆大挑战，趣味互动游戏 comments=0
+[queue] pop feedId=6a54f218000000002200a477 remaining=12 title=决定每天玩一关小游戏
+[skip-low] 决定每天玩一关小游戏 comments=2
+[queue] pop feedId=6a4663e6000000001c0244e0 remaining=11 title=能玩一整天的寻物游戏🔍迷宫大侦探❗
+[skip-low] 能玩一整天的寻物游戏🔍迷宫大侦探❗ comments=0
+[queue] pop feedId=6a3e1d98000000001100494f remaining=10 title=收集爱好者不能错过❗探索解谜风寻物推荐❗
+[skip-low] 收集爱好者不能错过❗探索解谜风寻物推荐❗ comments=2
+[queue] pop feedId=6a48dabc0000000017028fcd remaining=9 title=小程序小游戏之每天过一关
+[skip-low] 小程序小游戏之每天过一关 comments=4
+[queue] pop feedId=6a45e990000000001c02538a remaining=8 title=超魔性啊啊啊声控闯关游戏来了
+[skip-low] 超魔性啊啊啊声控闯关游戏来了 comments=0
+[queue] pop feedId=6a34fdb2000000001702b413 remaining=7 title=还不错的抖音小游戏
+[skip-low] 还不错的抖音小游戏 comments=0
+[queue] pop feedId=6a326815000000000f029ad8 remaining=6 title=高中生物必修1复习闯关游戏
+[skip-low] 高中生物必修1复习闯关游戏 comments=1
+[queue] pop feedId=6a2fb923000000001700b5b2 remaining=5 title=简单好玩的小游戏🦄解压放松打发时间✌️
+[skip-low] 简单好玩的小游戏🦄解压放松打发时间✌️ comments=0
+[queue] pop feedId=6a2e60540000000035030f64 remaining=4 title=✅三岁娃智勇大闯关游戏、在家解救小动物
+[plan] #15 keyword=闯关游戏 title=✅三岁娃智勇大闯关游戏、在家解救小动物 comments=13 age=35d score=4 msg=18/烧脑卡关 match=0
+[post] attempt feedId=6a2e60540000000035030f64 contentLen=45
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a2e60540000000035030f64 --xsec-token(46chars) --content(45chars)
+[cdp] done exit=0 elapsed=8.0s stdout=1114 stderr=0
+[post] success feedId=6a2e60540000000035030f64
+[cdp] phase=post-ok exit=0 feedId=6a2e60540000000035030f64
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a2e60540000000035030f64 --xsec-token(46chars) --content(45chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/search_result?keyword=%E9%97%AF%E5%85%B3%E6%B8%B8%E6%88%8F&source=web_explore_feed&type=51
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/465E15AF9F15B0CED54F0EAFFEC109D7
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=549m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a2e60540000000035030f64?xsec_token=AB02zQFAN45QCiKf_OatQDSJhkn1XcSRNhwdGrf5pxLaE=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (853, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1045, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a2e60540000000035030f64, length=45
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (15/41)
+[wait] 195s (~3.2min, random 2-4min)
+[queue] pop feedId=6a297675000000001602464a remaining=3 title=暑假游戏闯关背古文，初中就是降维打击👊
+[skip-low] 暑假游戏闯关背古文，初中就是降维打击👊 comments=2
+[queue] pop feedId=6a27b76e0000000035029ca8 remaining=2 title=✅三岁娃户外智勇大闯关游戏、解救爸爸
+[plan] #16 keyword=闯关游戏 title=✅三岁娃户外智勇大闯关游戏、解救爸爸 comments=15 age=40d score=4 msg=9/推箱子 match=0
+[post] attempt feedId=6a27b76e0000000035029ca8 contentLen=29
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a27b76e0000000035029ca8 --xsec-token(46chars) --content(29chars)
+[cdp] done exit=0 elapsed=8.6s stdout=1134 stderr=0
+[post] success feedId=6a27b76e0000000035029ca8
+[cdp] phase=post-ok exit=0 feedId=6a27b76e0000000035029ca8
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a27b76e0000000035029ca8 --xsec-token(46chars) --content(29chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a2e60540000000035030f64?xsec_token=AB02zQFAN45QCiKf_OatQDSJhkn1XcSRNhwdGrf5pxLaE=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/465E15AF9F15B0CED54F0EAFFEC109D7
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=552m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a27b76e0000000035029ca8?xsec_token=ABt8LNpF1v-aYgbyx4sw5D5VKGGv2r0HuHBNiuVEEfGik=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (853, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1045, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a27b76e0000000035029ca8, length=29
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (16/41)
+[wait] 135s (~2.2min, random 2-4min)
+[queue] pop feedId=6a4699fb000000000f028272 remaining=1 title=『迷宫』毫无压力版（可下载）
+[skip-low] 『迷宫』毫无压力版（可下载） comments=7
+[queue] pop feedId=6a37a173000000000f033e66 remaining=0 title=漫画风解谜之旅❗误入迷途童话冒险来了❗
+[skip-low] 漫画风解谜之旅❗误入迷途童话冒险来了❗ comments=0
+[queue] empty refilling keyword=推理游戏 sort=综合 task=73/42 empty_streak=0 seen_feeds=633
+[search-wait] 14s before keyword=推理游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 推理游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=12.3s stdout=425464 stderr=0
+[search-filter] keyword=推理游戏 sort=综合 scrolls=4 {'dup_or_empty_id': 66, 'not_note': 6, 'bad_publish_date': 1, 'low_relevance': 21, 'too_old': 8, 'already_commented': 10, 'bad_title': 2}
+[search] keyword=推理游戏 sort=综合 raw=126 skipped=114 usable=12 queued=12 rate_limited=False
+[queue] loaded 12 candidates, will post one-by-one before next search
+[queue] pop feedId=6a4daaf4000000000602060e remaining=11 title=烧脑拼图逻辑推理游戏｜摸鱼解压神器！关卡越
+[skip-low] 烧脑拼图逻辑推理游戏｜摸鱼解压神器！关卡越 comments=0
+[queue] pop feedId=6a3947d3000000002101775e remaining=10 title=《游戏设计师最喜欢的烧脑谜题》—夺命线条
+[skip-low] 《游戏设计师最喜欢的烧脑谜题》—夺命线条 comments=4
+[queue] pop feedId=6a1edcef0000000008025cf6 remaining=9 title=五月游戏总结 steam六款解谜推理游戏
+[plan] #17 keyword=推理游戏 title=五月游戏总结 steam六款解谜推理游戏 comments=30 age=47d score=6 msg=16/烧脑卡关 match=2
+[post] attempt feedId=6a1edcef0000000008025cf6 contentLen=33
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a1edcef0000000008025cf6 --xsec-token(46chars) --content(33chars)
+[cdp] done exit=0 elapsed=8.8s stdout=1114 stderr=0
+[post] success feedId=6a1edcef0000000008025cf6
+[cdp] phase=post-ok exit=0 feedId=6a1edcef0000000008025cf6
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a1edcef0000000008025cf6 --xsec-token(46chars) --content(33chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/search_result?keyword=%E6%8E%A8%E7%90%86%E6%B8%B8%E6%88%8F&source=web_explore_feed&type=51
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/465E15AF9F15B0CED54F0EAFFEC109D7
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=555m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a1edcef0000000008025cf6?xsec_token=ABt1P8qKXlgWLghJe2jXF1AUjq9bFx2XK1WuBwWBs5j8A=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (853, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1045, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a1edcef0000000008025cf6, length=33
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (17/41)
+[wait] 166s (~2.8min, random 2-4min)
+[queue] pop feedId=6a564ae5000000000f030ec6 remaining=8 title=凶案数独：推理类｜变种数独游戏
+[skip-low] 凶案数独：推理类｜变种数独游戏 comments=5
+[queue] pop feedId=6a4a38c6000000001503c086 remaining=7 title=分享一个很有意思的数独推理游戏
+[skip-low] 分享一个很有意思的数独推理游戏 comments=1
+[queue] pop feedId=6a4908dd000000001702abd9 remaining=6 title=需要更多的纯文本推理游戏
+[plan] #18 keyword=推理游戏 title=需要更多的纯文本推理游戏 comments=52 age=15d score=4 msg=6/推箱子 match=0
+[post] attempt feedId=6a4908dd000000001702abd9 contentLen=50
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a4908dd000000001702abd9 --xsec-token(46chars) --content(50chars)
+[cdp] done exit=0 elapsed=7.4s stdout=1134 stderr=0
+[post] success feedId=6a4908dd000000001702abd9
+[cdp] phase=post-ok exit=0 feedId=6a4908dd000000001702abd9
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a4908dd000000001702abd9 --xsec-token(46chars) --content(50chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a1edcef0000000008025cf6?xsec_token=ABt1P8qKXlgWLghJe2jXF1AUjq9bFx2XK1WuBwWBs5j8A=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/465E15AF9F15B0CED54F0EAFFEC109D7
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=558m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a4908dd000000001702abd9?xsec_token=AB0_q_wrK3bqvgiNA4aoZ5Zga18cdu0VoUPc4ATBc9HOU=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (853, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1045, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a4908dd000000001702abd9, length=50
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (18/41)
+[wait] 147s (~2.5min, random 2-4min)
+[queue] pop feedId=6a473cec000000000f0151ec remaining=5 title=所有人交出好玩的网页解谜游戏！
+[plan] #19 keyword=推理游戏 title=所有人交出好玩的网页解谜游戏！ comments=64 age=16d score=4 msg=17/烧脑卡关 match=2
+[post] attempt feedId=6a473cec000000000f0151ec contentLen=43
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a473cec000000000f0151ec --xsec-token(46chars) --content(43chars)
+[cdp] done exit=0 elapsed=9.2s stdout=1061 stderr=0
+[post] success feedId=6a473cec000000000f0151ec
+[cdp] phase=post-ok exit=0 feedId=6a473cec000000000f0151ec
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a473cec000000000f0151ec --xsec-token(46chars) --content(43chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore?channel_id=homefeed_recommend
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/465E15AF9F15B0CED54F0EAFFEC109D7
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=561m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a473cec000000000f0151ec?xsec_token=ABY4SCXHEDgwxqzotoO_15FhT60eUjVRNh3nAbL_4QBgk=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (853, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1045, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a473cec000000000f0151ec, length=43
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (19/41)
+[wait] 164s (~2.7min, random 2-4min)
+[queue] pop feedId=6a33e0fb0000000011016fa8 remaining=4 title=如果你也喜欢推理解谜…那么来玩这个！
+[plan] #20 keyword=推理游戏 title=如果你也喜欢推理解谜…那么来玩这个！ comments=27 age=31d score=4 msg=10/推箱子 match=0
+[post] attempt feedId=6a33e0fb0000000011016fa8 contentLen=43
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a33e0fb0000000011016fa8 --xsec-token(46chars) --content(43chars)
+[cdp] done exit=0 elapsed=8.5s stdout=1134 stderr=0
+[post] success feedId=6a33e0fb0000000011016fa8
+[cdp] phase=post-ok exit=0 feedId=6a33e0fb0000000011016fa8
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a33e0fb0000000011016fa8 --xsec-token(46chars) --content(43chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a5577c5000000002003820c?xsec_token=AB53J3eUzc3sXP-tsA-retrbczvBwTV9eRahBiEsOdK3E=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/465E15AF9F15B0CED54F0EAFFEC109D7
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=564m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a33e0fb0000000011016fa8?xsec_token=ABFdhEvX3zHt_uas5VolbivGlIVOcHwSOelqow-KBGdGQ=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (853, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1045, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a33e0fb0000000011016fa8, length=43
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (20/41)
+[wait] 179s (~3.0min, random 2-4min)
+[queue] pop feedId=6a2d55cb0000000022018e54 remaining=3 title=Steam新游｜一个人也能玩的狼人杀推理游戏
+[plan] #21 keyword=推理游戏 title=Steam新游｜一个人也能玩的狼人杀推理游戏 comments=24 age=34d score=4 msg=18/烧脑卡关 match=0
+[post] attempt feedId=6a2d55cb0000000022018e54 contentLen=45
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a2d55cb0000000022018e54 --xsec-token(46chars) --content(45chars)
+[cdp] done exit=0 elapsed=8.7s stdout=1134 stderr=0
+[post] success feedId=6a2d55cb0000000022018e54
+[cdp] phase=post-ok exit=0 feedId=6a2d55cb0000000022018e54
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a2d55cb0000000022018e54 --xsec-token(46chars) --content(45chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a33e0fb0000000011016fa8?xsec_token=ABFdhEvX3zHt_uas5VolbivGlIVOcHwSOelqow-KBGdGQ=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/465E15AF9F15B0CED54F0EAFFEC109D7
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=567m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a2d55cb0000000022018e54?xsec_token=AB25ZYwrW9SicOlKQM8euj49BPTRtX8WYhuHtwnhP4i0c=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (853, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1045, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a2d55cb0000000022018e54, length=45
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (21/41)
+[wait] 214s (~3.6min, random 2-4min)
+[queue] pop feedId=6a478af0000000000f01400d remaining=2 title=喜欢明侦探的朋友进，非恐友好推理！！！
+[skip-low] 喜欢明侦探的朋友进，非恐友好推理！！！ comments=3
+[queue] pop feedId=6a43c1d00000000007024d47 remaining=1 title=着迷地玩了俩小时数独推理！！
+[skip-low] 着迷地玩了俩小时数独推理！！ comments=4
+[queue] pop feedId=6a1a7c860000000007020bd9 remaining=0 title=我们做了一个收集网页解谜和ARG的网站
+[plan] #22 keyword=推理游戏 title=我们做了一个收集网页解谜和ARG的网站 comments=78 age=50d score=2 msg=20/烧脑卡关 match=5
+[post] attempt feedId=6a1a7c860000000007020bd9 contentLen=46
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a1a7c860000000007020bd9 --xsec-token(46chars) --content(46chars)
+[cdp] done exit=0 elapsed=8.4s stdout=1134 stderr=0
+[post] success feedId=6a1a7c860000000007020bd9
+[cdp] phase=post-ok exit=0 feedId=6a1a7c860000000007020bd9
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a1a7c860000000007020bd9 --xsec-token(46chars) --content(46chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a2d55cb0000000022018e54?xsec_token=AB25ZYwrW9SicOlKQM8euj49BPTRtX8WYhuHtwnhP4i0c=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/465E15AF9F15B0CED54F0EAFFEC109D7
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=570m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a1a7c860000000007020bd9?xsec_token=ABwgu0YQ-VU2U-EDO2IpcCw6RW2PMvJssG-48qSRICEZs=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (853, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1045, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a1a7c860000000007020bd9, length=47
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (22/41)
+[wait] 127s (~2.1min, random 2-4min)
+[queue] empty refilling keyword=推理游戏 sort=最新 task=74/42 empty_streak=0 seen_feeds=687
+[search-wait] 9s before keyword=推理游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 推理游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=13.1s stdout=425025 stderr=0
+[search-filter] keyword=推理游戏 sort=最新 scrolls=4 {'low_relevance': 25, 'bad_title': 7, 'not_note': 6, 'already_commented': 10, 'dup_or_empty_id': 42}
+[search] keyword=推理游戏 sort=最新 raw=124 skipped=90 usable=34 queued=34 rate_limited=False
+[queue] loaded 34 candidates, will post one-by-one before next search
+[queue] pop feedId=6a2b7e46000000000e038400 remaining=33 title=推荐几款我个人很喜欢的推理游戏
+[plan] #23 keyword=推理游戏 title=推荐几款我个人很喜欢的推理游戏 comments=36 age=9d score=6 msg=1/求推荐 match=5
+[post] attempt feedId=6a2b7e46000000000e038400 contentLen=55
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a2b7e46000000000e038400 --xsec-token(46chars) --content(55chars)
+[cdp] done exit=0 elapsed=7.0s stdout=1114 stderr=0
+[post] success feedId=6a2b7e46000000000e038400
+[cdp] phase=post-ok exit=0 feedId=6a2b7e46000000000e038400
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a2b7e46000000000e038400 --xsec-token(46chars) --content(55chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/search_result?keyword=%E6%8E%A8%E7%90%86%E6%B8%B8%E6%88%8F&source=web_explore_feed&type=51
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/465E15AF9F15B0CED54F0EAFFEC109D7
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=573m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a2b7e46000000000e038400?xsec_token=ABJnilHs4aHFdocfmy4swVYMTFxTDhRlRTniNUxmtjNwI=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (853, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1045, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a2b7e46000000000e038400, length=55
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (23/41)
+[wait] 151s (~2.5min, random 2-4min)
+[queue] pop feedId=6a43b2b90000000011016514 remaining=32 title=免费硬核侦探推理解谜游戏已在steam推出
+[skip-low] 免费硬核侦探推理解谜游戏已在steam推出 comments=3
+[queue] pop feedId=6a46760c0000000007026e23 remaining=31 title=脑洞大开的寻物解谜小游戏🐰
+[skip-low] 脑洞大开的寻物解谜小游戏🐰 comments=0
+[queue] pop feedId=6a42adc8000000001702b8a9 remaining=30 title=魔幻现实主题类奥波拉丁解谜推理游戏
+[skip-low] 魔幻现实主题类奥波拉丁解谜推理游戏 comments=9
+[queue] pop feedId=6a58bc5d000000001c00e89e remaining=29 title=周末宅家steam社交推理游戏合集
+[skip-low] 周末宅家steam社交推理游戏合集 comments=1
+[queue] pop feedId=6a5778f70000000011006172 remaining=28 title=Steam推理游戏·下篇（7款）
+[skip-low] Steam推理游戏·下篇（7款） comments=0
+[queue] pop feedId=6a576f8100000000080316cc remaining=27 title=近两个月掉puzzle&推理解谜🕳️里了
+[plan] #24 keyword=推理游戏 title=近两个月掉puzzle&推理解谜🕳️里了 comments=42 age=3d score=4 msg=20/烧脑卡关 match=5
+[post] attempt feedId=6a576f8100000000080316cc contentLen=46
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a576f8100000000080316cc --xsec-token(46chars) --content(46chars)
+[cdp] done exit=0 elapsed=8.6s stdout=1134 stderr=0
+[post] success feedId=6a576f8100000000080316cc
+[cdp] phase=post-ok exit=0 feedId=6a576f8100000000080316cc
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a576f8100000000080316cc --xsec-token(46chars) --content(46chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a2b7e46000000000e038400?xsec_token=ABJnilHs4aHFdocfmy4swVYMTFxTDhRlRTniNUxmtjNwI=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/465E15AF9F15B0CED54F0EAFFEC109D7
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=576m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a576f8100000000080316cc?xsec_token=ABZIZHoYD7gzNDo590xj4gXvWEbRZqq4IDyqhriRn9I_0=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (853, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1045, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a576f8100000000080316cc, length=47
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (24/41)
+[wait] 165s (~2.8min, random 2-4min)
+[queue] pop feedId=6a54dde0000000002101ac33 remaining=26 title=🔍 巨可爱的宝藏手绘风游戏❗️迷宫大侦探
+[skip-low] 🔍 巨可爱的宝藏手绘风游戏❗️迷宫大侦探 comments=0
+[queue] pop feedId=6a5389690000000007010365 remaining=25 title=这个推理游戏有名字吗我想看实况
+[skip-low] 这个推理游戏有名字吗我想看实况 comments=10
+[queue] pop feedId=6a5398a20000000011013cb9 remaining=24 title=推理游戏：找出凶手
+[skip-low] 推理游戏：找出凶手 comments=7
+[queue] pop feedId=6a4af396000000001101bee1 remaining=23 title=好玩的寻物游戏👀迷宫大侦探手游版来咯❗
+[skip-low] 好玩的寻物游戏👀迷宫大侦探手游版来咯❗ comments=0
+[queue] pop feedId=6a495f280000000007023dec remaining=22 title=如果你也喜欢推理游戏…
+[plan] #25 keyword=推理游戏 title=如果你也喜欢推理游戏… comments=30 age=14d score=4 msg=19/烧脑卡关 match=0
+[post] attempt feedId=6a495f280000000007023dec contentLen=42
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a495f280000000007023dec --xsec-token(46chars) --content(42chars)
+[cdp] done exit=0 elapsed=7.8s stdout=1134 stderr=0
+[post] success feedId=6a495f280000000007023dec
+[cdp] phase=post-ok exit=0 feedId=6a495f280000000007023dec
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a495f280000000007023dec --xsec-token(46chars) --content(42chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a49fcea000000002101794a?xsec_token=AB0_q_wrK3bqvgiNA4aoZ5ZmVkxPrfwhdPV147vRka1d8=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/3962F2B8ED2B2D7D17C3C0A0F1536C2A
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=579m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a495f280000000007023dec?xsec_token=AB0_q_wrK3bqvgiNA4aoZ5ZnlpVg1CTQmv09lz6KQrX3o=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (853, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1045, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a495f280000000007023dec, length=43
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (25/41)
+[wait] 140s (~2.3min, random 2-4min)
+[queue] pop feedId=6a48d4af0000000015025347 remaining=21 title=一个人玩的破案小游戏
+[skip-low] 一个人玩的破案小游戏 comments=3
+[queue] pop feedId=6a44a70400000000060214d9 remaining=20 title=数独+推理！这款免费网页游戏太上头了
+[skip-low] 数独+推理！这款免费网页游戏太上头了 comments=2
+[queue] pop feedId=6a3fe7c50000000007020c80 remaining=19 title=真的很喜欢玩解谜游戏了
+[plan] #26 keyword=推理游戏 title=真的很喜欢玩解谜游戏了 comments=157 age=21d score=4 msg=20/烧脑卡关 match=5
+[post] attempt feedId=6a3fe7c50000000007020c80 contentLen=46
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a3fe7c50000000007020c80 --xsec-token(46chars) --content(46chars)
+[cdp] done exit=0 elapsed=7.9s stdout=1133 stderr=0
+[post] success feedId=6a3fe7c50000000007020c80
+[cdp] phase=post-ok exit=0 feedId=6a3fe7c50000000007020c80
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a3fe7c50000000007020c80 --xsec-token(46chars) --content(46chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a1d962b0000000008030f39?xsec_token=ABH2jpJ60stU_qwjMNGqmuSuGoJOkEgIMxZrje6cEnEw4=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/3962F2B8ED2B2D7D17C3C0A0F1536C2A
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=581m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a3fe7c50000000007020c80?xsec_token=AB7A6tg6vkzoHYWtHWN7Ju1ybltj1Oi8UFH_nzhYF7QHA=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (761, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (972, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a3fe7c50000000007020c80, length=47
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (26/41)
+[wait] 152s (~2.5min, random 2-4min)
+[queue] pop feedId=6a3d62cc000000001700bdb9 remaining=18 title=类数独纸笔谜题推荐-Murdoku
+[plan] #27 keyword=推理游戏 title=类数独纸笔谜题推荐-Murdoku comments=73 age=23d score=4 msg=1/求推荐 match=5
+[post] attempt feedId=6a3d62cc000000001700bdb9 contentLen=55
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a3d62cc000000001700bdb9 --xsec-token(46chars) --content(55chars)
+[cdp] done exit=0 elapsed=8.1s stdout=1134 stderr=0
+[post] success feedId=6a3d62cc000000001700bdb9
+[cdp] phase=post-ok exit=0 feedId=6a3d62cc000000001700bdb9
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a3d62cc000000001700bdb9 --xsec-token(46chars) --content(55chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/69bf54a2000000001f004a08?xsec_token=ABGg3Mkx_Oa42n2izzZplhoL2JzEZFpxZ6Lqo63nbhnJ4=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/3962F2B8ED2B2D7D17C3C0A0F1536C2A
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=584m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a3d62cc000000001700bdb9?xsec_token=ABNO-mE0NWL3GkbjEFeDXVHZMorI69L2vu8-WP1EPoA4E=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (853, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1045, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a3d62cc000000001700bdb9, length=55
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (27/41)
+[wait] 169s (~2.8min, random 2-4min)
+[queue] pop feedId=6a37ed5100000000220163fc remaining=17 title=关于我已经更新了100部解谜游戏这件事
+[plan] #28 keyword=推理游戏 title=关于我已经更新了100部解谜游戏这件事 comments=55 age=28d score=4 msg=20/烧脑卡关 match=5
+[post] attempt feedId=6a37ed5100000000220163fc contentLen=46
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a37ed5100000000220163fc --xsec-token(46chars) --content(46chars)
+[cdp] done exit=0 elapsed=8.4s stdout=1134 stderr=0
+[post] success feedId=6a37ed5100000000220163fc
+[cdp] phase=post-ok exit=0 feedId=6a37ed5100000000220163fc
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a37ed5100000000220163fc --xsec-token(46chars) --content(46chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a28def50000000035025fb2?xsec_token=ABeyG2EK6sx8jEHlOZ7b44wZGpD-Ye_IqjL4SdrCkfOK4=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/3962F2B8ED2B2D7D17C3C0A0F1536C2A
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=587m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a37ed5100000000220163fc?xsec_token=ABS9i4Uh4n42Y0bOrQDRPcr7uZvHyb4o2cRvPKLtDxMeQ=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (853, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1045, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a37ed5100000000220163fc, length=47
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (28/41)
+[wait] 157s (~2.6min, random 2-4min)
+[queue] pop feedId=6a367f44000000001003d7c1 remaining=16 title=这推理游戏简直给大人的电脑版冒险小虎队！
+[skip-low] 这推理游戏简直给大人的电脑版冒险小虎队！ comments=0
+[queue] pop feedId=6a2e5161000000002201783f remaining=15 title=逻辑推理：能自主推理出来的，确实很厉害了！
+[plan] #29 keyword=推理游戏 title=逻辑推理：能自主推理出来的，确实很厉害了！ comments=222 age=35d score=4 msg=8/推箱子 match=3
+[post] attempt feedId=6a2e5161000000002201783f contentLen=47
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a2e5161000000002201783f --xsec-token(46chars) --content(47chars)
+[cdp] done exit=0 elapsed=7.8s stdout=1134 stderr=0
+[post] success feedId=6a2e5161000000002201783f
+[cdp] phase=post-ok exit=0 feedId=6a2e5161000000002201783f
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a2e5161000000002201783f --xsec-token(46chars) --content(47chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a474618000000001102c8df?xsec_token=ABY4SCXHEDgwxqzotoO_15FoRiDCOJSDNi2WltYfpvys8=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/3962F2B8ED2B2D7D17C3C0A0F1536C2A
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=589m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a2e5161000000002201783f?xsec_token=AB02zQFAN45QCiKf_OatQDSIqTSHyZgK0CFLd2JyGDQQc=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (853, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1045, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a2e5161000000002201783f, length=47
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (29/41)
+[wait] 211s (~3.5min, random 2-4min)
+[queue] pop feedId=6a2aedc5000000001603da06 remaining=14 title=推理游戏漫评（二）：无脑五星的一期
+[skip-low] 推理游戏漫评（二）：无脑五星的一期 comments=6
+[queue] pop feedId=6a2a905300000000060218e6 remaining=13 title=逻辑推理：123问题，看看你的思维够不够敏捷
+[plan] #30 keyword=推理游戏 title=逻辑推理：123问题，看看你的思维够不够敏捷 comments=399 age=38d score=4 msg=8/推箱子 match=3
+[post] attempt feedId=6a2a905300000000060218e6 contentLen=47
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a2a905300000000060218e6 --xsec-token(46chars) --content(47chars)
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1447
+[post] failed feedId=6a2a905300000000060218e6
+[cdp] phase=post-fail exit=1 feedId=6a2a905300000000060218e6
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a2a905300000000060218e6 --xsec-token(46chars) --content(47chars)
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <built-in function kill> returned a result with an exception set
+[fail] feedId=6a2a905300000000060218e6 detail_tail=ripts\run_lock.py", line 59, in _cleanup_stale_lock
+    if isinstance(pid, int) and _pid_running(pid):
+  File "C:\Users\Admin\.agents\skills\redbookskills\scripts\run_lock.py", line 28, in _pid_running
+    os.kill(pid, 0)
+SystemError: <built-in function kill> returned a result with an exception set
+
+[retry-infra] CDP lock cleared, retry once after 30s
+[post] attempt feedId=6a2a905300000000060218e6 contentLen=47
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a2a905300000000060218e6 --xsec-token(46chars) --content(47chars)
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1447
+[post] failed feedId=6a2a905300000000060218e6
+[cdp] phase=post-fail exit=1 feedId=6a2a905300000000060218e6
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a2a905300000000060218e6 --xsec-token(46chars) --content(47chars)
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <built-in function kill> returned a result with an exception set
+[skip-fail] post_comment failed on 6a2a905300000000060218e6, continue next candidate
+[queue] pop feedId=6a2a9d5b0000000008027731 remaining=12 title=推理游戏果然还是要跟朋友一起玩啊！
+[skip-low] 推理游戏果然还是要跟朋友一起玩啊！ comments=6
+[queue] pop feedId=6a293c95000000001c02543a remaining=11 title=再出一百部我都入库的烂梗王破案推理游戏
+[plan] #30 keyword=推理游戏 title=再出一百部我都入库的烂梗王破案推理游戏 comments=83 age=39d score=4 msg=3/求推荐 match=0
+[post] attempt feedId=6a293c95000000001c02543a contentLen=55
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a293c95000000001c02543a --xsec-token(46chars) --content(55chars)
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[post] failed feedId=6a293c95000000001c02543a
+[cdp] phase=post-fail exit=1 feedId=6a293c95000000001c02543a
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a293c95000000001c02543a --xsec-token(46chars) --content(55chars)
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[fail] feedId=6a293c95000000001c02543a detail_tail=ills\scripts\run_lock.py", line 59, in _cleanup_stale_lock
+    if isinstance(pid, int) and _pid_running(pid):
+  File "C:\Users\Admin\.agents\skills\redbookskills\scripts\run_lock.py", line 28, in _pid_running
+    os.kill(pid, 0)
+SystemError: <class 'OSError'> returned a result with an exception set
+
+[retry-infra] CDP lock cleared, retry once after 30s
+[post] attempt feedId=6a293c95000000001c02543a contentLen=55
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a293c95000000001c02543a --xsec-token(46chars) --content(55chars)
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1447
+[post] failed feedId=6a293c95000000001c02543a
+[cdp] phase=post-fail exit=1 feedId=6a293c95000000001c02543a
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a293c95000000001c02543a --xsec-token(46chars) --content(55chars)
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <built-in function kill> returned a result with an exception set
+[skip-fail] post_comment failed on 6a293c95000000001c02543a, continue next candidate
+[queue] pop feedId=6a1fcf17000000000803c621 remaining=10 title=蹲蹲类似的这种小游戏
+[skip-low] 蹲蹲类似的这种小游戏 comments=10
+[queue] pop feedId=6a1c3e920000000038022fea remaining=9 title=脑洞大开的小游戏合集🐰
+[skip-low] 脑洞大开的小游戏合集🐰 comments=3
+[queue] pop feedId=6a18e609000000003601be28 remaining=8 title=一个摸鱼游戏, 烧脑, 但是很解压. 260528-C
+[skip-low] 一个摸鱼游戏, 烧脑, 但是很解压. 260528-C comments=0
+[queue] pop feedId=6a184f7b00000000060309eb remaining=7 title=逻辑推理40 ★★★★ 三位数解密
+[skip-low] 逻辑推理40 ★★★★ 三位数解密 comments=0
+[queue] pop feedId=6a584311000000001102cea1 remaining=6 title=谁还没玩人生画廊😭暗黑解谜天花板挖到宝
+[skip-low] 谁还没玩人生画廊😭暗黑解谜天花板挖到宝 comments=0
+[queue] pop feedId=6a58205f000000000702febc remaining=5 title=猫咪数独谜题挑战 0716
+[skip-low] 猫咪数独谜题挑战 0716 comments=0
+[queue] pop feedId=6a4ca703000000000803e326 remaining=4 title=烧脑来袭猜猜谁是凶手
+[plan] #30 keyword=推理游戏 title=烧脑来袭猜猜谁是凶手 comments=11 age=12d score=2 msg=19/烧脑卡关 match=5
+[post] attempt feedId=6a4ca703000000000803e326 contentLen=42
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a4ca703000000000803e326 --xsec-token(46chars) --content(42chars)
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1447
+[post] failed feedId=6a4ca703000000000803e326
+[cdp] phase=post-fail exit=1 feedId=6a4ca703000000000803e326
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a4ca703000000000803e326 --xsec-token(46chars) --content(42chars)
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <built-in function kill> returned a result with an exception set
+[fail] feedId=6a4ca703000000000803e326 detail_tail=ripts\run_lock.py", line 59, in _cleanup_stale_lock
+    if isinstance(pid, int) and _pid_running(pid):
+  File "C:\Users\Admin\.agents\skills\redbookskills\scripts\run_lock.py", line 28, in _pid_running
+    os.kill(pid, 0)
+SystemError: <built-in function kill> returned a result with an exception set
+
+[retry-infra] CDP lock cleared, retry once after 30s
+[post] attempt feedId=6a4ca703000000000803e326 contentLen=42
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a4ca703000000000803e326 --xsec-token(46chars) --content(42chars)
+[cdp] done exit=1 elapsed=0.3s stdout=0 stderr=1447
+[post] failed feedId=6a4ca703000000000803e326
+[cdp] phase=post-fail exit=1 feedId=6a4ca703000000000803e326
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a4ca703000000000803e326 --xsec-token(46chars) --content(42chars)
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <built-in function kill> returned a result with an exception set
+[skip-fail] post_comment failed on 6a4ca703000000000803e326, continue next candidate
+[queue] pop feedId=6a4455ae000000001101f7fb remaining=3 title=你很会推理吗？来试试这个
+[plan] #30 keyword=推理游戏 title=你很会推理吗？来试试这个 comments=1079 age=18d score=2 msg=13/微信小游戏 match=0
+[post] attempt feedId=6a4455ae000000001101f7fb contentLen=39
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a4455ae000000001101f7fb --xsec-token(46chars) --content(39chars)
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[post] failed feedId=6a4455ae000000001101f7fb
+[cdp] phase=post-fail exit=1 feedId=6a4455ae000000001101f7fb
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a4455ae000000001101f7fb --xsec-token(46chars) --content(39chars)
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[fail] feedId=6a4455ae000000001101f7fb detail_tail=ills\scripts\run_lock.py", line 59, in _cleanup_stale_lock
+    if isinstance(pid, int) and _pid_running(pid):
+  File "C:\Users\Admin\.agents\skills\redbookskills\scripts\run_lock.py", line 28, in _pid_running
+    os.kill(pid, 0)
+SystemError: <class 'OSError'> returned a result with an exception set
+
+[retry-infra] CDP lock cleared, retry once after 30s
+[post] attempt feedId=6a4455ae000000001101f7fb contentLen=39
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a4455ae000000001101f7fb --xsec-token(46chars) --content(39chars)
+[cdp] done exit=0 elapsed=8.4s stdout=1134 stderr=0
+[post] success feedId=6a4455ae000000001101f7fb
+[cdp] phase=post-ok exit=0 feedId=6a4455ae000000001101f7fb
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a4455ae000000001101f7fb --xsec-token(46chars) --content(39chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a58c62a000000000401db82?xsec_token=ABRfGZMJpkrRXVY6GP3I8MleC_rMdtmIdOgrIv8ULJYxo=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/3962F2B8ED2B2D7D17C3C0A0F1536C2A
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=595m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a4455ae000000001101f7fb?xsec_token=ABz5qyJXIwFL-2gjvqVE5IKRuHMoAOGXgStsUPvudDdPQ=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (853, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1045, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a4455ae000000001101f7fb, length=39
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done after retry (30/41)
+[wait] 178s (~3.0min, random 2-4min)
+[queue] pop feedId=6a3dda550000000011006866 remaining=2 title=逻辑题，我告诉你怎么玩
+[skip-low] 逻辑题，我告诉你怎么玩 comments=0
+[queue] pop feedId=6a1cd91200000000070250fe remaining=1 title=推理小题-12, 用简单推理找"好人/坏蛋"
+[skip-low] 推理小题-12, 用简单推理找"好人/坏蛋" comments=3
+[queue] pop feedId=6a1969a80000000008025bc0 remaining=0 title=手游版分享|视觉错位解谜的艺术🥰
+[plan] #31 keyword=推理游戏 title=手游版分享|视觉错位解谜的艺术🥰 comments=38 age=51d score=2 msg=20/烧脑卡关 match=5
+[post] attempt feedId=6a1969a80000000008025bc0 contentLen=46
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a1969a80000000008025bc0 --xsec-token(46chars) --content(46chars)
+[cdp] done exit=0 elapsed=9.0s stdout=1134 stderr=0
+[post] success feedId=6a1969a80000000008025bc0
+[cdp] phase=post-ok exit=0 feedId=6a1969a80000000008025bc0
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a1969a80000000008025bc0 --xsec-token(46chars) --content(46chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a41f5280000000008033d00?xsec_token=ABJW0w2j-6T_qcFwfIgN11NI5yb7tvXDENYjC3n64FCuE=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/3962F2B8ED2B2D7D17C3C0A0F1536C2A
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=598m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a1969a80000000008025bc0?xsec_token=ABkMw-oncjHcUm9EyAr7aNd_RdwpRQGl5YFk0YwD9bQVQ=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (853, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1045, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a1969a80000000008025bc0, length=47
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (31/41)
+[wait] 127s (~2.1min, random 2-4min)
+[queue] empty refilling keyword=脑力游戏 sort=综合 task=75/42 empty_streak=0 seen_feeds=763
+[search-wait] 9s before keyword=脑力游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 脑力游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=12.3s stdout=442705 stderr=0
+[search-filter] keyword=脑力游戏 sort=综合 scrolls=4 {'dup_or_empty_id': 88, 'not_note': 6, 'already_commented': 5, 'low_relevance': 20, 'too_old': 4, 'bad_title': 1, 'bad_publish_date': 2}
+[search] keyword=脑力游戏 sort=综合 raw=126 skipped=126 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=脑力游戏 sort=最新 task=76/42 empty_streak=1 seen_feeds=795
+[search-wait] 12s before keyword=脑力游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 脑力游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=13.5s stdout=449639 stderr=0
+[search-filter] keyword=脑力游戏 sort=最新 scrolls=4 {'low_relevance': 31, 'dup_or_empty_id': 53, 'bad_title': 9, 'not_note': 6, 'already_commented': 6}
+[search] keyword=脑力游戏 sort=最新 raw=123 skipped=105 usable=18 queued=18 rate_limited=False
+[queue] loaded 18 candidates, will post one-by-one before next search
+[queue] pop feedId=6a5706140000000007028205 remaining=17 title=小众数字排列逻辑小游戏
+[skip-low] 小众数字排列逻辑小游戏 comments=0
+[queue] pop feedId=6a51c2f80000000007012920 remaining=16 title=小众数字排列逻辑小游戏
+[skip-low] 小众数字排列逻辑小游戏 comments=6
+[queue] pop feedId=6a47714f00000000220141bd remaining=15 title=最近最喜欢的微信小游戏
+[skip-low] 最近最喜欢的微信小游戏 comments=3
+[queue] pop feedId=6a1bcc030000000036032185 remaining=14 title=适合学生党和打工人的5款逻辑小游戏
+[skip-low] 适合学生党和打工人的5款逻辑小游戏 comments=0
+[queue] pop feedId=6a1539840000000006030b72 remaining=13 title=娃越玩越聪明！找规律逻辑启蒙小游戏
+[skip-low] 娃越玩越聪明！找规律逻辑启蒙小游戏 comments=0
+[queue] pop feedId=6a156b91000000003501e1d7 remaining=12 title=高铁3小时靠窗满电 无尿 休闲游戏推荐
+[skip-low] 高铁3小时靠窗满电 无尿 休闲游戏推荐 comments=0
+[queue] pop feedId=6a11750f0000000006032131 remaining=11 title=《头脑王者》——一款答题益智类的小游戏
+[skip-low] 《头脑王者》——一款答题益智类的小游戏 comments=1
+[queue] pop feedId=6a100437000000003700ce9a remaining=10 title=微信小程序答题益智类游戏——头脑王者
+[skip-low] 微信小程序答题益智类游戏——头脑王者 comments=3
+[queue] pop feedId=6a547ee40000000016026aec remaining=9 title=脑力闯关挑战来啦🧠
+[skip-low] 脑力闯关挑战来啦🧠 comments=5
+[queue] pop feedId=6a50bc100000000011017df2 remaining=8 title=暑假让孩子静下来的6个小游戏
+[skip-low] 暑假让孩子静下来的6个小游戏 comments=1
+[queue] pop feedId=6a48ad1f0000000008003f03 remaining=7 title=深陷找牛小游戏两个小时
+[skip-low] 深陷找牛小游戏两个小时 comments=7
+[queue] pop feedId=6a1fb7850000000035026152 remaining=6 title=6 个长辈专属认知小游戏，好玩又练脑✨
+[skip-low] 6 个长辈专属认知小游戏，好玩又练脑✨ comments=5
+[queue] pop feedId=6a1429120000000036032e8b remaining=5 title=亲子互动小游戏|水果炸弹，锻炼宝宝专注力！
+[skip-low] 亲子互动小游戏|水果炸弹，锻炼宝宝专注力！ comments=1
+[queue] pop feedId=6a5a1e4400000000040286af remaining=4 title=烧脑题（不会的往右翻）
+[skip-low] 烧脑题（不会的往右翻） comments=5
+[queue] pop feedId=6a5752a10000000011019b64 remaining=3 title=烧脑，搞定
+[skip-low] 烧脑，搞定 comments=2
+[queue] pop feedId=6a50b442000000000f0046b7 remaining=2 title=超烧脑的英语脑筋急转弯第⑨弹
+[skip-low] 超烧脑的英语脑筋急转弯第⑨弹 comments=1
+[queue] pop feedId=6a51366800000000150272a8 remaining=1 title=『迷宫』收集工具（可下载）
+[skip-low] 『迷宫』收集工具（可下载） comments=2
+[queue] pop feedId=6a1d6718000000003700d83d remaining=0 title=封神脑力综艺｜《魔鬼的计谋》详细拆解🔥
+[plan] #32 keyword=脑力游戏 title=封神脑力综艺｜《魔鬼的计谋》详细拆解🔥 comments=13 age=48d score=2 msg=11/微信小游戏 match=0
+[post] attempt feedId=6a1d6718000000003700d83d contentLen=42
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a1d6718000000003700d83d --xsec-token(46chars) --content(42chars)
+[cdp] done exit=0 elapsed=0.5s stdout=0 stderr=0
+[post] failed feedId=6a1d6718000000003700d83d
+[cdp] phase=post-fail exit=0 feedId=6a1d6718000000003700d83d
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a1d6718000000003700d83d --xsec-token(46chars) --content(42chars)
+[fail] feedId=6a1d6718000000003700d83d detail_tail=
+[skip-fail] post_comment failed on 6a1d6718000000003700d83d, continue next candidate
+[queue] empty refilling keyword=光学解谜 sort=综合 task=77/42 empty_streak=0 seen_feeds=859
+[search-wait] 14s before keyword=光学解谜 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 光学解谜 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=13.9s stdout=412028 stderr=0
+[search-filter] keyword=光学解谜 sort=综合 scrolls=4 {'dup_or_empty_id': 63, 'not_note': 2, 'low_relevance': 26, 'too_old': 12, 'bad_title': 4, 'bad_publish_date': 1, 'already_commented': 2}
+[search] keyword=光学解谜 sort=综合 raw=122 skipped=110 usable=12 queued=12 rate_limited=False
+[queue] loaded 12 candidates, will post one-by-one before next search
+[queue] pop feedId=6a30b7f50000000006032131 remaining=11 title=脑洞大开的寻物解谜小游戏🐰
+[skip-low] 脑洞大开的寻物解谜小游戏🐰 comments=0
+[queue] pop feedId=6a1ced790000000038021a7b remaining=10 title=免费Excel解谜游戏推荐 - Counterspace
+[skip-low] 免费Excel解谜游戏推荐 - Counterspace comments=5
+[queue] pop feedId=6a54a92f0000000007025aaf remaining=9 title=推理谜题·考验你的观察力
+[skip-low] 推理谜题·考验你的观察力 comments=0
+[queue] pop feedId=6a255588000000002103ff5c remaining=8 title=有没有类似于这种解密游戏推荐
+[plan] #32 keyword=光学解谜 title=有没有类似于这种解密游戏推荐 comments=25 age=42d score=4 msg=1/求推荐 match=17
+[post] attempt feedId=6a255588000000002103ff5c contentLen=55
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a255588000000002103ff5c --xsec-token(46chars) --content(55chars)
+[cdp] done exit=0 elapsed=2.0s stdout=0 stderr=0
+[post] failed feedId=6a255588000000002103ff5c
+[cdp] phase=post-fail exit=0 feedId=6a255588000000002103ff5c
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a255588000000002103ff5c --xsec-token(46chars) --content(55chars)
+[fail] feedId=6a255588000000002103ff5c detail_tail=
+[skip-fail] post_comment failed on 6a255588000000002103ff5c, continue next candidate
+[queue] pop feedId=6a58bf4c000000000f033737 remaining=7 title=这也太烧脑了❗️智商被达芬奇碾压😭
+[skip-low] 这也太烧脑了❗️智商被达芬奇碾压😭 comments=0
+[queue] pop feedId=6a5772600000000007027f75 remaining=6 title=【每日脑洞谜题🧐】0715光阴似箭
+[skip-low] 【每日脑洞谜题🧐】0715光阴似箭 comments=5
+[queue] pop feedId=6a53bf6d000000001503c199 remaining=5 title=Type Help已打完 求类似游戏！
+[plan] #32 keyword=光学解谜 title=Type Help已打完 求类似游戏！ comments=31 age=6d score=2 msg=1/求推荐 match=7
+[post] attempt feedId=6a53bf6d000000001503c199 contentLen=55
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a53bf6d000000001503c199 --xsec-token(46chars) --content(55chars)
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[post] failed feedId=6a53bf6d000000001503c199
+[cdp] phase=post-fail exit=3 feedId=6a53bf6d000000001503c199
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a53bf6d000000001503c199 --xsec-token(46chars) --content(55chars)
+[cdp]   Error: Another publish process is running (pid=2624), started at 2026-07-18T17:24:32.844200+00:00. Please wait or terminate it before retrying.
+[fail] feedId=6a53bf6d000000001503c199 detail_tail=Error: Another publish process is running (pid=2624), started at 2026-07-18T17:24:32.844200+00:00. Please wait or terminate it before retrying.
+
+[retry-infra] CDP lock cleared, retry once after 30s
+[post] attempt feedId=6a53bf6d000000001503c199 contentLen=55
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a53bf6d000000001503c199 --xsec-token(46chars) --content(55chars)
+[cdp] done exit=0 elapsed=0.2s stdout=0 stderr=0
+[post] failed feedId=6a53bf6d000000001503c199
+[cdp] phase=post-fail exit=0 feedId=6a53bf6d000000001503c199
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a53bf6d000000001503c199 --xsec-token(46chars) --content(55chars)
+[skip-fail] post_comment failed on 6a53bf6d000000001503c199, continue next candidate
+[queue] pop feedId=6a4e277b000000001c027924 remaining=4 title=🔥烧脑神作！未上锁的房间2真香💫
+[skip-low] 🔥烧脑神作！未上锁的房间2真香💫 comments=0
+[queue] pop feedId=6a491430000000000f01d7b2 remaining=3 title=📱iPhone高品质解谜神作，玩到根本停不下来
+[skip-low] 📱iPhone高品质解谜神作，玩到根本停不下来 comments=0
+[queue] pop feedId=6a43333000000000060207c2 remaining=2 title=跟朋友推荐未来之光她问我是不是收钱
+[skip-low] 跟朋友推荐未来之光她问我是不是收钱 comments=3
+[queue] pop feedId=6a3a8f7700000000060229ab remaining=1 title=漫画探案，边解谜边学物理
+[skip-low] 漫画探案，边解谜边学物理 comments=6
+[queue] pop feedId=69f1fa2c0000000037035d59 remaining=0 title=· ✅ 【未上锁的房间：烧脑天花板🔥】
+[skip-low] · ✅ 【未上锁的房间：烧脑天花板🔥】 comments=0
+[queue] empty refilling keyword=光学解谜 sort=最新 task=78/42 empty_streak=0 seen_feeds=916
+[search-wait] 8s before keyword=光学解谜 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 光学解谜 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=12.8s stdout=431090 stderr=0
+[search-filter] keyword=光学解谜 sort=最新 scrolls=4 {'dup_or_empty_id': 46, 'low_relevance': 44, 'not_note': 2, 'bad_publish_date': 5, 'bad_title': 4, 'already_commented': 2}
+[search] keyword=光学解谜 sort=最新 raw=120 skipped=103 usable=17 queued=17 rate_limited=False
+[queue] loaded 17 candidates, will post one-by-one before next search
+[queue] pop feedId=6a5a419c000000000100d798 remaining=16 title=Steam社交推理节 解谜佳作史低游戏推荐
+[skip-low] Steam社交推理节 解谜佳作史低游戏推荐 comments=1
+[queue] pop feedId=6a59d654000000001b01ef59 remaining=15 title=网页解谜游戏丨脑中神探（推荐篇）
+[skip-low] 网页解谜游戏丨脑中神探（推荐篇） comments=3
+[queue] pop feedId=6a530fb40000000017008e84 remaining=14 title=iOS免费解谜游戏推荐
+[skip-low] iOS免费解谜游戏推荐 comments=5
+[queue] pop feedId=6a59a88b0000000014004da6 remaining=13 title=建筑解谜之立体魔方！空间想象力谜题
+[skip-low] 建筑解谜之立体魔方！空间想象力谜题 comments=0
+[queue] pop feedId=6a58debf000000000e036018 remaining=12 title=推理游戏：谁盗走了项链？
+[skip-low] 推理游戏：谁盗走了项链？ comments=1
+[queue] pop feedId=6a50a74d000000001503e683 remaining=11 title=玩过的解谜游戏（记录5）-8个
+[skip-low] 玩过的解谜游戏（记录5）-8个 comments=2
+[queue] pop feedId=6a550cdd000000000802737a remaining=10 title=📱新游推荐丨微恐解谜🌙&暗黑童话🎃
+[skip-low] 📱新游推荐丨微恐解谜🌙&暗黑童话🎃 comments=0
+[queue] pop feedId=6a54bb6c000000001101a24e remaining=9 title=练习判断推理的专项游戏？
+[skip-low] 练习判断推理的专项游戏？ comments=0
+[queue] pop feedId=6a51cd62000000001100678e remaining=8 title=方格寻解 7x7 挑战｜数字逻辑方块解谜太上
+[skip-low] 方格寻解 7x7 挑战｜数字逻辑方块解谜太上 comments=0
+[queue] pop feedId=6a48dad8000000000f02872b remaining=7 title=救命！这个机械解谜游戏治好了我的电子Ed
+[skip-low] 救命！这个机械解谜游戏治好了我的电子Ed comments=0
+[queue] pop feedId=6a59fcdf000000001c00f1f1 remaining=6 title=北京遛娃｜屁屁侦探线下解谜游园会来啦✨
+[skip-low] 北京遛娃｜屁屁侦探线下解谜游园会来啦✨ comments=5
+[queue] pop feedId=6a59d816000000000301c870 remaining=5 title=达芬奇密室｜机械谜题美到窒息
+[skip-low] 达芬奇密室｜机械谜题美到窒息 comments=3
+[queue] pop feedId=6a59eab50000000011010c52 remaining=4 title=大型机关搜证解谜密室！多场景~
+[skip-low] 大型机关搜证解谜密室！多场景~ comments=0
+[queue] pop feedId=6a59d809000000000301c816 remaining=3 title=解谜控狂喜！盒子碎片封神了
+[skip-low] 解谜控狂喜！盒子碎片封神了 comments=0
+[queue] pop feedId=6a5376f6000000001503d4da remaining=2 title=被这波脑洞解谜硬控了！🔥
+[skip-low] 被这波脑洞解谜硬控了！🔥 comments=0
+[queue] pop feedId=6a4e0fbc000000001702d6ca remaining=1 title=崩铁解谜从夯到拉
+[plan] #32 keyword=光学解谜 title=崩铁解谜从夯到拉 comments=115 age=10d score=2 msg=20/烧脑卡关 match=5
+[post] attempt feedId=6a4e0fbc000000001702d6ca contentLen=46
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a4e0fbc000000001702d6ca --xsec-token(46chars) --content(46chars)
+[cdp] done exit=0 elapsed=7.5s stdout=1114 stderr=0
+[post] success feedId=6a4e0fbc000000001702d6ca
+[cdp] phase=post-ok exit=0 feedId=6a4e0fbc000000001702d6ca
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a4e0fbc000000001702d6ca --xsec-token(46chars) --content(46chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/search_result?keyword=%E5%85%89%E5%AD%A6%E8%A7%A3%E8%B0%9C&source=web_explore_feed&type=51
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/3962F2B8ED2B2D7D17C3C0A0F1536C2A
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=603m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a4e0fbc000000001702d6ca?xsec_token=ABa3QG7-NGBN7DoHsb1kCY4rKQxh9p6FzOM_pWGjiML4c=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (853, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1045, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a4e0fbc000000001702d6ca, length=47
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (32/41)
+[wait] 156s (~2.6min, random 2-4min)
+[queue] pop feedId=6a4f980f00000000210210e6 remaining=0 title=『迷宫』逃出生天（可下载）
+[skip-low] 『迷宫』逃出生天（可下载） comments=0
+[queue] empty refilling keyword=光线迷宫 sort=综合 task=79/42 empty_streak=0 seen_feeds=988
+[search-wait] 12s before keyword=光线迷宫 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 光线迷宫 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=8.4s stdout=0 stderr=0
+[warn] no search json keyword=光线迷宫
+[cdp] phase=search-no-json exit=0 keyword=光线迷宫
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 光线迷宫 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[search] keyword=光线迷宫 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=光线迷宫 sort=最新 task=80/42 empty_streak=1 seen_feeds=988
+[search-wait] 11s before keyword=光线迷宫 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 光线迷宫 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=光线迷宫
+[cdp] phase=search exit=3 keyword=光线迷宫
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 光线迷宫 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=光线迷宫 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=微信游戏推荐 sort=综合 task=81/42 empty_streak=2 seen_feeds=988
+[search-wait] 14s before keyword=微信游戏推荐 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 微信游戏推荐 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=微信游戏推荐
+[cdp] phase=search exit=3 keyword=微信游戏推荐
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 微信游戏推荐 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=微信游戏推荐 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=微信游戏推荐 sort=最新 task=82/42 empty_streak=3 seen_feeds=988
+[search-wait] 10s before keyword=微信游戏推荐 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 微信游戏推荐 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=微信游戏推荐
+[cdp] phase=search exit=3 keyword=微信游戏推荐
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 微信游戏推荐 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=微信游戏推荐 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=小游戏安利 sort=综合 task=83/42 empty_streak=4 seen_feeds=988
+[search-wait] 10s before keyword=小游戏安利 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 小游戏安利 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=小游戏安利
+[cdp] phase=search exit=3 keyword=小游戏安利
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 小游戏安利 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=小游戏安利 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=小游戏安利 sort=最新 task=84/42 empty_streak=5 seen_feeds=988
+[search-wait] 9s before keyword=小游戏安利 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 小游戏安利 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=小游戏安利
+[cdp] phase=search exit=3 keyword=小游戏安利
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 小游戏安利 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=小游戏安利 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=益智小游戏 sort=综合 task=85/42 empty_streak=6 seen_feeds=988
+[search-wait] 13s before keyword=益智小游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 益智小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=益智小游戏
+[cdp] phase=search exit=3 keyword=益智小游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 益智小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=益智小游戏 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=益智小游戏 sort=最新 task=86/42 empty_streak=7 seen_feeds=988
+[search-wait] 14s before keyword=益智小游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 益智小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=益智小游戏
+[cdp] phase=search exit=3 keyword=益智小游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 益智小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=益智小游戏 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=烧脑小游戏 sort=综合 task=87/42 empty_streak=8 seen_feeds=988
+[search-wait] 15s before keyword=烧脑小游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 烧脑小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=烧脑小游戏
+[cdp] phase=search exit=3 keyword=烧脑小游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 烧脑小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=烧脑小游戏 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=烧脑小游戏 sort=最新 task=88/42 empty_streak=9 seen_feeds=988
+[search-wait] 15s before keyword=烧脑小游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 烧脑小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=烧脑小游戏
+[cdp] phase=search exit=3 keyword=烧脑小游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 烧脑小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=烧脑小游戏 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=推箱子 sort=综合 task=89/42 empty_streak=10 seen_feeds=988
+[search-wait] 8s before keyword=推箱子 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 推箱子 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=推箱子
+[cdp] phase=search exit=3 keyword=推箱子
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 推箱子 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=推箱子 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=推箱子 sort=最新 task=90/42 empty_streak=11 seen_feeds=988
+[search-wait] 13s before keyword=推箱子 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 推箱子 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=推箱子
+[cdp] phase=search exit=3 keyword=推箱子
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 推箱子 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=推箱子 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=解谜游戏 sort=综合 task=91/42 empty_streak=12 seen_feeds=988
+[search-wait] 8s before keyword=解谜游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 解谜游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=解谜游戏
+[cdp] phase=search exit=3 keyword=解谜游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 解谜游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=解谜游戏 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=解谜游戏 sort=最新 task=92/42 empty_streak=13 seen_feeds=988
+[search-wait] 11s before keyword=解谜游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 解谜游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=解谜游戏
+[cdp] phase=search exit=3 keyword=解谜游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 解谜游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=解谜游戏 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=游戏推荐 sort=综合 task=93/42 empty_streak=14 seen_feeds=988
+[search-wait] 11s before keyword=游戏推荐 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 游戏推荐 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=游戏推荐
+[cdp] phase=search exit=3 keyword=游戏推荐
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 游戏推荐 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=游戏推荐 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=游戏推荐 sort=最新 task=94/42 empty_streak=15 seen_feeds=988
+[search-wait] 6s before keyword=游戏推荐 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 游戏推荐 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=游戏推荐
+[cdp] phase=search exit=3 keyword=游戏推荐
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 游戏推荐 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=游戏推荐 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=微信小游戏 sort=综合 task=95/42 empty_streak=16 seen_feeds=988
+[search-wait] 13s before keyword=微信小游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 微信小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=微信小游戏
+[cdp] phase=search exit=3 keyword=微信小游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 微信小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=微信小游戏 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=微信小游戏 sort=最新 task=96/42 empty_streak=17 seen_feeds=988
+[search-wait] 12s before keyword=微信小游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 微信小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=微信小游戏
+[cdp] phase=search exit=3 keyword=微信小游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 微信小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=微信小游戏 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=迷宫游戏 sort=综合 task=97/42 empty_streak=18 seen_feeds=988
+[search-wait] 8s before keyword=迷宫游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 迷宫游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=迷宫游戏
+[cdp] phase=search exit=3 keyword=迷宫游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 迷宫游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=迷宫游戏 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=迷宫游戏 sort=最新 task=98/42 empty_streak=19 seen_feeds=988
+[search-wait] 13s before keyword=迷宫游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 迷宫游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=迷宫游戏
+[cdp] phase=search exit=3 keyword=迷宫游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 迷宫游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=迷宫游戏 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=逻辑游戏 sort=综合 task=99/42 empty_streak=20 seen_feeds=988
+[search-wait] 10s before keyword=逻辑游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 逻辑游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=逻辑游戏
+[cdp] phase=search exit=3 keyword=逻辑游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 逻辑游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=逻辑游戏 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=逻辑游戏 sort=最新 task=100/42 empty_streak=21 seen_feeds=988
+[search-wait] 11s before keyword=逻辑游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 逻辑游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=逻辑游戏
+[cdp] phase=search exit=3 keyword=逻辑游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 逻辑游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=逻辑游戏 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=休闲小游戏 sort=综合 task=101/42 empty_streak=22 seen_feeds=988
+[search-wait] 13s before keyword=休闲小游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 休闲小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=休闲小游戏
+[cdp] phase=search exit=3 keyword=休闲小游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 休闲小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=休闲小游戏 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=休闲小游戏 sort=最新 task=102/42 empty_streak=23 seen_feeds=988
+[search-wait] 10s before keyword=休闲小游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 休闲小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=休闲小游戏
+[cdp] phase=search exit=3 keyword=休闲小游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 休闲小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=休闲小游戏 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=单机小游戏 sort=综合 task=103/42 empty_streak=24 seen_feeds=988
+[search-wait] 14s before keyword=单机小游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 单机小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=单机小游戏
+[cdp] phase=search exit=3 keyword=单机小游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 单机小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=单机小游戏 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=单机小游戏 sort=最新 task=104/42 empty_streak=25 seen_feeds=988
+[search-wait] 13s before keyword=单机小游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 单机小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=单机小游戏
+[cdp] phase=search exit=3 keyword=单机小游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 单机小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=单机小游戏 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=解谜小游戏 sort=综合 task=105/42 empty_streak=26 seen_feeds=988
+[search-wait] 12s before keyword=解谜小游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 解谜小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=解谜小游戏
+[cdp] phase=search exit=3 keyword=解谜小游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 解谜小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=解谜小游戏 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=解谜小游戏 sort=最新 task=106/42 empty_streak=27 seen_feeds=988
+[search-wait] 14s before keyword=解谜小游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 解谜小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=解谜小游戏
+[cdp] phase=search exit=3 keyword=解谜小游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 解谜小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=解谜小游戏 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=益智游戏推荐 sort=综合 task=107/42 empty_streak=28 seen_feeds=988
+[search-wait] 10s before keyword=益智游戏推荐 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 益智游戏推荐 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=益智游戏推荐
+[cdp] phase=search exit=3 keyword=益智游戏推荐
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 益智游戏推荐 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=益智游戏推荐 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=益智游戏推荐 sort=最新 task=108/42 empty_streak=29 seen_feeds=988
+[search-wait] 11s before keyword=益智游戏推荐 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 益智游戏推荐 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=益智游戏推荐
+[cdp] phase=search exit=3 keyword=益智游戏推荐
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 益智游戏推荐 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=益智游戏推荐 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=烧脑游戏推荐 sort=综合 task=109/42 empty_streak=30 seen_feeds=988
+[search-wait] 13s before keyword=烧脑游戏推荐 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 烧脑游戏推荐 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=烧脑游戏推荐
+[cdp] phase=search exit=3 keyword=烧脑游戏推荐
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 烧脑游戏推荐 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=烧脑游戏推荐 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=烧脑游戏推荐 sort=最新 task=110/42 empty_streak=31 seen_feeds=988
+[search-wait] 12s before keyword=烧脑游戏推荐 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 烧脑游戏推荐 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=烧脑游戏推荐
+[cdp] phase=search exit=3 keyword=烧脑游戏推荐
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 烧脑游戏推荐 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=烧脑游戏推荐 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=打发时间小游戏 sort=综合 task=111/42 empty_streak=32 seen_feeds=988
+[search-wait] 9s before keyword=打发时间小游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 打发时间小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=打发时间小游戏
+[cdp] phase=search exit=3 keyword=打发时间小游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 打发时间小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=打发时间小游戏 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=打发时间小游戏 sort=最新 task=112/42 empty_streak=33 seen_feeds=988
+[search-wait] 13s before keyword=打发时间小游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 打发时间小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=打发时间小游戏
+[cdp] phase=search exit=3 keyword=打发时间小游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 打发时间小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=打发时间小游戏 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=闯关游戏 sort=综合 task=113/42 empty_streak=34 seen_feeds=988
+[search-wait] 11s before keyword=闯关游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 闯关游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=闯关游戏
+[cdp] phase=search exit=3 keyword=闯关游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 闯关游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=闯关游戏 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=闯关游戏 sort=最新 task=114/42 empty_streak=35 seen_feeds=988
+[search-wait] 5s before keyword=闯关游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 闯关游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=闯关游戏
+[cdp] phase=search exit=3 keyword=闯关游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 闯关游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=闯关游戏 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=推理游戏 sort=综合 task=115/42 empty_streak=36 seen_feeds=988
+[search-wait] 9s before keyword=推理游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 推理游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=推理游戏
+[cdp] phase=search exit=3 keyword=推理游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 推理游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=推理游戏 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=推理游戏 sort=最新 task=116/42 empty_streak=37 seen_feeds=988
+[search-wait] 7s before keyword=推理游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 推理游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=推理游戏
+[cdp] phase=search exit=3 keyword=推理游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 推理游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=推理游戏 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=脑力游戏 sort=综合 task=117/42 empty_streak=38 seen_feeds=988
+[search-wait] 13s before keyword=脑力游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 脑力游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=脑力游戏
+[cdp] phase=search exit=3 keyword=脑力游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 脑力游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=脑力游戏 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=脑力游戏 sort=最新 task=118/42 empty_streak=39 seen_feeds=988
+[search-wait] 12s before keyword=脑力游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 脑力游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=脑力游戏
+[cdp] phase=search exit=3 keyword=脑力游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 脑力游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=脑力游戏 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=光学解谜 sort=综合 task=119/42 empty_streak=40 seen_feeds=988
+[search-wait] 13s before keyword=光学解谜 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 光学解谜 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=光学解谜
+[cdp] phase=search exit=3 keyword=光学解谜
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 光学解谜 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=光学解谜 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=光学解谜 sort=最新 task=120/42 empty_streak=41 seen_feeds=988
+[search-wait] 10s before keyword=光学解谜 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 光学解谜 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=144
+[warn] search failed keyword=光学解谜
+[cdp] phase=search exit=3 keyword=光学解谜
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 光学解谜 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Error: Another publish process is running (pid=9660), started at 2026-07-18T17:28:22.230641+00:00. Please wait or terminate it before retrying.
+[search] keyword=光学解谜 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[info] all search tasks tried with no new candidates, stop (search_count=120 empty_streak=42)
+
+=== SUMMARY ===
+{
+  "target": 41,
+  "success": 32,
+  "searchCount": 120,
+  "failures": 7,
+  "logFile": "D:\\Baoyu\\包宇的cocos\\LightPuzzle\\宣传素材\\小红书评论\\campaign_2026-07-18_225915.log",
+  "elapsedSeconds": 9419.8,
+  "elapsedMinutes": 157.0,
+  "dryRun": false,
+  "rateLimits": {
+    "minIntervalMinutes": 2,
+    "maxIntervalMinutes": 4,
+    "maxPerHour": 0,
+    "maxPerDay": 100,
+    "circuitBreakerHours": 24,
+    "searchIntervalSecondsMin": 5,
+    "searchIntervalSecondsMax": 15
+  },
+  "circuitBreakerUntil": null,
+  "finishedAt": "2026-07-19T01:36:15+08:00"
+}
+failures:
+6a2a905300000000060218e6: ):
+  File "C:\Users\Admin\.agents\skills\redbookskills\scripts\run_lock.py", line 28, in _pid_running
+    os.kill(pid, 0)
+SystemError: <built-in function kill> returned a result with an exception set
+
+6a293c95000000001c02543a: ing(pid):
+  File "C:\Users\Admin\.agents\skills\redbookskills\scripts\run_lock.py", line 28, in _pid_running
+    os.kill(pid, 0)
+SystemError: <class 'OSError'> returned a result with an exception set
+
+6a4ca703000000000803e326: ):
+  File "C:\Users\Admin\.agents\skills\redbookskills\scripts\run_lock.py", line 28, in _pid_running
+    os.kill(pid, 0)
+SystemError: <built-in function kill> returned a result with an exception set
+
+6a4455ae000000001101f7fb: ing(pid):
+  File "C:\Users\Admin\.agents\skills\redbookskills\scripts\run_lock.py", line 28, in _pid_running
+    os.kill(pid, 0)
+SystemError: <class 'OSError'> returned a result with an exception set
+
+6a1d6718000000003700d83d: 

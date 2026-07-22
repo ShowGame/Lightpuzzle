@@ -1,0 +1,64 @@
+[log-file] D:\Baoyu\包宇的cocos\LightPuzzle\宣传素材\小红书评论\campaign_2026-07-18_204711.log
+[rate-status] hourly=1/off daily=36/100 ok=True 
+[start] target=1 dry_run=False max_age_days=60 min_relevance=2 history_posts=36 keywords=6
+[step] check-login
+[cdp] spawn timeout=90s cmd=check-login
+[cdp] done exit=0 elapsed=0.2s stdout=330 stderr=0
+[cdp] phase=check-login-ok exit=0
+[cdp] cmd=check-login
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/EA3E890E5CCB9ED432F25CCDCA36794E
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (creator, age=325m, ttl=12h).
+[cdp]   [cdp_publish] Login confirmed (cached).
+[limits] interval=3-5min posts/hour=off posts/day=100 circuit=24h
+[queue] empty refilling keyword=益智小游戏 idx=1/6 empty_streak=0 seen_feeds=0
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 益智小游戏
+[cdp] done exit=0 elapsed=6.4s stdout=166402 stderr=0
+[search-filter] keyword=益智小游戏 {'too_old': 12, 'already_commented': 5, 'low_relevance': 16, 'not_note': 4, 'bad_title': 4}
+[search] keyword=益智小游戏 raw=44 skipped=41 usable=3 queued=3 rate_limited=False
+[plan] #1 keyword=益智小游戏 title=还有没有类似纪念碑谷，咔咔闯关的游戏？！ comments=352 age=40d score=4 msg=1/求推荐 match=10
+[post] attempt feedId=6a26855d000000002202474f contentLen=55
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a26855d000000002202474f --xsec-token(46chars) --content(55chars)
+[cdp] done exit=0 elapsed=8.6s stdout=1123 stderr=0
+[post] success feedId=6a26855d000000002202474f
+[cdp] phase=post-ok exit=0 feedId=6a26855d000000002202474f
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a26855d000000002202474f --xsec-token(46chars) --content(55chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/search_result?keyword=%E7%9B%8A%E6%99%BA%E5%B0%8F%E6%B8%B8%E6%88%8F&source=web_explore_feed&type=51
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/EA3E890E5CCB9ED432F25CCDCA36794E
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=324m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a26855d000000002202474f?xsec_token=ABDBDs6vhNgX5vxkpSuXbLUY8OFVdZpzpKw6uQS_u9JNc=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (834, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1045, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a26855d000000002202474f, length=55
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (1/1)
+
+=== SUMMARY ===
+{
+  "target": 1,
+  "success": 1,
+  "searchCount": 1,
+  "failures": 0,
+  "logFile": "D:\\Baoyu\\包宇的cocos\\LightPuzzle\\宣传素材\\小红书评论\\campaign_2026-07-18_204711.log",
+  "elapsedSeconds": 15.3,
+  "elapsedMinutes": 0.25,
+  "dryRun": false,
+  "rateLimits": {
+    "minIntervalMinutes": 3,
+    "maxIntervalMinutes": 5,
+    "maxPerHour": 0,
+    "maxPerDay": 100,
+    "circuitBreakerHours": 24,
+    "searchIntervalSecondsMin": 5,
+    "searchIntervalSecondsMax": 15
+  },
+  "circuitBreakerUntil": null,
+  "finishedAt": "2026-07-18T20:47:27+08:00"
+}

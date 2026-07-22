@@ -1,0 +1,20 @@
+[log-file] D:\Baoyu\包宇的cocos\LightPuzzle\宣传素材\小红书评论\campaign_2026-07-19_132313.log
+[lock] campaign instance pid=23228
+[rate-status] hourly=0/off daily=25/100 ok=True 
+[start] target=100 dry_run=False max_age_days=60 min_relevance=2 history_posts=94 dedup_skip=94 search_tasks=42 search_scrolls=4
+[step] check-login
+[cdp] spawn timeout=90s cmd=check-login
+[cdp] done exit=1 elapsed=8.0s stdout=752 stderr=0
+[step] check-login retry after 2s
+[cdp] spawn timeout=90s cmd=check-login
+[cdp] done exit=1 elapsed=6.0s stdout=464 stderr=0
+[cdp] phase=check-login-fail exit=1
+[cdp] cmd=check-login
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/4253D971935DAB988721F83B899F40F4
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Navigating to https://creator.xiaohongshu.com
+[cdp]   [cdp_publish] Current URL: https://creator.xiaohongshu.com/login
+[cdp]   [cdp_publish] NOT LOGGED IN.
+[error] not logged in

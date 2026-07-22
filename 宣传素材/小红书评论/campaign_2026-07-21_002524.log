@@ -1,0 +1,79 @@
+[log-file] D:\Baoyu\包宇的cocos\LightPuzzle\宣传素材\小红书评论\campaign_2026-07-21_002524.log
+[lock] campaign instance pid=5444
+[rate-status] hourly=16/off daily=4/110 ok=True 
+[start] target=1 dry_run=False max_age_days=60 min_relevance=2 history_posts=286 dedup_skip=286 search_tasks=42 search_scrolls=8
+[step] check-login
+[cdp] spawn timeout=90s cmd=check-login
+[cdp] done exit=0 elapsed=0.3s stdout=330 stderr=0
+[cdp] phase=check-login-ok exit=0
+[cdp] cmd=check-login
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/983FC21EFD40B4EEAEB91826F4BA4D67
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (creator, age=179m, ttl=12h).
+[cdp]   [cdp_publish] Login confirmed (cached).
+[limits] interval=60-120s posts/hour=off posts/day=110 circuit=24h
+[search-next] keyword=益智小游戏 sort=综合 task=1/42 empty_streak=0 seen_feeds=0
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 益智小游戏 --sort-by 综合 --publish-time 半年内
+[cdp] done exit=0 elapsed=8.2s stdout=135617 stderr=0
+[cdp] spawn timeout=90s cmd=--reuse-existing-tab get-feed-detail --feed-id 6a400ac90000000021014d32 --xsec-token(46chars)
+[cdp] done exit=0 elapsed=6.6s stdout=15278 stderr=0
+[relevance-skip] feedId=6a400ac90000000021014d32 title=🔢🧩 我为什么现在才知道这个网站！！ bodyLen=482 score=-2 min=2
+[detail-wait] 2.4s before feedId=6a195f8c000000003502c370
+[cdp] spawn timeout=90s cmd=--reuse-existing-tab get-feed-detail --feed-id 6a195f8c000000003502c370 --xsec-token(46chars)
+[cdp] done exit=0 elapsed=5.5s stdout=13465 stderr=0
+[search-scroll-stop] keyword=益智小游戏 sort=综合 usable=1 after scrolls=0 (max=8, skip further scrolls)
+[search-filter] keyword=益智小游戏 sort=综合 scrolls=0 {'already_commented': 14, 'low_relevance': 1, 'not_note': 1, 'too_old': 5, 'bad_title': 2}
+[search-hit] keyword=益智小游戏 sort=综合 raw=42 skipped=23 feedId=6a195f8c000000003502c370 score=6 title=我的小程序要石沉大海了吗？ → post now
+[plan] #1 keyword=益智小游戏 title=我的小程序要石沉大海了吗？ comments=5 age=53d score=6 msg=11/微信小游戏 match=10
+[post] attempt feedId=6a195f8c000000003502c370 contentLen=42 also_upvote=1
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a195f8c000000003502c370 --xsec-token(46chars) --content(42chars) --also-upvote
+[cdp] done exit=0 elapsed=11.7s stdout=2302 stderr=0
+[upvote-warn] feedId=6a195f8c000000003502c370 comment ok but like not confirmed upvote={'success': False, 'changed': False, 'state_before': False, 'state_after': False}
+[post] success feedId=6a195f8c000000003502c370
+[cdp] phase=post-ok exit=0 feedId=6a195f8c000000003502c370
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a195f8c000000003502c370 --xsec-token(46chars) --content(42chars) --also-upvote
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a195f8c000000003502c370?xsec_token=ABkMw-oncjHcUm9EyAr7aNd0gZY_ai-ZdXr9MGg-dy1Ho=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/983FC21EFD40B4EEAEB91826F4BA4D67
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=179m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a195f8c000000003502c370?xsec_token=ABkMw-oncjHcUm9EyAr7aNd0gZY_ai-ZdXr9MGg-dy1Ho=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (912, 1232)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1104, 1232)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a195f8c000000003502c370, length=42
+[cdp]   [cdp_publish] Clicking note like in interact bar at (1024, 1232) hint=interact-container .like-wrapper target=SPAN bar=interactions engage-bar top=1220 left=1003.53125 viewport={'w': 1257, 'h': 1291}
+[cdp]   [cdp_publish] JS click on like-wrapper, class_after=like-wrapper like-active at=(1033.7447929382324, 1232)
+[cdp]   [cdp_publish] Warning: note like click did not activate. state_before=False state_after=False likeRoot.class=like-wrapper like-active visual_before={'className': 'like-wrapper like-active', 'ariaPressed': '', 'color': 'rgb(51, 51, 51)', 'svgColor': 'rgb(51, 51, 51)', 'svgHtml': '<span data-v-9403e00c="" class="like-lottie" style="width: 24px; height: 24px;"></span>'} visual_after={'className': 'like-wrapper like-active', 'ariaPressed': '', 'color': 'rgb(51, 51, 51)', 'svgColor': 'rgb(51, 51, 51)', 'svgHtml': '<span data-v-9403e00c="" class="like-lottie" style="width: 24px; height: 24px;"></span>'}
+[cdp]   [cdp_publish] Warning: upvote on same page failed. payload={'success': False, 'changed': False, 'state_before': False, 'state_after': False}
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (1/1)
+
+=== SUMMARY ===
+{
+  "target": 1,
+  "success": 1,
+  "searchCount": 1,
+  "failures": 0,
+  "logFile": "D:\\Baoyu\\包宇的cocos\\LightPuzzle\\宣传素材\\小红书评论\\campaign_2026-07-21_002524.log",
+  "elapsedSeconds": 34.8,
+  "elapsedMinutes": 0.58,
+  "dryRun": false,
+  "rateLimits": {
+    "minIntervalSeconds": 60,
+    "maxIntervalSeconds": 120,
+    "maxPerHour": 0,
+    "maxPerDay": 110,
+    "circuitBreakerHours": 24,
+    "searchIntervalSecondsMin": 5,
+    "searchIntervalSecondsMax": 15,
+    "detailFetchIntervalSecondsMin": 2,
+    "detailFetchIntervalSecondsMax": 4,
+    "limitUnit": "posts"
+  },
+  "circuitBreakerUntil": null,
+  "finishedAt": "2026-07-21T00:25:59+08:00"
+}

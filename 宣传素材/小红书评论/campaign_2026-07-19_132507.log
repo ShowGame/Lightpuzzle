@@ -1,0 +1,152 @@
+[log-file] D:\Baoyu\包宇的cocos\LightPuzzle\宣传素材\小红书评论\campaign_2026-07-19_132507.log
+[lock] campaign instance pid=7244
+[rate-status] hourly=0/off daily=25/100 ok=True 
+[start] target=75 dry_run=False max_age_days=60 min_relevance=2 history_posts=94 dedup_skip=94 search_tasks=42 search_scrolls=4
+[step] check-login
+[cdp] spawn timeout=90s cmd=check-login
+[cdp] done exit=0 elapsed=5.5s stdout=379 stderr=0
+[cdp] phase=check-login-ok exit=0
+[cdp] cmd=check-login
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/3F962C09B566CE531934742C18F1D39D
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Navigating to https://creator.xiaohongshu.com
+[cdp]   [cdp_publish] Current URL: https://creator.xiaohongshu.com/new/home
+[cdp]   [cdp_publish] Login confirmed.
+[limits] interval=60-120s posts/hour=off posts/day=100 circuit=24h
+[queue] empty refilling keyword=益智小游戏 sort=综合 task=1/42 empty_streak=0 seen_feeds=0
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 益智小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=44.3s stdout=851 stderr=1130
+[warn] search failed keyword=益智小游戏
+[cdp] phase=search exit=1 keyword=益智小游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 益智小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://creator.xiaohongshu.com/new/home
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/3F962C09B566CE531934742C18F1D39D
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com
+[cdp]   [cdp_publish] Home URL: https://www.xiaohongshu.com/explore
+[cdp]   [cdp_publish] Home login confirmed.
+[cdp]   [cdp_publish] Direct navigate (single jump): https://www.xiaohongshu.com/search_result?keyword=%E7%9B%8A%E6%99%BA%E5%B0%8F%E6%B8%B8%E6%88%8F&source=web_explore_feed
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/search_result?keyword=%E7%9B%8A%E6%99%BA%E5%B0%8F%E6%B8%B8%E6%88%8F&source=web_explore_feed
+[cdp]   Traceback (most recent call last):
+[cdp]   raise FeedExplorerError(
+[cdp]   feed_explorer.FeedExplorerError: Timed out waiting for search data in window.__INITIAL_STATE__.
+[cdp]   Traceback (most recent call last):
+[cdp]   raise CDPError(str(e)) from e
+[cdp]   __main__.CDPError: Timed out waiting for search data in window.__INITIAL_STATE__.
+[search] keyword=益智小游戏 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=益智小游戏 sort=最新 task=2/42 empty_streak=1 seen_feeds=0
+[search-wait] 7s before keyword=益智小游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 益智小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=29.5s stdout=1076 stderr=1130
+[warn] search failed keyword=益智小游戏
+[cdp] phase=search exit=1 keyword=益智小游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 益智小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/website-login/captcha?redirectPath=https%3A%2F%2Fwww.xiaohongshu.com%2Fsearch_result%2F%3Fkeyword%3D%E7%9B%8A%E6%99%BA%E5%B0%8F%E6%B8%B8%E6%88%8F%26source%3Dweb_explore_feed%26exSource%3D&verifyUuid=bed7905f-65c5-4a75-b333-6f30aa012a00&verifyType=124&verifyBiz=461&verifyMsg=null
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/3F962C09B566CE531934742C18F1D39D
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=0m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Direct navigate (single jump): https://www.xiaohongshu.com/search_result?keyword=%E7%9B%8A%E6%99%BA%E5%B0%8F%E6%B8%B8%E6%88%8F&source=web_explore_feed
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/search_result?keyword=%E7%9B%8A%E6%99%BA%E5%B0%8F%E6%B8%B8%E6%88%8F&source=web_explore_feed
+[cdp]   Traceback (most recent call last):
+[cdp]   raise FeedExplorerError(
+[cdp]   feed_explorer.FeedExplorerError: Timed out waiting for search data in window.__INITIAL_STATE__.
+[cdp]   Traceback (most recent call last):
+[cdp]   raise CDPError(str(e)) from e
+[cdp]   __main__.CDPError: Timed out waiting for search data in window.__INITIAL_STATE__.
+[search] keyword=益智小游戏 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=烧脑小游戏 sort=综合 task=3/42 empty_streak=2 seen_feeds=0
+[search-wait] 6s before keyword=烧脑小游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 烧脑小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=19.8s stdout=379179 stderr=0
+[search-filter] keyword=烧脑小游戏 sort=综合 scrolls=4 {'low_relevance': 39, 'too_old': 23, 'bad_title': 8, 'not_note': 6, 'already_commented': 34, 'bad_publish_date': 1}
+[search] keyword=烧脑小游戏 sort=综合 raw=116 skipped=111 usable=5 queued=5 rate_limited=False
+[queue] loaded 5 candidates, will post one-by-one before next search
+[queue] pop feedId=6a4daaf4000000000602060e remaining=4 title=烧脑拼图逻辑推理游戏｜摸鱼解压神器！关卡越
+[plan] #1 keyword=烧脑小游戏 title=烧脑拼图逻辑推理游戏｜摸鱼解压神器！关卡越 comments=0 age=11d score=8 msg=18/烧脑卡关 match=7
+[post] attempt feedId=6a4daaf4000000000602060e contentLen=45
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a4daaf4000000000602060e --xsec-token(46chars) --content(45chars)
+[cdp] done exit=0 elapsed=9.2s stdout=1130 stderr=0
+[post] success feedId=6a4daaf4000000000602060e
+[cdp] phase=post-ok exit=0 feedId=6a4daaf4000000000602060e
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a4daaf4000000000602060e --xsec-token(46chars) --content(45chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/search_result?keyword=%E7%83%A7%E8%84%91%E5%B0%8F%E6%B8%B8%E6%88%8F&source=web_explore_feed&exSource=&type=51
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/4253D971935DAB988721F83B899F40F4
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=1m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a4daaf4000000000602060e?xsec_token=AB55Hi1hbsAIjMaAt0YYyzGZ9hW5BfeucbyFhmW6I7YMc=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (800, 1227)...
+[cdp]   [cdp_publish] Clicking comment submit button at (992, 1227)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a4daaf4000000000602060e, length=45
+[cdp]   POST_COMMENT_RESULT:
+[upvote] attempt feedId=6a4daaf4000000000602060e
+[cdp] spawn timeout=90s cmd=--reuse-existing-tab note-upvote --feed-id 6a4daaf4000000000602060e --xsec-token(46chars)
+[cdp] done exit=0 elapsed=8.7s stdout=1009 stderr=0
+[upvote] success feedId=6a4daaf4000000000602060e
+[ok] post done (1/75)
+[wait] 65s (~1.1min, random 60-120s)
+[queue] pop feedId=6a2520220000000006033951 remaining=3 title=做了一款烧脑的解密小游戏，你会来玩吗
+[plan] #2 keyword=烧脑小游戏 title=做了一款烧脑的解密小游戏，你会来玩吗 comments=9 age=42d score=6 msg=11/微信小游戏 match=5
+[post] attempt feedId=6a2520220000000006033951 contentLen=42
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a2520220000000006033951 --xsec-token(46chars) --content(42chars)
+[cdp] done exit=0 elapsed=7.8s stdout=1131 stderr=0
+[post] success feedId=6a2520220000000006033951
+[cdp] phase=post-ok exit=0 feedId=6a2520220000000006033951
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a2520220000000006033951 --xsec-token(46chars) --content(42chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a4daaf4000000000602060e?xsec_token=AB55Hi1hbsAIjMaAt0YYyzGZ9hW5BfeucbyFhmW6I7YMc=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/4253D971935DAB988721F83B899F40F4
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=2m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a2520220000000006033951?xsec_token=ABot21c8AEvy4HEnDeHeU51Q1VvlvdTTByu0ze_caEp68=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (801, 1227)...
+[cdp]   [cdp_publish] Clicking comment submit button at (993, 1227)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a2520220000000006033951, length=42
+[cdp]   POST_COMMENT_RESULT:
+[upvote] attempt feedId=6a2520220000000006033951
+[cdp] spawn timeout=90s cmd=--reuse-existing-tab note-upvote --feed-id 6a2520220000000006033951 --xsec-token(46chars)
+[cdp] done exit=0 elapsed=8.4s stdout=1009 stderr=0
+[upvote] success feedId=6a2520220000000006033951
+[ok] post done (2/75)
+[wait] 75s (~1.2min, random 60-120s)
+[queue] pop feedId=6a1052fa000000003601cc41 remaining=2 title=交出你们的解谜烧脑游戏！
+[plan] #3 keyword=烧脑小游戏 title=交出你们的解谜烧脑游戏！ comments=6 age=58d score=6 msg=19/烧脑卡关 match=7
+[post] attempt feedId=6a1052fa000000003601cc41 contentLen=42
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a1052fa000000003601cc41 --xsec-token(46chars) --content(42chars)
+[cdp] done exit=0 elapsed=8.5s stdout=1132 stderr=0
+[post] success feedId=6a1052fa000000003601cc41
+[cdp] phase=post-ok exit=0 feedId=6a1052fa000000003601cc41
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a1052fa000000003601cc41 --xsec-token(46chars) --content(42chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a2520220000000006033951?xsec_token=ABot21c8AEvy4HEnDeHeU51Q1VvlvdTTByu0ze_caEp68=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/4253D971935DAB988721F83B899F40F4
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=4m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a1052fa000000003601cc41?xsec_token=ABpiBlVGKD-Ov9PE7YpfzOmkwROb9A9e4TC56nT_e6s-A=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (854, 1227)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1046, 1227)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a1052fa000000003601cc41, length=43
+[cdp]   POST_COMMENT_RESULT:
+[upvote] attempt feedId=6a1052fa000000003601cc41
+[cdp] spawn timeout=90s cmd=--reuse-existing-tab note-upvote --feed-id 6a1052fa000000003601cc41 --xsec-token(46chars)
+[cdp] done exit=0 elapsed=7.8s stdout=1009 stderr=0
+[upvote] success feedId=6a1052fa000000003601cc41
+[ok] post done (3/75)
+[wait] 112s (~1.9min, random 60-120s)

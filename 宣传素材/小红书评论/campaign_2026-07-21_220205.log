@@ -1,0 +1,223 @@
+[log-file] D:\Baoyu\包宇的cocos\LightPuzzle\宣传素材\小红书评论\campaign_2026-07-21_220205.log
+[lock] campaign instance pid=18360
+[rate-status] hourly=0/off daily=24/110 ok=True 
+[start] target=100 dry_run=False max_age_days=60 min_relevance=2 history_posts=306 dedup_skip=306 liked_skip=0 search_tasks=42 search_scrolls=8
+[step] check-login
+[cdp] spawn timeout=90s cmd=check-login
+[cdp] done exit=0 elapsed=8.5s stdout=667 stderr=0
+[cdp] phase=check-login-ok exit=0
+[cdp] cmd=check-login
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/E0641814139216112256C2BBDD63DEBE
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Navigating to https://creator.xiaohongshu.com
+[cdp]   [cdp_publish] Current URL: https://creator.xiaohongshu.com/new/home
+[cdp]   [cdp_publish] Login confirmed.
+[limits] interval=20-30s posts/hour=off posts/day=110 circuit=24h
+[search-next] keyword=益智小游戏 sort=综合 task=1/42 empty_streak=0 seen_feeds=0
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 益智小游戏 --sort-by 综合 --publish-time 半年内
+[cdp] done exit=1 elapsed=35.6s stdout=851 stderr=1125
+[warn] search failed keyword=益智小游戏 scrolls=0
+[cdp] phase=search exit=1 keyword=益智小游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 益智小游戏 --sort-by 综合 --publish-time 半年内
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://creator.xiaohongshu.com/new/home
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/E0641814139216112256C2BBDD63DEBE
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com
+[cdp]   [cdp_publish] Home URL: https://www.xiaohongshu.com/explore
+[cdp]   [cdp_publish] Home login confirmed.
+[cdp]   [cdp_publish] Direct navigate (single jump): https://www.xiaohongshu.com/search_result?keyword=%E7%9B%8A%E6%99%BA%E5%B0%8F%E6%B8%B8%E6%88%8F&source=web_explore_feed
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/search_result?keyword=%E7%9B%8A%E6%99%BA%E5%B0%8F%E6%B8%B8%E6%88%8F&source=web_explore_feed
+[cdp]   Traceback (most recent call last):
+[cdp]   raise FeedExplorerError(
+[cdp]   feed_explorer.FeedExplorerError: Failed to apply search filter '综合': filter_button_not_found
+[cdp]   Traceback (most recent call last):
+[cdp]   raise CDPError(str(e)) from e
+[cdp]   __main__.CDPError: Failed to apply search filter '综合': filter_button_not_found
+[search] keyword=益智小游戏 sort=综合 raw=0 skipped=0 hit=0 rate_limited=False
+[search-next] keyword=益智小游戏 sort=最新 task=2/42 empty_streak=1 seen_feeds=0
+[search-wait] 6s before keyword=益智小游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 益智小游戏 --sort-by 最新 --publish-time 半年内
+[cdp] done exit=0 elapsed=2.4s stdout=128744 stderr=0
+[cdp] spawn timeout=90s cmd=--reuse-existing-tab get-feed-detail --feed-id 6a5dd9b5000000000f02ba9d --xsec-token(46chars)
+[cdp] done exit=0 elapsed=4.8s stdout=19834 stderr=0
+[search-scroll-stop] keyword=益智小游戏 sort=最新 usable=1 after scrolls=0 (max=8, skip further scrolls)
+[search-filter] keyword=益智小游戏 sort=最新 scrolls=0 {'already_commented': 1}
+[search-hit] keyword=益智小游戏 sort=最新 raw=40 skipped=1 feedId=6a5dd9b5000000000f02ba9d score=4 title=真不要给娃玩手机了，不如一起来做实验吧 → post now
+[plan] #1 keyword=益智小游戏 title=真不要给娃玩手机了，不如一起来做实验吧 comments=0 age=1d score=4 msg=11/微信小游戏 match=5
+[post] attempt feedId=6a5dd9b5000000000f02ba9d contentLen=42 also_upvote=1
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a5dd9b5000000000f02ba9d --xsec-token(46chars) --content(42chars) --also-upvote
+[cdp] done exit=0 elapsed=10.2s stdout=2337 stderr=0
+[upvote-warn] feedId=6a5dd9b5000000000f02ba9d comment ok but like not confirmed upvote={'success': False, 'changed': False, 'state_before': False, 'state_after': False}
+[post] success feedId=6a5dd9b5000000000f02ba9d
+[cdp] phase=post-ok exit=0 feedId=6a5dd9b5000000000f02ba9d
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a5dd9b5000000000f02ba9d --xsec-token(46chars) --content(42chars) --also-upvote
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a5dd9b5000000000f02ba9d?xsec_token=ABgO_RO9hCJQb3LOMcuXbRt5V-XcFKVtL4JKbqTFq8Ji4=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/E0641814139216112256C2BBDD63DEBE
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=0m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a5dd9b5000000000f02ba9d?xsec_token=ABgO_RO9hCJQb3LOMcuXbRt5V-XcFKVtL4JKbqTFq8Ji4=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (1061, 1223)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1293, 1223)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a5dd9b5000000000f02ba9d, length=42
+[cdp]   [cdp_publish] Clicking note like in interact bar at (1201, 1223) hint=interact-container .like-wrapper target=SPAN bar=interactions engage-bar top=1211.3333740234375 left=1180.8958740234375 viewport={'w': 1517, 'h': 1291}
+[cdp]   [cdp_publish] JS click on like-wrapper, class_after=like-wrapper like-active at=(1207.0052490234375, 1223.3333740234375)
+[cdp]   [cdp_publish] Warning: note like click did not activate. state_before=False state_after=False likeRoot.class=like-wrapper like-active visual_before={'className': 'like-wrapper like-active', 'ariaPressed': '', 'color': 'rgb(51, 51, 51)', 'svgColor': 'rgb(51, 51, 51)', 'svgHtml': '<span data-v-9403e00c="" class="like-lottie" style="width: 24px; height: 24px;"></span>'} visual_after={'className': 'like-wrapper like-active', 'ariaPressed': '', 'color': 'rgb(51, 51, 51)', 'svgColor': 'rgb(51, 51, 51)', 'svgHtml': '<span data-v-9403e00c="" class="like-lottie" style="width: 24px; height: 24px;"></span>'}
+[cdp]   [cdp_publish] Warning: upvote on same page failed. payload={'success': False, 'changed': False, 'state_before': False, 'state_after': False}
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (1/100)
+[wait] 29s (~0.5min, random 20-30s)
+[search-next] keyword=烧脑小游戏 sort=综合 task=3/42 empty_streak=0 seen_feeds=2
+[search-wait] 13s before keyword=烧脑小游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 烧脑小游戏 --sort-by 综合 --publish-time 半年内
+[cdp] done exit=0 elapsed=7.9s stdout=142943 stderr=0
+[cdp] spawn timeout=90s cmd=--reuse-existing-tab get-feed-detail --feed-id 6a400ac90000000021014d32 --xsec-token(46chars)
+[cdp] done exit=0 elapsed=4.9s stdout=15418 stderr=0
+[relevance-skip] feedId=6a400ac90000000021014d32 title=🔢🧩 我为什么现在才知道这个网站！！ bodyLen=482 score=-2 min=2
+[detail-wait] 2.9s before feedId=6a4768ce000000001101b943
+[cdp] spawn timeout=90s cmd=--reuse-existing-tab get-feed-detail --feed-id 6a4768ce000000001101b943 --xsec-token(46chars)
+[cdp] done exit=0 elapsed=6.0s stdout=29025 stderr=0
+[relevance-skip] feedId=6a4768ce000000001101b943 title=Get到了一款数独app bodyLen=338 score=-4 min=2
+[detail-wait] 2.0s before feedId=6a38eba0000000001101c316
+[cdp] spawn timeout=90s cmd=--reuse-existing-tab get-feed-detail --feed-id 6a38eba0000000001101c316 --xsec-token(46chars)
+[cdp] done exit=0 elapsed=5.7s stdout=21228 stderr=0
+[relevance-skip] feedId=6a38eba0000000001101c316 title=格里米斯工匠一定要玩啊 bodyLen=113 score=-8 min=2
+[detail-wait] 3.8s before feedId=69c93c0c0000000021007045
+[cdp] spawn timeout=90s cmd=--reuse-existing-tab get-feed-detail --feed-id 69c93c0c0000000021007045 --xsec-token(46chars)
+[cdp] done exit=0 elapsed=5.8s stdout=24437 stderr=0
+[relevance-skip] feedId=69c93c0c0000000021007045 title=又找到打发时间新游戏了 bodyLen=42 score=-14 min=2
+[search-scroll-next] keyword=烧脑小游戏 sort=综合 raw=42 usable=0 scroll once (1/8)
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds-scroll
+[cdp] done exit=1 elapsed=0.2s stdout=594 stderr=617
+[warn] search scroll failed keyword=烧脑小游戏 scrolls=1
+[cdp] phase=search-scroll exit=1 keyword=烧脑小游戏 scrolls=1
+[cdp] cmd=--reuse-existing-tab search-feeds-scroll
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/69c93c0c0000000021007045?xsec_token=AB4CelMHqBwn-xBx9BLsVjmPgW6m5bqCbzjijUmmdwvSA=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/E0641814139216112256C2BBDD63DEBE
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=2m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   Traceback (most recent call last):
+[cdp]   raise CDPError(
+[cdp]   __main__.CDPError: Current tab is not a search results page: https://www.xiaohongshu.com/explore/69c93c0c0000000021007045?xsec_token=AB4CelMHqBwn-xBx9BLsVjmPgW6m5bqCbzjijUmmdwvSA=&x
+[search-filter] keyword=烧脑小游戏 sort=综合 scrolls=0(exhausted max=8) {'bad_title': 3, 'already_commented': 19, 'low_relevance': 4, 'not_note': 2, 'too_old': 14}
+[search] keyword=烧脑小游戏 sort=综合 raw=42 skipped=42 hit=0 rate_limited=False
+[search-next] keyword=烧脑小游戏 sort=最新 task=4/42 empty_streak=1 seen_feeds=42
+[search-wait] 15s before keyword=烧脑小游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 烧脑小游戏 --sort-by 最新 --publish-time 半年内
+[cdp] done exit=0 elapsed=8.5s stdout=102980 stderr=0
+[cdp] spawn timeout=90s cmd=--reuse-existing-tab get-feed-detail --feed-id 6a5dd9a70000000011004ac7 --xsec-token(46chars)
+[cdp] done exit=0 elapsed=6.3s stdout=14517 stderr=0
+[search-scroll-stop] keyword=烧脑小游戏 sort=最新 usable=1 after scrolls=0 (max=8, skip further scrolls)
+[search-filter] keyword=烧脑小游戏 sort=最新 scrolls=0 {'bad_publish_date': 3, 'bad_title': 1}
+[search-hit] keyword=烧脑小游戏 sort=最新 raw=40 skipped=4 feedId=6a5dd9a70000000011004ac7 score=4 title=🐢经典海龟汤之——《魔术》🔥🔥🔥 → post now
+[plan] #2 keyword=烧脑小游戏 title=🐢经典海龟汤之——《魔术》🔥🔥🔥 comments=6 age=1d score=4 msg=17/烧脑卡关 match=5
+[post] attempt feedId=6a5dd9a70000000011004ac7 contentLen=40 also_upvote=1
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a5dd9a70000000011004ac7 --xsec-token(46chars) --content(40chars) --also-upvote
+[cdp] done exit=0 elapsed=10.5s stdout=2329 stderr=0
+[upvote-warn] feedId=6a5dd9a70000000011004ac7 comment ok but like not confirmed upvote={'success': False, 'changed': False, 'state_before': False, 'state_after': False}
+[post] success feedId=6a5dd9a70000000011004ac7
+[cdp] phase=post-ok exit=0 feedId=6a5dd9a70000000011004ac7
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a5dd9a70000000011004ac7 --xsec-token(46chars) --content(40chars) --also-upvote
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a5dd9a70000000011004ac7?xsec_token=ABgO_RO9hCJQb3LOMcuXbRt11WcFZzFlwqqgTi3j4TxHE=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/E0641814139216112256C2BBDD63DEBE
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=2m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a5dd9a70000000011004ac7?xsec_token=ABgO_RO9hCJQb3LOMcuXbRt11WcFZzFlwqqgTi3j4TxHE=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (1061, 1223)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1293, 1223)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a5dd9a70000000011004ac7, length=40
+[cdp]   [cdp_publish] Clicking note like in interact bar at (1212, 1223) hint=interact-container .like-wrapper target=SPAN bar=interactions engage-bar top=1211.3333740234375 left=1192.46875 viewport={'w': 1517, 'h': 1291}
+[cdp]   [cdp_publish] JS click on like-wrapper, class_after=like-wrapper like-active at=(1222.6822929382324, 1223.3333740234375)
+[cdp]   [cdp_publish] Warning: note like click did not activate. state_before=False state_after=False likeRoot.class=like-wrapper like-active visual_before={'className': 'like-wrapper like-active', 'ariaPressed': '', 'color': 'rgb(51, 51, 51)', 'svgColor': 'rgb(51, 51, 51)', 'svgHtml': '<span data-v-9403e00c="" class="like-lottie" style="width: 24px; height: 24px;"></span>'} visual_after={'className': 'like-wrapper like-active', 'ariaPressed': '', 'color': 'rgb(51, 51, 51)', 'svgColor': 'rgb(51, 51, 51)', 'svgHtml': '<span data-v-9403e00c="" class="like-lottie" style="width: 24px; height: 24px;"></span>'}
+[cdp]   [cdp_publish] Warning: upvote on same page failed. payload={'success': False, 'changed': False, 'state_before': False, 'state_after': False}
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (2/100)
+[wait] 22s (~0.4min, random 20-30s)
+[search-next] keyword=推箱子 sort=综合 task=5/42 empty_streak=0 seen_feeds=47
+[search-wait] 13s before keyword=推箱子 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 推箱子 --sort-by 综合 --publish-time 半年内
+[cdp] done exit=0 elapsed=8.1s stdout=123570 stderr=0
+[cdp] spawn timeout=90s cmd=--reuse-existing-tab get-feed-detail --feed-id 6a4c744c0000000017009dd8 --xsec-token(46chars)
+[cdp] done exit=0 elapsed=5.9s stdout=18025 stderr=0
+[relevance-skip] feedId=6a4c744c0000000017009dd8 title=我们必须想象西西弗斯是幸福的🪨 bodyLen=201 score=-6 min=2
+[detail-wait] 3.5s before feedId=6a37a0000000000008031391
+[cdp] spawn timeout=90s cmd=--reuse-existing-tab get-feed-detail --feed-id 6a37a0000000000008031391 --xsec-token(46chars)
+[cdp] done exit=0 elapsed=5.6s stdout=7387 stderr=0
+[relevance-skip] feedId=6a37a0000000000008031391 title=一款超有趣的杀时间的推箱子游戏 bodyLen=141 score=-6 min=2
+[detail-wait] 2.6s before feedId=6a5872fa000000001302ddef
+[cdp] spawn timeout=90s cmd=--reuse-existing-tab get-feed-detail --feed-id 6a5872fa000000001302ddef --xsec-token(46chars)
+[cdp] done exit=0 elapsed=5.5s stdout=12274 stderr=0
+[search-scroll-stop] keyword=推箱子 sort=综合 usable=1 after scrolls=0 (max=8, skip further scrolls)
+[search-filter] keyword=推箱子 sort=综合 scrolls=0 {'too_old': 3, 'low_relevance': 2, 'already_commented': 7, 'not_note': 1, 'bad_publish_date': 1}
+[search-hit] keyword=推箱子 sort=综合 raw=42 skipped=14 feedId=6a5872fa000000001302ddef score=6 title=新游分享：Ball Escape Puzzle → post now
+[plan] #3 keyword=推箱子 title=新游分享：Ball Escape Puzzle comments=1 age=3d score=6 msg=8/推箱子 match=9
+[post] attempt feedId=6a5872fa000000001302ddef contentLen=49 also_upvote=1
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a5872fa000000001302ddef --xsec-token(46chars) --content(49chars) --also-upvote
+[cdp] done exit=0 elapsed=11.0s stdout=2336 stderr=0
+[upvote-warn] feedId=6a5872fa000000001302ddef comment ok but like not confirmed upvote={'success': False, 'changed': False, 'state_before': False, 'state_after': False}
+[post] success feedId=6a5872fa000000001302ddef
+[cdp] phase=post-ok exit=0 feedId=6a5872fa000000001302ddef
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a5872fa000000001302ddef --xsec-token(46chars) --content(49chars) --also-upvote
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a5872fa000000001302ddef?xsec_token=ABRfGZMJpkrRXVY6GP3I8MlZYMGkg-N6Sf0h3hsBs1TgA=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/E0641814139216112256C2BBDD63DEBE
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=3m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a5872fa000000001302ddef?xsec_token=ABRfGZMJpkrRXVY6GP3I8MlZYMGkg-N6Sf0h3hsBs1TgA=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (1061, 1223)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1293, 1223)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a5872fa000000001302ddef, length=49
+[cdp]   [cdp_publish] Clicking note like in interact bar at (1204, 1223) hint=interact-container .like-wrapper target=SPAN bar=interactions engage-bar top=1211.3333740234375 left=1184.260498046875 viewport={'w': 1517, 'h': 1291}
+[cdp]   [cdp_publish] JS click on like-wrapper, class_after=like-wrapper like-active at=(1214.4740409851074, 1223.3333740234375)
+[cdp]   [cdp_publish] Warning: note like click did not activate. state_before=False state_after=False likeRoot.class=like-wrapper like-active visual_before={'className': 'like-wrapper like-active', 'ariaPressed': '', 'color': 'rgb(51, 51, 51)', 'svgColor': 'rgb(51, 51, 51)', 'svgHtml': '<span data-v-9403e00c="" class="like-lottie" style="width: 24px; height: 24px;"></span>'} visual_after={'className': 'like-wrapper like-active', 'ariaPressed': '', 'color': 'rgb(51, 51, 51)', 'svgColor': 'rgb(51, 51, 51)', 'svgHtml': '<span data-v-9403e00c="" class="like-lottie" style="width: 24px; height: 24px;"></span>'}
+[cdp]   [cdp_publish] Warning: upvote on same page failed. payload={'success': False, 'changed': False, 'state_before': False, 'state_after': False}
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (3/100)
+[wait] 21s (~0.3min, random 20-30s)
+[search-next] keyword=推箱子 sort=最新 task=6/42 empty_streak=0 seen_feeds=61
+[search-wait] 6s before keyword=推箱子 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 推箱子 --sort-by 最新 --publish-time 半年内
+[cdp] done exit=0 elapsed=7.3s stdout=116605 stderr=0
+[cdp] spawn timeout=90s cmd=--reuse-existing-tab get-feed-detail --feed-id 6a5c752d000000000100f463 --xsec-token(46chars)
+[cdp] done exit=0 elapsed=5.6s stdout=13676 stderr=0
+[search-scroll-stop] keyword=推箱子 sort=最新 usable=1 after scrolls=0 (max=8, skip further scrolls)
+[search-hit] keyword=推箱子 sort=最新 raw=42 skipped=0 feedId=6a5c752d000000000100f463 score=6 title=儿童相机-小游戏 → post now
+[skip-low] 儿童相机-小游戏 comments=1
+[search-next] keyword=解谜游戏 sort=综合 task=7/42 empty_streak=0 seen_feeds=62
+[search-wait] 13s before keyword=解谜游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 解谜游戏 --sort-by 综合 --publish-time 半年内
+[cdp] done exit=0 elapsed=7.5s stdout=134623 stderr=0
+[cdp] spawn timeout=90s cmd=--reuse-existing-tab get-feed-detail --feed-id 6a5da744000000000401c911 --xsec-token(46chars)
+[cdp] done exit=0 elapsed=5.5s stdout=8325 stderr=0
+[search-scroll-stop] keyword=解谜游戏 sort=综合 usable=1 after scrolls=0 (max=8, skip further scrolls)
+[search-filter] keyword=解谜游戏 sort=综合 scrolls=0 {'dup_or_empty_id': 4, 'already_commented': 2, 'not_note': 2}
+[search-hit] keyword=解谜游戏 sort=综合 raw=43 skipped=8 feedId=6a5da744000000000401c911 score=4 title=网页解谜游戏《ROOM酒店连环谋杀案》 → post now
+[skip-low] 网页解谜游戏《ROOM酒店连环谋杀案》 comments=3
+[search-next] keyword=解谜游戏 sort=最新 task=8/42 empty_streak=0 seen_feeds=65
+[search-wait] 14s before keyword=解谜游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 解谜游戏 --sort-by 最新 --publish-time 半年内
+[cdp] done exit=0 elapsed=7.3s stdout=174226 stderr=0
+[cdp] spawn timeout=90s cmd=--reuse-existing-tab get-feed-detail --feed-id 6a5ded51000000001d00d393 --xsec-token(46chars)
+[cdp] done exit=0 elapsed=5.5s stdout=15120 stderr=0
+[search-scroll-stop] keyword=解谜游戏 sort=最新 usable=1 after scrolls=0 (max=8, skip further scrolls)
+[search-filter] keyword=解谜游戏 sort=最新 scrolls=0 {'bad_publish_date': 5, 'not_note': 2, 'bad_title': 1, 'already_commented': 3}
+[search-hit] keyword=解谜游戏 sort=最新 raw=43 skipped=11 feedId=6a5ded51000000001d00d393 score=4 title=游戏上线谜页集两天，这个通关率正常吗 → post now
+[skip-low] 游戏上线谜页集两天，这个通关率正常吗 comments=9
+[search-next] keyword=游戏推荐 sort=综合 task=9/42 empty_streak=0 seen_feeds=75
+[search-wait] 10s before keyword=游戏推荐 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 游戏推荐 --sort-by 综合 --publish-time 半年内

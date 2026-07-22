@@ -1,0 +1,31 @@
+﻿python : Traceback (most recent call last):
+所在位置 C:\Users\Admin\AppData\Local\Temp\ps-script-8e9585fc-0a58-44b8-9829-5db8f750f132.ps1:104 字符: 1
++ python "C:\Users\Admin\.agents\skills\redbookskills\scripts\cdp_publi ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Traceback (most recent call last)::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  File "C:\Users\Admin\.agents\skills\redbookskills\scripts\run_lock.py", line 102, in single_instance
+    _write_lock_data(path, payload)
+  File "C:\Users\Admin\.agents\skills\redbookskills\scripts\run_lock.py", line 50, in _write_lock_data
+    fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+
+During handling of the above exception, another exception occurred:
+
+OSError: [WinError 87] 鍙傛暟閿欒銆?
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Admin\.agents\skills\redbookskills\scripts\cdp_publish.py", line 5218, in <module>
+    with single_instance("post_to_xhs_publish"):
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "C:\Users\Admin\.agents\skills\redbookskills\scripts\run_lock.py", line 106, in single_instance
+    removed, lock_data = _cleanup_stale_lock(path)
+  File "C:\Users\Admin\.agents\skills\redbookskills\scripts\run_lock.py", line 59, in _cleanup_stale_lock
+    if isinstance(pid, int) and _pid_running(pid):
+  File "C:\Users\Admin\.agents\skills\redbookskills\scripts\run_lock.py", line 28, in _pid_running
+    os.kill(pid, 0)
+SystemError: <class 'OSError'> returned a result with an exception set

@@ -1,0 +1,1264 @@
+[log-file] D:\Baoyu\包宇的cocos\LightPuzzle\宣传素材\小红书评论\campaign_2026-07-19_005943.log
+[rate-status] hourly=14/off daily=14/100 ok=True 
+[start] target=17 dry_run=False max_age_days=60 min_relevance=2 history_posts=83 search_tasks=42 search_scrolls=4
+[step] check-login
+[cdp] spawn timeout=90s cmd=check-login
+[cdp] done exit=0 elapsed=0.2s stdout=330 stderr=0
+[cdp] phase=check-login-ok exit=0
+[cdp] cmd=check-login
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/3962F2B8ED2B2D7D17C3C0A0F1536C2A
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (creator, age=577m, ttl=12h).
+[cdp]   [cdp_publish] Login confirmed (cached).
+[limits] interval=60-120s posts/hour=off posts/day=100 circuit=24h
+[queue] empty refilling keyword=益智小游戏 sort=综合 task=1/42 empty_streak=0 seen_feeds=0
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 益智小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=12.4s stdout=428101 stderr=0
+[search-filter] keyword=益智小游戏 sort=综合 scrolls=4 {'already_commented': 37, 'low_relevance': 48, 'bad_title': 10, 'not_note': 6, 'too_old': 20, 'bad_publish_date': 1}
+[search] keyword=益智小游戏 sort=综合 raw=126 skipped=122 usable=4 queued=4 rate_limited=False
+[queue] loaded 4 candidates, will post one-by-one before next search
+[queue] pop feedId=6a49fcea000000002101794a remaining=3 title=AI制作的微信小游戏
+[plan] #1 keyword=益智小游戏 title=AI制作的微信小游戏 comments=24 age=14d score=6 msg=11/微信小游戏 match=10
+[post] attempt feedId=6a49fcea000000002101794a contentLen=42
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a49fcea000000002101794a --xsec-token(46chars) --content(42chars)
+[cdp] done exit=0 elapsed=8.3s stdout=1122 stderr=0
+[post] success feedId=6a49fcea000000002101794a
+[cdp] phase=post-ok exit=0 feedId=6a49fcea000000002101794a
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a49fcea000000002101794a --xsec-token(46chars) --content(42chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/search_result?keyword=%E7%9B%8A%E6%99%BA%E5%B0%8F%E6%B8%B8%E6%88%8F&source=web_explore_feed&type=51
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/3962F2B8ED2B2D7D17C3C0A0F1536C2A
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=577m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a49fcea000000002101794a?xsec_token=AB0_q_wrK3bqvgiNA4aoZ5ZmVkxPrfwhdPV147vRka1d8=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (796, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (988, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a49fcea000000002101794a, length=42
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (1/17)
+[wait] 103s (~1.7min, random 60-120s)
+[queue] pop feedId=6a46895800000000210214db remaining=2 title=微信有没有类似这样的小游戏
+[plan] #2 keyword=益智小游戏 title=微信有没有类似这样的小游戏 comments=9 age=17d score=6 msg=1/求推荐 match=10
+[post] attempt feedId=6a46895800000000210214db contentLen=55
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a46895800000000210214db --xsec-token(46chars) --content(55chars)
+[cdp] done exit=0 elapsed=8.1s stdout=1133 stderr=0
+[post] success feedId=6a46895800000000210214db
+[cdp] phase=post-ok exit=0 feedId=6a46895800000000210214db
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a46895800000000210214db --xsec-token(46chars) --content(55chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a495f280000000007023dec?xsec_token=AB0_q_wrK3bqvgiNA4aoZ5ZnlpVg1CTQmv09lz6KQrX3o=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/3962F2B8ED2B2D7D17C3C0A0F1536C2A
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=579m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a46895800000000210214db?xsec_token=ABYvSwgXEOpxnl0xFHdfQ083aZHippYAi8fmUQDB8dCn0=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (800, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (992, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a46895800000000210214db, length=55
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (2/17)
+[wait] 60s (~1.0min, random 60-120s)
+[queue] pop feedId=6a1d962b0000000008030f39 remaining=1 title=没有人觉得微信的一些小游戏非常解压吗？
+[plan] #3 keyword=益智小游戏 title=没有人觉得微信的一些小游戏非常解压吗？ comments=6 age=48d score=6 msg=13/微信小游戏 match=7
+[post] attempt feedId=6a1d962b0000000008030f39 contentLen=39
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a1d962b0000000008030f39 --xsec-token(46chars) --content(39chars)
+[cdp] done exit=0 elapsed=8.0s stdout=1133 stderr=0
+[post] success feedId=6a1d962b0000000008030f39
+[cdp] phase=post-ok exit=0 feedId=6a1d962b0000000008030f39
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a1d962b0000000008030f39 --xsec-token(46chars) --content(39chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a46895800000000210214db?xsec_token=ABYvSwgXEOpxnl0xFHdfQ083aZHippYAi8fmUQDB8dCn0=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/3962F2B8ED2B2D7D17C3C0A0F1536C2A
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=580m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a1d962b0000000008030f39?xsec_token=ABH2jpJ60stU_qwjMNGqmuSuGoJOkEgIMxZrje6cEnEw4=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (800, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (992, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a1d962b0000000008030f39, length=39
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (3/17)
+[wait] 70s (~1.2min, random 60-120s)
+[queue] pop feedId=6a11750f0000000006032131 remaining=0 title=《头脑王者》——一款答题益智类的小游戏
+[plan] #4 keyword=益智小游戏 title=《头脑王者》——一款答题益智类的小游戏 comments=0 age=57d score=6 msg=15/微信小游戏 match=2
+[post] attempt feedId=6a11750f0000000006032131 contentLen=35
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a11750f0000000006032131 --xsec-token(46chars) --content(35chars)
+[cdp] done exit=0 elapsed=7.8s stdout=1133 stderr=0
+[post] success feedId=6a11750f0000000006032131
+[cdp] phase=post-ok exit=0 feedId=6a11750f0000000006032131
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a11750f0000000006032131 --xsec-token(46chars) --content(35chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a3fe7c50000000007020c80?xsec_token=AB7A6tg6vkzoHYWtHWN7Ju1ybltj1Oi8UFH_nzhYF7QHA=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/3962F2B8ED2B2D7D17C3C0A0F1536C2A
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=581m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a11750f0000000006032131?xsec_token=ABX_Pr7aa2-DNHpQT5zE9pe3elrfN3d1q8yZ11wVRpZpc=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (794, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (987, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a11750f0000000006032131, length=35
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (4/17)
+[wait] 76s (~1.3min, random 60-120s)
+[queue] empty refilling keyword=益智小游戏 sort=最新 task=2/42 empty_streak=0 seen_feeds=120
+[search-wait] 10s before keyword=益智小游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 益智小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=12.9s stdout=452141 stderr=0
+[search-filter] keyword=益智小游戏 sort=最新 scrolls=4 {'low_relevance': 41, 'bad_title': 10, 'not_note': 6, 'dup_or_empty_id': 26, 'already_commented': 3}
+[search] keyword=益智小游戏 sort=最新 raw=122 skipped=86 usable=36 queued=36 rate_limited=False
+[queue] loaded 36 candidates, will post one-by-one before next search
+[queue] pop feedId=6a51c2f80000000007012920 remaining=35 title=小众数字排列逻辑小游戏
+[skip-low] 小众数字排列逻辑小游戏 comments=6
+[queue] pop feedId=6a4f02e8000000001c027f72 remaining=34 title=近期超爱的休闲策略小游戏！
+[skip-low] 近期超爱的休闲策略小游戏！ comments=0
+[queue] pop feedId=6a438df5000000001503dea9 remaining=33 title=可爱风解谜游戏推荐❗误入迷途手游已上线❗
+[skip-low] 可爱风解谜游戏推荐❗误入迷途手游已上线❗ comments=0
+[queue] pop feedId=69bf54a2000000001f004a08 remaining=32 title=好玩又烧脑解谜游戏《隐蔽小镇》来了❗
+[plan] #5 keyword=益智小游戏 title=好玩又烧脑解谜游戏《隐蔽小镇》来了❗ comments=17 age=14d score=6 msg=19/烧脑卡关 match=7
+[post] attempt feedId=69bf54a2000000001f004a08 contentLen=42
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 69bf54a2000000001f004a08 --xsec-token(46chars) --content(42chars)
+[cdp] done exit=0 elapsed=7.8s stdout=1123 stderr=0
+[post] success feedId=69bf54a2000000001f004a08
+[cdp] phase=post-ok exit=0 feedId=69bf54a2000000001f004a08
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 69bf54a2000000001f004a08 --xsec-token(46chars) --content(42chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/search_result?keyword=%E7%9B%8A%E6%99%BA%E5%B0%8F%E6%B8%B8%E6%88%8F&source=web_explore_feed&type=51
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/3962F2B8ED2B2D7D17C3C0A0F1536C2A
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=583m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/69bf54a2000000001f004a08?xsec_token=ABGg3Mkx_Oa42n2izzZplhoL2JzEZFpxZ6Lqo63nbhnJ4=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (853, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1045, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=69bf54a2000000001f004a08, length=43
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (5/17)
+[wait] 116s (~1.9min, random 60-120s)
+[queue] pop feedId=6a4a1cb50000000021015e47 remaining=31 title=脑洞大开的寻物解谜小游戏🐰
+[skip-low] 脑洞大开的寻物解谜小游戏🐰 comments=0
+[queue] pop feedId=69be07eb00000000210109f2 remaining=30 title=锈湖平替❗烧脑解谜游戏隐藏小镇全系列❗
+[skip-low] 锈湖平替❗烧脑解谜游戏隐藏小镇全系列❗ comments=0
+[queue] pop feedId=6a487db50000000021017fc3 remaining=29 title=益智小游戏
+[skip-low] 益智小游戏 comments=1
+[queue] pop feedId=6a46760c0000000007026e23 remaining=28 title=脑洞大开的寻物解谜小游戏🐰
+[skip-low] 脑洞大开的寻物解谜小游戏🐰 comments=0
+[queue] pop feedId=6a3e239a00000000110124f9 remaining=27 title=🌟好玩到停不下来！5款微信小游戏！
+[skip-low] 🌟好玩到停不下来！5款微信小游戏！ comments=3
+[queue] pop feedId=6a28def50000000035025fb2 remaining=26 title=3岁益智游戏推荐｜端午节游戏培养对应思维
+[plan] #6 keyword=益智小游戏 title=3岁益智游戏推荐｜端午节游戏培养对应思维 comments=18 age=38d score=6 msg=5/求推荐 match=4
+[post] attempt feedId=6a28def50000000035025fb2 contentLen=38
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a28def50000000035025fb2 --xsec-token(46chars) --content(38chars)
+[cdp] done exit=0 elapsed=7.9s stdout=1134 stderr=0
+[post] success feedId=6a28def50000000035025fb2
+[cdp] phase=post-ok exit=0 feedId=6a28def50000000035025fb2
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a28def50000000035025fb2 --xsec-token(46chars) --content(38chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a3d62cc000000001700bdb9?xsec_token=ABNO-mE0NWL3GkbjEFeDXVHZMorI69L2vu8-WP1EPoA4E=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/3962F2B8ED2B2D7D17C3C0A0F1536C2A
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=585m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a28def50000000035025fb2?xsec_token=ABeyG2EK6sx8jEHlOZ7b44wZGpD-Ye_IqjL4SdrCkfOK4=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (853, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1045, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a28def50000000035025fb2, length=38
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (6/17)
+[wait] 98s (~1.6min, random 60-120s)
+[queue] pop feedId=6a59e5bb000000000100160a remaining=25 title=挖到宝！6 款女生熬夜狂刷的解压小游戏
+[skip-low] 挖到宝！6 款女生熬夜狂刷的解压小游戏 comments=0
+[queue] pop feedId=6a597502000000001101165f remaining=24 title=今日小学堂：专注力小游戏
+[skip-low] 今日小学堂：专注力小游戏 comments=0
+[queue] pop feedId=6a585553000000000f030102 remaining=23 title=夏活猜图小游戏的答案✔️
+[skip-low] 夏活猜图小游戏的答案✔️ comments=5
+[queue] pop feedId=6a55edf2000000001603fe06 remaining=22 title=课前小游戏：记忆大挑战，趣味互动游戏
+[skip-low] 课前小游戏：记忆大挑战，趣味互动游戏 comments=0
+[queue] pop feedId=6a54dde0000000002101ac33 remaining=21 title=🔍 巨可爱的宝藏手绘风游戏❗️迷宫大侦探
+[skip-low] 🔍 巨可爱的宝藏手绘风游戏❗️迷宫大侦探 comments=0
+[queue] pop feedId=6a54aadc0000000008033fd6 remaining=20 title=薅羊毛小游戏合集
+[skip-low] 薅羊毛小游戏合集 comments=7
+[queue] pop feedId=6a4663e6000000001c0244e0 remaining=19 title=能玩一整天的寻物游戏🔍迷宫大侦探❗
+[skip-low] 能玩一整天的寻物游戏🔍迷宫大侦探❗ comments=0
+[queue] pop feedId=6a50bc100000000011017df2 remaining=18 title=暑假让孩子静下来的6个小游戏
+[skip-low] 暑假让孩子静下来的6个小游戏 comments=1
+[queue] pop feedId=6a4da4630000000021008b55 remaining=17 title=最爱玩的多邻国小游戏
+[plan] #7 keyword=益智小游戏 title=最爱玩的多邻国小游戏 comments=35 age=11d score=4 msg=12/微信小游戏 match=2
+[post] attempt feedId=6a4da4630000000021008b55 contentLen=41
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a4da4630000000021008b55 --xsec-token(46chars) --content(41chars)
+[cdp] done exit=0 elapsed=8.7s stdout=1133 stderr=0
+[post] success feedId=6a4da4630000000021008b55
+[cdp] phase=post-ok exit=0 feedId=6a4da4630000000021008b55
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a4da4630000000021008b55 --xsec-token(46chars) --content(41chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a37ed5100000000220163fc?xsec_token=ABS9i4Uh4n42Y0bOrQDRPcr7uZvHyb4o2cRvPKLtDxMeQ=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/3962F2B8ED2B2D7D17C3C0A0F1536C2A
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=587m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a4da4630000000021008b55?xsec_token=AB55Hi1hbsAIjMaAt0YYyzGVOSC35Cn9vjNhYcRBHzvfI=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (800, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (992, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a4da4630000000021008b55, length=41
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (7/17)
+[wait] 105s (~1.8min, random 60-120s)
+[queue] pop feedId=6a3e1d98000000001100494f remaining=16 title=收集爱好者不能错过❗探索解谜风寻物推荐❗
+[skip-low] 收集爱好者不能错过❗探索解谜风寻物推荐❗ comments=2
+[queue] pop feedId=6a4c81010000000015025598 remaining=15 title=挖菜小游戏
+[skip-low] 挖菜小游戏 comments=2
+[queue] pop feedId=6a48ad1f0000000008003f03 remaining=14 title=深陷找牛小游戏两个小时
+[skip-low] 深陷找牛小游戏两个小时 comments=7
+[queue] pop feedId=6a463fee000000000702db0b remaining=13 title=周五摸鱼小游戏上新
+[skip-low] 周五摸鱼小游戏上新 comments=5
+[queue] pop feedId=6a462c84000000000f0319cc remaining=12 title=摸鱼必备小游戏
+[skip-low] 摸鱼必备小游戏 comments=5
+[queue] pop feedId=6a3cdc10000000001102fdb1 remaining=11 title=🎮｜爽玩！不用下载的5款治愈小游戏
+[skip-low] 🎮｜爽玩！不用下载的5款治愈小游戏 comments=2
+[queue] pop feedId=6a3391840000000016027510 remaining=10 title=爆梗找茬王者！新上解压小游戏！嘎嘎解压！
+[skip-low] 爆梗找茬王者！新上解压小游戏！嘎嘎解压！ comments=2
+[queue] pop feedId=6a321bae000000001c02630b remaining=9 title=这个小游戏也太好玩了啊啊啊啊
+[skip-low] 这个小游戏也太好玩了啊啊啊啊 comments=0
+[queue] pop feedId=6a2a787c000000001c024d2a remaining=8 title=手把手教你开发这五款经典小游戏（含源码）
+[skip-low] 手把手教你开发这五款经典小游戏（含源码） comments=7
+[queue] pop feedId=6a2813870000000017028061 remaining=7 title=在家专注力训练｜听觉干扰小游戏
+[skip-low] 在家专注力训练｜听觉干扰小游戏 comments=1
+[queue] pop feedId=6a474461000000002201a0b8 remaining=6 title=告别手机平板！商场里藏着超宝藏益智桌游！
+[skip-low] 告别手机平板！商场里藏着超宝藏益智桌游！ comments=0
+[queue] pop feedId=6a58205f000000000702febc remaining=5 title=猫咪数独谜题挑战 0716
+[skip-low] 猫咪数独谜题挑战 0716 comments=0
+[queue] pop feedId=6a5772600000000007027f75 remaining=4 title=【每日脑洞谜题🧐】0715光阴似箭
+[skip-low] 【每日脑洞谜题🧐】0715光阴似箭 comments=5
+[queue] pop feedId=6a53ceed000000000f0069f0 remaining=3 title=打卡今天的脑力练习！
+[skip-low] 打卡今天的脑力练习！ comments=0
+[queue] pop feedId=6a5376f6000000001503d4da remaining=2 title=被这波脑洞解谜硬控了！🔥
+[skip-low] 被这波脑洞解谜硬控了！🔥 comments=0
+[queue] pop feedId=6a474618000000001102c8df remaining=1 title=数感启蒙—数字消消乐  专注力、逻辑思维
+[plan] #8 keyword=益智小游戏 title=数感启蒙—数字消消乐  专注力、逻辑思维 comments=11 age=16d score=2 msg=8/推箱子 match=3
+[post] attempt feedId=6a474618000000001102c8df contentLen=47
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a474618000000001102c8df --xsec-token(46chars) --content(47chars)
+[cdp] done exit=0 elapsed=7.6s stdout=1134 stderr=0
+[post] success feedId=6a474618000000001102c8df
+[cdp] phase=post-ok exit=0 feedId=6a474618000000001102c8df
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a474618000000001102c8df --xsec-token(46chars) --content(47chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a4da4630000000021008b55?xsec_token=AB55Hi1hbsAIjMaAt0YYyzGVOSC35Cn9vjNhYcRBHzvfI=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/3962F2B8ED2B2D7D17C3C0A0F1536C2A
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=589m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a474618000000001102c8df?xsec_token=ABY4SCXHEDgwxqzotoO_15FoRiDCOJSDNi2WltYfpvys8=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (853, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1045, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a474618000000001102c8df, length=47
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (8/17)
+[wait] 117s (~1.9min, random 60-120s)
+[queue] pop feedId=6a1eb3b90000000022020777 remaining=0 title=3-6岁益智启蒙|专注力训练60页🉑打印
+[plan] #9 keyword=益智小游戏 title=3-6岁益智启蒙|专注力训练60页🉑打印 comments=258 age=23d score=2 msg=14/微信小游戏 match=2
+[post] attempt feedId=6a1eb3b90000000022020777 contentLen=43
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a1eb3b90000000022020777 --xsec-token(46chars) --content(43chars)
+[cdp] done exit=0 elapsed=9.0s stdout=1134 stderr=0
+[post] success feedId=6a1eb3b90000000022020777
+[cdp] phase=post-ok exit=0 feedId=6a1eb3b90000000022020777
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a1eb3b90000000022020777 --xsec-token(46chars) --content(43chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a2e5161000000002201783f?xsec_token=AB02zQFAN45QCiKf_OatQDSIqTSHyZgK0CFLd2JyGDQQc=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/3962F2B8ED2B2D7D17C3C0A0F1536C2A
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=591m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a1eb3b90000000022020777?xsec_token=ABt1P8qKXlgWLghJe2jXF1AQcGlQUXL_tjx1puL5QLhsw=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (853, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1045, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a1eb3b90000000022020777, length=43
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (9/17)
+[wait] 98s (~1.6min, random 60-120s)
+[queue] empty refilling keyword=烧脑小游戏 sort=综合 task=3/42 empty_streak=0 seen_feeds=210
+[search-wait] 6s before keyword=烧脑小游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 烧脑小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=12.8s stdout=0 stderr=0
+[warn] no search json keyword=烧脑小游戏
+[cdp] phase=search-no-json exit=0 keyword=烧脑小游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 烧脑小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[search] keyword=烧脑小游戏 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=烧脑小游戏 sort=最新 task=4/42 empty_streak=1 seen_feeds=210
+[search-wait] 10s before keyword=烧脑小游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 烧脑小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=13.0s stdout=443103 stderr=0
+[search-filter] keyword=烧脑小游戏 sort=最新 scrolls=4 {'already_commented': 9, 'low_relevance': 28, 'not_note': 6, 'bad_publish_date': 1, 'bad_title': 10, 'dup_or_empty_id': 38}
+[search] keyword=烧脑小游戏 sort=最新 raw=123 skipped=92 usable=31 queued=31 rate_limited=False
+[queue] loaded 31 candidates, will post one-by-one before next search
+[queue] pop feedId=6a4daaf4000000000602060e remaining=30 title=烧脑拼图逻辑推理游戏｜摸鱼解压神器！关卡越
+[skip-low] 烧脑拼图逻辑推理游戏｜摸鱼解压神器！关卡越 comments=0
+[queue] pop feedId=6a2ff5b5000000001603f0e5 remaining=29 title=第一款微信小游戏《脑洞大闯关2》上线了！
+[skip-low] 第一款微信小游戏《脑洞大闯关2》上线了！ comments=3
+[queue] pop feedId=6a59d654000000001b01ef59 remaining=28 title=网页解谜游戏丨脑中神探（推荐篇）
+[skip-low] 网页解谜游戏丨脑中神探（推荐篇） comments=3
+[queue] pop feedId=6a58360800000000140061b6 remaining=27 title=非常烧脑和益智类游戏 《Baba Is You》
+[skip-low] 非常烧脑和益智类游戏 《Baba Is You》 comments=1
+[queue] pop feedId=6a51f3e700000000200385a5 remaining=26 title=8款文字类解谜游戏合集｜逻辑党爱了✨
+[skip-low] 8款文字类解谜游戏合集｜逻辑党爱了✨ comments=0
+[queue] pop feedId=6a510b91000000000f01f93c remaining=25 title=学生党暑假囤货✅解压益智怀旧小游戏全套
+[skip-low] 学生党暑假囤货✅解压益智怀旧小游戏全套 comments=2
+[queue] pop feedId=6a492e8e000000001101171f remaining=24 title=睡前别玩闯关小游戏，一不小心熬夜到凌晨
+[skip-low] 睡前别玩闯关小游戏，一不小心熬夜到凌晨 comments=0
+[queue] pop feedId=6a3e510e000000001101c273 remaining=23 title=童年神作！超可爱鳄鱼解谜小游戏太上头
+[skip-low] 童年神作！超可爱鳄鱼解谜小游戏太上头 comments=7
+[queue] pop feedId=6a3947d3000000002101775e remaining=22 title=《游戏设计师最喜欢的烧脑谜题》—夺命线条
+[skip-low] 《游戏设计师最喜欢的烧脑谜题》—夺命线条 comments=4
+[queue] pop feedId=6a35710200000000110172e3 remaining=21 title=睡前别玩闯关小游戏，一不小心熬夜到凌晨
+[skip-low] 睡前别玩闯关小游戏，一不小心熬夜到凌晨 comments=0
+[queue] pop feedId=6a2520220000000006033951 remaining=20 title=做了一款烧脑的解密小游戏，你会来玩吗
+[skip-low] 做了一款烧脑的解密小游戏，你会来玩吗 comments=9
+[queue] pop feedId=6a1bcc030000000036032185 remaining=19 title=适合学生党和打工人的5款逻辑小游戏
+[skip-low] 适合学生党和打工人的5款逻辑小游戏 comments=0
+[queue] pop feedId=6a563e2600000000080031dd remaining=18 title=适合摸鱼🐟的小游戏
+[plan] #10 keyword=烧脑小游戏 title=适合摸鱼🐟的小游戏 comments=22 age=4d score=4 msg=18/烧脑卡关 match=5
+[post] attempt feedId=6a563e2600000000080031dd contentLen=45
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a563e2600000000080031dd --xsec-token(46chars) --content(45chars)
+[cdp] done exit=0 elapsed=7.0s stdout=0 stderr=0
+[post] failed feedId=6a563e2600000000080031dd
+[cdp] phase=post-fail exit=0 feedId=6a563e2600000000080031dd
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a563e2600000000080031dd --xsec-token(46chars) --content(45chars)
+[fail] feedId=6a563e2600000000080031dd detail_tail=
+[skip-fail] post_comment failed on 6a563e2600000000080031dd, continue next candidate
+[queue] pop feedId=6a5647fe000000000f017f68 remaining=17 title=谁懂！3000款无广告小游戏合集✨再也不用看弹
+[skip-low] 谁懂！3000款无广告小游戏合集✨再也不用看弹 comments=0
+[queue] pop feedId=6a54f218000000002200a477 remaining=16 title=决定每天玩一关小游戏
+[skip-low] 决定每天玩一关小游戏 comments=2
+[queue] pop feedId=6a5398a20000000011013cb9 remaining=15 title=推理游戏：找出凶手
+[skip-low] 推理游戏：找出凶手 comments=7
+[queue] pop feedId=6a524bb1000000001101c1c8 remaining=14 title=真的太烧脑了❗锈湖解谜天花板来了❗
+[skip-low] 真的太烧脑了❗锈湖解谜天花板来了❗ comments=0
+[queue] pop feedId=6a50f347000000001702b492 remaining=13 title=海龟汤推理游戏：
+[skip-low] 海龟汤推理游戏： comments=0
+[queue] pop feedId=6a4bc46e000000000f02bbb2 remaining=12 title=暑假救急✨3000款无广告小游戏｜告别弹窗折磨
+[skip-low] 暑假救急✨3000款无广告小游戏｜告别弹窗折磨 comments=0
+[queue] pop feedId=6a48d4af0000000015025347 remaining=11 title=一个人玩的破案小游戏
+[skip-low] 一个人玩的破案小游戏 comments=3
+[queue] pop feedId=6a48cb8e0000000021021a25 remaining=10 title=8000+免广告小游戏宝藏
+[skip-low] 8000+免广告小游戏宝藏 comments=0
+[queue] pop feedId=6a3fd3a00000000006032c00 remaining=9 title=赵云与阿斗 小游戏 免广告 无限体力
+[plan] #10 keyword=烧脑小游戏 title=赵云与阿斗 小游戏 免广告 无限体力 comments=88 age=21d score=4 msg=20/烧脑卡关 match=2
+[post] attempt feedId=6a3fd3a00000000006032c00 contentLen=46
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a3fd3a00000000006032c00 --xsec-token(46chars) --content(46chars)
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=145
+[post] failed feedId=6a3fd3a00000000006032c00
+[cdp] phase=post-fail exit=3 feedId=6a3fd3a00000000006032c00
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a3fd3a00000000006032c00 --xsec-token(46chars) --content(46chars)
+[cdp]   Error: Another publish process is running (pid=24812), started at 2026-07-18T17:16:17.159356+00:00. Please wait or terminate it before retrying.
+[fail] feedId=6a3fd3a00000000006032c00 detail_tail=Error: Another publish process is running (pid=24812), started at 2026-07-18T17:16:17.159356+00:00. Please wait or terminate it before retrying.
+
+[retry-infra] CDP lock cleared, retry once after 30s
+[post] attempt feedId=6a3fd3a00000000006032c00 contentLen=46
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a3fd3a00000000006032c00 --xsec-token(46chars) --content(46chars)
+[cdp] done exit=0 elapsed=0.2s stdout=0 stderr=0
+[post] failed feedId=6a3fd3a00000000006032c00
+[cdp] phase=post-fail exit=0 feedId=6a3fd3a00000000006032c00
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a3fd3a00000000006032c00 --xsec-token(46chars) --content(46chars)
+[skip-fail] post_comment failed on 6a3fd3a00000000006032c00, continue next candidate
+[queue] pop feedId=6a3d333a0000000007028eb8 remaining=8 title=解压小游戏🎮
+[skip-low] 解压小游戏🎮 comments=0
+[queue] pop feedId=6a34d36a000000001702fe60 remaining=7 title=解谜游戏合集‼️放假宅家必玩🏠
+[skip-low] 解谜游戏合集‼️放假宅家必玩🏠 comments=2
+[queue] pop feedId=6a353e3e0000000006021867 remaining=6 title=抖音小游戏免广告直接玩
+[skip-low] 抖音小游戏免广告直接玩 comments=1
+[queue] pop feedId=6a1fb7850000000035026152 remaining=5 title=6 个长辈专属认知小游戏，好玩又练脑✨
+[skip-low] 6 个长辈专属认知小游戏，好玩又练脑✨ comments=5
+[queue] pop feedId=6a1c3e920000000038022fea remaining=4 title=脑洞大开的小游戏合集🐰
+[skip-low] 脑洞大开的小游戏合集🐰 comments=3
+[queue] pop feedId=6a1985150000000036001939 remaining=3 title=小游戏分享第二弹
+[skip-low] 小游戏分享第二弹 comments=4
+[queue] pop feedId=6a18e609000000003601be28 remaining=2 title=一个摸鱼游戏, 烧脑, 但是很解压. 260528-C
+[skip-low] 一个摸鱼游戏, 烧脑, 但是很解压. 260528-C comments=0
+[queue] pop feedId=6a59d809000000000301c816 remaining=1 title=解谜控狂喜！盒子碎片封神了
+[skip-low] 解谜控狂喜！盒子碎片封神了 comments=0
+[queue] pop feedId=6a11f670000000003502e88c remaining=0 title=推理挑战
+[plan] #10 keyword=烧脑小游戏 title=推理挑战 comments=11 age=56d score=2 msg=17/烧脑卡关 match=5
+[post] attempt feedId=6a11f670000000003502e88c contentLen=41
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a11f670000000003502e88c --xsec-token(46chars) --content(41chars)
+[cdp] done exit=0 elapsed=0.2s stdout=0 stderr=0
+[post] failed feedId=6a11f670000000003502e88c
+[cdp] phase=post-fail exit=0 feedId=6a11f670000000003502e88c
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a11f670000000003502e88c --xsec-token(46chars) --content(41chars)
+[fail] feedId=6a11f670000000003502e88c detail_tail=
+[skip-fail] post_comment failed on 6a11f670000000003502e88c, continue next candidate
+[queue] empty refilling keyword=推箱子 sort=综合 task=5/42 empty_streak=0 seen_feeds=289
+[search-wait] 14s before keyword=推箱子 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 推箱子 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=12.5s stdout=404138 stderr=0
+[search-filter] keyword=推箱子 sort=综合 scrolls=4 {'dup_or_empty_id': 12, 'already_commented': 9, 'low_relevance': 56, 'too_old': 17, 'not_note': 6, 'bad_title': 8, 'bad_publish_date': 2}
+[search] keyword=推箱子 sort=综合 raw=126 skipped=110 usable=16 queued=16 rate_limited=False
+[queue] loaded 16 candidates, will post one-by-one before next search
+[queue] pop feedId=6a599d9b000000000101c489 remaining=15 title=AI这样看推箱子游戏和数学学习有什么关系
+[skip-low] AI这样看推箱子游戏和数学学习有什么关系 comments=0
+[queue] pop feedId=6a58c62a000000000401db82 remaining=14 title=可恶的小游戏
+[plan] #10 keyword=推箱子 title=可恶的小游戏 comments=22 age=2d score=4 msg=6/推箱子 match=9
+[post] attempt feedId=6a58c62a000000000401db82 contentLen=50
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a58c62a000000000401db82 --xsec-token(46chars) --content(50chars)
+[cdp] done exit=0 elapsed=4.1s stdout=0 stderr=0
+[post] failed feedId=6a58c62a000000000401db82
+[cdp] phase=post-fail exit=0 feedId=6a58c62a000000000401db82
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a58c62a000000000401db82 --xsec-token(46chars) --content(50chars)
+[fail] feedId=6a58c62a000000000401db82 detail_tail=
+[skip-fail] post_comment failed on 6a58c62a000000000401db82, continue next candidate
+[queue] pop feedId=6a2aeaf5000000001503e961 remaining=13 title=你游每一个小游戏都做的可沙币
+[plan] #10 keyword=推箱子 title=你游每一个小游戏都做的可沙币 comments=14 age=37d score=4 msg=7/推箱子 match=9
+[post] attempt feedId=6a2aeaf5000000001503e961 contentLen=46
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a2aeaf5000000001503e961 --xsec-token(46chars) --content(46chars)
+[cdp] done exit=3 elapsed=0.2s stdout=0 stderr=145
+[post] failed feedId=6a2aeaf5000000001503e961
+[cdp] phase=post-fail exit=3 feedId=6a2aeaf5000000001503e961
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a2aeaf5000000001503e961 --xsec-token(46chars) --content(46chars)
+[cdp]   Error: Another publish process is running (pid=13160), started at 2026-07-18T17:17:20.864159+00:00. Please wait or terminate it before retrying.
+[fail] feedId=6a2aeaf5000000001503e961 detail_tail=Error: Another publish process is running (pid=13160), started at 2026-07-18T17:17:20.864159+00:00. Please wait or terminate it before retrying.
+
+[retry-infra] CDP lock cleared, retry once after 30s
+[post] attempt feedId=6a2aeaf5000000001503e961 contentLen=46
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a2aeaf5000000001503e961 --xsec-token(46chars) --content(46chars)
+[cdp] done exit=0 elapsed=8.6s stdout=1134 stderr=0
+[post] success feedId=6a2aeaf5000000001503e961
+[cdp] phase=post-ok exit=0 feedId=6a2aeaf5000000001503e961
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a2aeaf5000000001503e961 --xsec-token(46chars) --content(46chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a58c62a000000000401db82?xsec_token=ABRfGZMJpkrRXVY6GP3I8MleC_rMdtmIdOgrIv8ULJYxo=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/3962F2B8ED2B2D7D17C3C0A0F1536C2A
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=595m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a2aeaf5000000001503e961?xsec_token=AB_Y6rJ4r_TLs1ZS5VJwG5XvriHaKwXPxlGnho7Ys0jog=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (841, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1045, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a2aeaf5000000001503e961, length=46
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done after retry (10/17)
+[wait] 99s (~1.6min, random 60-120s)
+[queue] pop feedId=6a5a1a11000000001c00de01 remaining=12 title=退酒店、遇猴劫、推箱子｜张家界真实心得
+[skip-low] 退酒店、遇猴劫、推箱子｜张家界真实心得 comments=9
+[queue] pop feedId=6a59ec500000000001030fc9 remaining=11 title=儿童相机推箱子再下一城
+[skip-low] 儿童相机推箱子再下一城 comments=0
+[queue] pop feedId=6a5457e2000000001700b083 remaining=10 title=分享推箱子新关卡攻略
+[skip-low] 分享推箱子新关卡攻略 comments=2
+[queue] pop feedId=6a50b208000000002100a852 remaining=9 title=智力考验——推箱子
+[skip-low] 智力考验——推箱子 comments=6
+[queue] pop feedId=6a41f5280000000008033d00 remaining=8 title=已过关推箱子
+[plan] #11 keyword=推箱子 title=已过关推箱子 comments=19 age=15d score=2 msg=9/推箱子 match=6
+[post] attempt feedId=6a41f5280000000008033d00 contentLen=29
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a41f5280000000008033d00 --xsec-token(46chars) --content(29chars)
+[cdp] done exit=0 elapsed=7.0s stdout=1134 stderr=0
+[post] success feedId=6a41f5280000000008033d00
+[cdp] phase=post-ok exit=0 feedId=6a41f5280000000008033d00
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a41f5280000000008033d00 --xsec-token(46chars) --content(29chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a4455ae000000001101f7fb?xsec_token=ABz5qyJXIwFL-2gjvqVE5IKRuHMoAOGXgStsUPvudDdPQ=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/3962F2B8ED2B2D7D17C3C0A0F1536C2A
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=597m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a41f5280000000008033d00?xsec_token=ABJW0w2j-6T_qcFwfIgN11NI5yb7tvXDENYjC3n64FCuE=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (853, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1045, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a41f5280000000008033d00, length=29
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (11/17)
+[wait] 117s (~1.9min, random 60-120s)
+[queue] pop feedId=6a488f76000000000f014471 remaining=7 title=推箱子这一关要怎么推才能过关
+[skip-low] 推箱子这一关要怎么推才能过关 comments=3
+[queue] pop feedId=6a3bb5a00000000011004267 remaining=6 title=推箱子
+[skip-low] 推箱子 comments=8
+[queue] pop feedId=6a3497e80000000017009b1e remaining=5 title=推箱子关卡拦路虎
+[skip-low] 推箱子关卡拦路虎 comments=3
+[queue] pop feedId=6a259f5d000000003503b8af remaining=4 title=怎么推啊？推箱子的这一关要怎么过啊？
+[skip-low] 怎么推啊？推箱子的这一关要怎么过啊？ comments=4
+[queue] pop feedId=6a2579c0000000003502d968 remaining=3 title=这关很烧脑！
+[skip-low] 这关很烧脑！ comments=2
+[queue] pop feedId=6a1c31df000000003701e9f6 remaining=2 title=不是推箱子，而是推倒你脑子里的墙 🧱
+[skip-low] 不是推箱子，而是推倒你脑子里的墙 🧱 comments=4
+[queue] pop feedId=6a12bb260000000036019671 remaining=1 title=儿童相机推箱子攻略又来了
+[skip-low] 儿童相机推箱子攻略又来了 comments=4
+[queue] pop feedId=6a119be10000000038036666 remaining=0 title=船在下沉，心在上浮✨治愈系横版解谜
+[skip-low] 船在下沉，心在上浮✨治愈系横版解谜 comments=0
+[queue] empty refilling keyword=推箱子 sort=最新 task=6/42 empty_streak=0 seen_feeds=397
+[search-wait] 11s before keyword=推箱子 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 推箱子 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=12.9s stdout=351171 stderr=0
+[search-filter] keyword=推箱子 sort=最新 scrolls=4 {'dup_or_empty_id': 35, 'not_note': 6, 'low_relevance': 45, 'bad_title': 17, 'too_old': 5, 'already_commented': 3}
+[search] keyword=推箱子 sort=最新 raw=123 skipped=111 usable=12 queued=12 rate_limited=False
+[queue] loaded 12 candidates, will post one-by-one before next search
+[queue] pop feedId=6a5a0df2000000000e03714a remaining=11 title=DAY1小游戏胜利结算✌（出物在p2）
+[skip-low] DAY1小游戏胜利结算✌（出物在p2） comments=3
+[queue] pop feedId=6a598ad8000000001102d890 remaining=10 title=严肃做小游戏
+[skip-low] 严肃做小游戏 comments=0
+[queue] pop feedId=6a588fbe000000001102fb81 remaining=9 title=摸鱼小游戏｜小脑瓜动起来 推四位数字
+[skip-low] 摸鱼小游戏｜小脑瓜动起来 推四位数字 comments=8
+[queue] pop feedId=6a5a195e000000001100469f remaining=8 title=磐城奇想星谜题★攻略「用箱子开启开关3」
+[skip-low] 磐城奇想星谜题★攻略「用箱子开启开关3」 comments=3
+[queue] pop feedId=6a5a0592000000000f012749 remaining=7 title=谜题空间亲娘来了
+[skip-low] 谜题空间亲娘来了 comments=2
+[queue] pop feedId=6a59c807000000000f0292fd remaining=6 title=脑力短视频｜逆序数字挑战
+[skip-low] 脑力短视频｜逆序数字挑战 comments=2
+[queue] pop feedId=6a599a87000000000301f710 remaining=5 title=儿童相机推箱子更新
+[skip-low] 儿童相机推箱子更新 comments=0
+[queue] pop feedId=6a33b6e20000000015025594 remaining=4 title=试玩丨类推箱《沉星之序》试玩感受
+[skip-low] 试玩丨类推箱《沉星之序》试玩感受 comments=0
+[queue] pop feedId=6a21516b0000000036030e8d remaining=3 title=scratch入门作品《推箱子》
+[skip-low] scratch入门作品《推箱子》 comments=1
+[queue] pop feedId=6a1ee876000000000803c4f7 remaining=2 title=推箱子04攻略
+[skip-low] 推箱子04攻略 comments=2
+[queue] pop feedId=6a17fe73000000003600235c remaining=1 title=主线困难5-11推箱子速刷攻略
+[skip-low] 主线困难5-11推箱子速刷攻略 comments=3
+[queue] pop feedId=6a13b3bf000000003700f489 remaining=0 title=【Godot笔记】TileMap推箱子
+[skip-low] 【Godot笔记】TileMap推箱子 comments=0
+[queue] empty refilling keyword=解谜游戏 sort=综合 task=7/42 empty_streak=0 seen_feeds=479
+[search-wait] 9s before keyword=解谜游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 解谜游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=0 elapsed=14.0s stdout=440108 stderr=0
+[search-filter] keyword=解谜游戏 sort=综合 scrolls=4 {'already_commented': 18, 'dup_or_empty_id': 36, 'not_note': 6, 'too_old': 11, 'low_relevance': 36, 'bad_title': 10}
+[search] keyword=解谜游戏 sort=综合 raw=126 skipped=117 usable=9 queued=9 rate_limited=False
+[queue] loaded 9 candidates, will post one-by-one before next search
+[queue] pop feedId=6a16d7e600000000060205d0 remaining=8 title=解谜小游戏
+[skip-low] 解谜小游戏 comments=2
+[queue] pop feedId=6a5a5f8c000000002201b43d remaining=7 title=古早解谜游戏求助
+[plan] #12 keyword=解谜游戏 title=古早解谜游戏求助 comments=12 age=1d score=4 msg=16/烧脑卡关 match=2
+[post] attempt feedId=6a5a5f8c000000002201b43d contentLen=33
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a5a5f8c000000002201b43d --xsec-token(46chars) --content(33chars)
+[cdp] done exit=0 elapsed=8.4s stdout=1114 stderr=0
+[post] success feedId=6a5a5f8c000000002201b43d
+[cdp] phase=post-ok exit=0 feedId=6a5a5f8c000000002201b43d
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a5a5f8c000000002201b43d --xsec-token(46chars) --content(33chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/search_result?keyword=%E8%A7%A3%E8%B0%9C%E6%B8%B8%E6%88%8F&source=web_explore_feed&type=51
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/3962F2B8ED2B2D7D17C3C0A0F1536C2A
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=600m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a5a5f8c000000002201b43d?xsec_token=ABtRLV1FjpOQQ6kbKPgqrOrHwzJLRGmk4S_7Vc4ZTfxr8=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (853, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1045, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a5a5f8c000000002201b43d, length=33
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (12/17)
+[wait] 82s (~1.4min, random 60-120s)
+[queue] pop feedId=6a564ae5000000000f030ec6 remaining=6 title=凶案数独：推理类｜变种数独游戏
+[skip-low] 凶案数独：推理类｜变种数独游戏 comments=5
+[queue] pop feedId=6a5250f100000000170287cb remaining=5 title=网页解谜游戏【毕业季失踪事件】先已发布
+[plan] #13 keyword=解谜游戏 title=网页解谜游戏【毕业季失踪事件】先已发布 comments=83 age=5d score=4 msg=3/求推荐 match=0
+[post] attempt feedId=6a5250f100000000170287cb contentLen=55
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a5250f100000000170287cb --xsec-token(46chars) --content(55chars)
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1447
+[post] failed feedId=6a5250f100000000170287cb
+[cdp] phase=post-fail exit=1 feedId=6a5250f100000000170287cb
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a5250f100000000170287cb --xsec-token(46chars) --content(55chars)
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <built-in function kill> returned a result with an exception set
+[fail] feedId=6a5250f100000000170287cb detail_tail=ripts\run_lock.py", line 59, in _cleanup_stale_lock
+    if isinstance(pid, int) and _pid_running(pid):
+  File "C:\Users\Admin\.agents\skills\redbookskills\scripts\run_lock.py", line 28, in _pid_running
+    os.kill(pid, 0)
+SystemError: <built-in function kill> returned a result with an exception set
+
+[retry-infra] CDP lock cleared, retry once after 30s
+[post] attempt feedId=6a5250f100000000170287cb contentLen=55
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a5250f100000000170287cb --xsec-token(46chars) --content(55chars)
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1447
+[post] failed feedId=6a5250f100000000170287cb
+[cdp] phase=post-fail exit=1 feedId=6a5250f100000000170287cb
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a5250f100000000170287cb --xsec-token(46chars) --content(55chars)
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <built-in function kill> returned a result with an exception set
+[skip-fail] post_comment failed on 6a5250f100000000170287cb, continue next candidate
+[queue] pop feedId=6a3fe7c50000000007020c80 remaining=4 title=真的很喜欢玩解谜游戏了
+[plan] #13 keyword=解谜游戏 title=真的很喜欢玩解谜游戏了 comments=158 age=21d score=4 msg=2/求推荐 match=0
+[post] attempt feedId=6a3fe7c50000000007020c80 contentLen=42
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a3fe7c50000000007020c80 --xsec-token(46chars) --content(42chars)
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[post] failed feedId=6a3fe7c50000000007020c80
+[cdp] phase=post-fail exit=1 feedId=6a3fe7c50000000007020c80
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a3fe7c50000000007020c80 --xsec-token(46chars) --content(42chars)
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[fail] feedId=6a3fe7c50000000007020c80 detail_tail=ills\scripts\run_lock.py", line 59, in _cleanup_stale_lock
+    if isinstance(pid, int) and _pid_running(pid):
+  File "C:\Users\Admin\.agents\skills\redbookskills\scripts\run_lock.py", line 28, in _pid_running
+    os.kill(pid, 0)
+SystemError: <class 'OSError'> returned a result with an exception set
+
+[retry-infra] CDP lock cleared, retry once after 30s
+[post] attempt feedId=6a3fe7c50000000007020c80 contentLen=42
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a3fe7c50000000007020c80 --xsec-token(46chars) --content(42chars)
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1447
+[post] failed feedId=6a3fe7c50000000007020c80
+[cdp] phase=post-fail exit=1 feedId=6a3fe7c50000000007020c80
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a3fe7c50000000007020c80 --xsec-token(46chars) --content(42chars)
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <built-in function kill> returned a result with an exception set
+[skip-fail] post_comment failed on 6a3fe7c50000000007020c80, continue next candidate
+[queue] pop feedId=6a3d62cc000000001700bdb9 remaining=3 title=类数独纸笔谜题推荐-Murdoku
+[plan] #13 keyword=解谜游戏 title=类数独纸笔谜题推荐-Murdoku comments=74 age=23d score=4 msg=4/求推荐 match=2
+[post] attempt feedId=6a3d62cc000000001700bdb9 contentLen=51
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a3d62cc000000001700bdb9 --xsec-token(46chars) --content(51chars)
+[cdp] done exit=0 elapsed=7.7s stdout=1134 stderr=0
+[post] success feedId=6a3d62cc000000001700bdb9
+[cdp] phase=post-ok exit=0 feedId=6a3d62cc000000001700bdb9
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a3d62cc000000001700bdb9 --xsec-token(46chars) --content(51chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a255588000000002103ff5c?xsec_token=ABot21c8AEvy4HEnDeHeU51WJ7PrNyqQRZ8aXZ7p--PJI=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/3962F2B8ED2B2D7D17C3C0A0F1536C2A
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=602m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a3d62cc000000001700bdb9?xsec_token=ABNO-mE0NWL3GkbjEFeDXVHZMorI69L2vu8-WP1EPoA4E=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (853, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1045, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a3d62cc000000001700bdb9, length=51
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (13/17)
+[wait] 112s (~1.9min, random 60-120s)
+[queue] pop feedId=6a1f6585000000003700eb84 remaining=2 title=游戏安利 ｜策略解谜神作《魔塔50层》
+[skip-low] 游戏安利 ｜策略解谜神作《魔塔50层》 comments=2
+[queue] pop feedId=6a43c1d00000000007024d47 remaining=1 title=着迷地玩了俩小时数独推理！！
+[skip-low] 着迷地玩了俩小时数独推理！！ comments=4
+[queue] pop feedId=6a1107ef000000003601b95c remaining=0 title=暗黑解谜三大神作合集来了！！
+[plan] #14 keyword=解谜游戏 title=暗黑解谜三大神作合集来了！！ comments=29 age=57d score=2 msg=10/推箱子 match=0
+[post] attempt feedId=6a1107ef000000003601b95c contentLen=43
+[cdp] spawn timeout=120s cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a1107ef000000003601b95c --xsec-token(46chars) --content(43chars)
+[cdp] done exit=0 elapsed=8.4s stdout=1134 stderr=0
+[post] success feedId=6a1107ef000000003601b95c
+[cdp] phase=post-ok exit=0 feedId=6a1107ef000000003601b95c
+[cdp] cmd=--reuse-existing-tab post-comment-to-feed --feed-id 6a1107ef000000003601b95c --xsec-token(46chars) --content(43chars)
+[cdp]   [cdp_publish] Timing jitter ratio: 0.25
+[cdp]   [cdp_publish] Login cache: enabled (ttl=12h).
+[cdp]   [cdp_publish] Tab selection mode: prefer reusing existing tab.
+[cdp]   [cdp_publish] Reusing existing tab to reduce focus switching: https://www.xiaohongshu.com/explore/6a4e0fbc000000001702d6ca?xsec_token=ABa3QG7-NGBN7DoHsb1kCY4rKQxh9p6FzOM_pWGjiML4c=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Connecting to ws://127.0.0.1:9222/devtools/page/3962F2B8ED2B2D7D17C3C0A0F1536C2A
+[cdp]   [cdp_publish] Connected to Chrome tab.
+[cdp]   [cdp_publish] Using cached login status (home, age=604m, ttl=12h).
+[cdp]   [cdp_publish] Home login confirmed (cached).
+[cdp]   [cdp_publish] Navigating to https://www.xiaohongshu.com/explore/6a1107ef000000003601b95c?xsec_token=ABX_Pr7aa2-DNHpQT5zE9pe8UKmT7QQ11NZNKGjwLiHXs=&xsec_source=pc_feed
+[cdp]   [cdp_publish] Clicking comment input box at (853, 1226)...
+[cdp]   [cdp_publish] Clicking comment submit button at (1045, 1226)...
+[cdp]   [cdp_publish] Comment posted. feed_id=6a1107ef000000003601b95c, length=43
+[cdp]   POST_COMMENT_RESULT:
+[ok] post done (14/17)
+[wait] 68s (~1.1min, random 60-120s)
+[queue] empty refilling keyword=解谜游戏 sort=最新 task=8/42 empty_streak=0 seen_feeds=563
+[search-wait] 9s before keyword=解谜游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 解谜游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1447
+[warn] search failed keyword=解谜游戏
+[cdp] phase=search exit=1 keyword=解谜游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 解谜游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <built-in function kill> returned a result with an exception set
+[search] keyword=解谜游戏 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=游戏推荐 sort=综合 task=9/42 empty_streak=1 seen_feeds=563
+[search-wait] 7s before keyword=游戏推荐 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 游戏推荐 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=游戏推荐
+[cdp] phase=search exit=1 keyword=游戏推荐
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 游戏推荐 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=游戏推荐 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=游戏推荐 sort=最新 task=10/42 empty_streak=2 seen_feeds=563
+[search-wait] 10s before keyword=游戏推荐 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 游戏推荐 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=游戏推荐
+[cdp] phase=search exit=1 keyword=游戏推荐
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 游戏推荐 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=游戏推荐 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=微信小游戏 sort=综合 task=11/42 empty_streak=3 seen_feeds=563
+[search-wait] 14s before keyword=微信小游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 微信小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=微信小游戏
+[cdp] phase=search exit=1 keyword=微信小游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 微信小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=微信小游戏 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=微信小游戏 sort=最新 task=12/42 empty_streak=4 seen_feeds=563
+[search-wait] 8s before keyword=微信小游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 微信小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=微信小游戏
+[cdp] phase=search exit=1 keyword=微信小游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 微信小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=微信小游戏 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=迷宫游戏 sort=综合 task=13/42 empty_streak=5 seen_feeds=563
+[search-wait] 14s before keyword=迷宫游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 迷宫游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=迷宫游戏
+[cdp] phase=search exit=1 keyword=迷宫游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 迷宫游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=迷宫游戏 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=迷宫游戏 sort=最新 task=14/42 empty_streak=6 seen_feeds=563
+[search-wait] 12s before keyword=迷宫游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 迷宫游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=迷宫游戏
+[cdp] phase=search exit=1 keyword=迷宫游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 迷宫游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=迷宫游戏 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=逻辑游戏 sort=综合 task=15/42 empty_streak=7 seen_feeds=563
+[search-wait] 7s before keyword=逻辑游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 逻辑游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=逻辑游戏
+[cdp] phase=search exit=1 keyword=逻辑游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 逻辑游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=逻辑游戏 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=逻辑游戏 sort=最新 task=16/42 empty_streak=8 seen_feeds=563
+[search-wait] 14s before keyword=逻辑游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 逻辑游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=逻辑游戏
+[cdp] phase=search exit=1 keyword=逻辑游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 逻辑游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=逻辑游戏 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=休闲小游戏 sort=综合 task=17/42 empty_streak=9 seen_feeds=563
+[search-wait] 8s before keyword=休闲小游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 休闲小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=休闲小游戏
+[cdp] phase=search exit=1 keyword=休闲小游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 休闲小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=休闲小游戏 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=休闲小游戏 sort=最新 task=18/42 empty_streak=10 seen_feeds=563
+[search-wait] 14s before keyword=休闲小游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 休闲小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=休闲小游戏
+[cdp] phase=search exit=1 keyword=休闲小游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 休闲小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=休闲小游戏 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=单机小游戏 sort=综合 task=19/42 empty_streak=11 seen_feeds=563
+[search-wait] 12s before keyword=单机小游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 单机小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=单机小游戏
+[cdp] phase=search exit=1 keyword=单机小游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 单机小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=单机小游戏 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=单机小游戏 sort=最新 task=20/42 empty_streak=12 seen_feeds=563
+[search-wait] 11s before keyword=单机小游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 单机小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.3s stdout=0 stderr=1440
+[warn] search failed keyword=单机小游戏
+[cdp] phase=search exit=1 keyword=单机小游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 单机小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=单机小游戏 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=解谜小游戏 sort=综合 task=21/42 empty_streak=13 seen_feeds=563
+[search-wait] 12s before keyword=解谜小游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 解谜小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=解谜小游戏
+[cdp] phase=search exit=1 keyword=解谜小游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 解谜小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=解谜小游戏 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=解谜小游戏 sort=最新 task=22/42 empty_streak=14 seen_feeds=563
+[search-wait] 10s before keyword=解谜小游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 解谜小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=解谜小游戏
+[cdp] phase=search exit=1 keyword=解谜小游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 解谜小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=解谜小游戏 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=益智游戏推荐 sort=综合 task=23/42 empty_streak=15 seen_feeds=563
+[search-wait] 10s before keyword=益智游戏推荐 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 益智游戏推荐 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=益智游戏推荐
+[cdp] phase=search exit=1 keyword=益智游戏推荐
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 益智游戏推荐 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=益智游戏推荐 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=益智游戏推荐 sort=最新 task=24/42 empty_streak=16 seen_feeds=563
+[search-wait] 11s before keyword=益智游戏推荐 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 益智游戏推荐 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=益智游戏推荐
+[cdp] phase=search exit=1 keyword=益智游戏推荐
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 益智游戏推荐 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=益智游戏推荐 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=烧脑游戏推荐 sort=综合 task=25/42 empty_streak=17 seen_feeds=563
+[search-wait] 13s before keyword=烧脑游戏推荐 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 烧脑游戏推荐 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=烧脑游戏推荐
+[cdp] phase=search exit=1 keyword=烧脑游戏推荐
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 烧脑游戏推荐 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=烧脑游戏推荐 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=烧脑游戏推荐 sort=最新 task=26/42 empty_streak=18 seen_feeds=563
+[search-wait] 6s before keyword=烧脑游戏推荐 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 烧脑游戏推荐 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=烧脑游戏推荐
+[cdp] phase=search exit=1 keyword=烧脑游戏推荐
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 烧脑游戏推荐 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=烧脑游戏推荐 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=打发时间小游戏 sort=综合 task=27/42 empty_streak=19 seen_feeds=563
+[search-wait] 12s before keyword=打发时间小游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 打发时间小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=打发时间小游戏
+[cdp] phase=search exit=1 keyword=打发时间小游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 打发时间小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=打发时间小游戏 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=打发时间小游戏 sort=最新 task=28/42 empty_streak=20 seen_feeds=563
+[search-wait] 9s before keyword=打发时间小游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 打发时间小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=打发时间小游戏
+[cdp] phase=search exit=1 keyword=打发时间小游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 打发时间小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=打发时间小游戏 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=闯关游戏 sort=综合 task=29/42 empty_streak=21 seen_feeds=563
+[search-wait] 13s before keyword=闯关游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 闯关游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=闯关游戏
+[cdp] phase=search exit=1 keyword=闯关游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 闯关游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=闯关游戏 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=闯关游戏 sort=最新 task=30/42 empty_streak=22 seen_feeds=563
+[search-wait] 12s before keyword=闯关游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 闯关游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=闯关游戏
+[cdp] phase=search exit=1 keyword=闯关游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 闯关游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=闯关游戏 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=推理游戏 sort=综合 task=31/42 empty_streak=23 seen_feeds=563
+[search-wait] 15s before keyword=推理游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 推理游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=推理游戏
+[cdp] phase=search exit=1 keyword=推理游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 推理游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=推理游戏 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=推理游戏 sort=最新 task=32/42 empty_streak=24 seen_feeds=563
+[search-wait] 14s before keyword=推理游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 推理游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=推理游戏
+[cdp] phase=search exit=1 keyword=推理游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 推理游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=推理游戏 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=脑力游戏 sort=综合 task=33/42 empty_streak=25 seen_feeds=563
+[search-wait] 11s before keyword=脑力游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 脑力游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=脑力游戏
+[cdp] phase=search exit=1 keyword=脑力游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 脑力游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=脑力游戏 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=脑力游戏 sort=最新 task=34/42 empty_streak=26 seen_feeds=563
+[search-wait] 13s before keyword=脑力游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 脑力游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=脑力游戏
+[cdp] phase=search exit=1 keyword=脑力游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 脑力游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=脑力游戏 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=光学解谜 sort=综合 task=35/42 empty_streak=27 seen_feeds=563
+[search-wait] 11s before keyword=光学解谜 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 光学解谜 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=光学解谜
+[cdp] phase=search exit=1 keyword=光学解谜
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 光学解谜 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=光学解谜 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=光学解谜 sort=最新 task=36/42 empty_streak=28 seen_feeds=563
+[search-wait] 14s before keyword=光学解谜 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 光学解谜 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=光学解谜
+[cdp] phase=search exit=1 keyword=光学解谜
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 光学解谜 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=光学解谜 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=光线迷宫 sort=综合 task=37/42 empty_streak=29 seen_feeds=563
+[search-wait] 12s before keyword=光线迷宫 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 光线迷宫 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=光线迷宫
+[cdp] phase=search exit=1 keyword=光线迷宫
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 光线迷宫 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=光线迷宫 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=光线迷宫 sort=最新 task=38/42 empty_streak=30 seen_feeds=563
+[search-wait] 12s before keyword=光线迷宫 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 光线迷宫 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=光线迷宫
+[cdp] phase=search exit=1 keyword=光线迷宫
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 光线迷宫 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=光线迷宫 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=微信游戏推荐 sort=综合 task=39/42 empty_streak=31 seen_feeds=563
+[search-wait] 6s before keyword=微信游戏推荐 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 微信游戏推荐 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=微信游戏推荐
+[cdp] phase=search exit=1 keyword=微信游戏推荐
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 微信游戏推荐 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=微信游戏推荐 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=微信游戏推荐 sort=最新 task=40/42 empty_streak=32 seen_feeds=563
+[search-wait] 9s before keyword=微信游戏推荐 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 微信游戏推荐 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=微信游戏推荐
+[cdp] phase=search exit=1 keyword=微信游戏推荐
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 微信游戏推荐 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=微信游戏推荐 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=小游戏安利 sort=综合 task=41/42 empty_streak=33 seen_feeds=563
+[search-wait] 13s before keyword=小游戏安利 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 小游戏安利 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=小游戏安利
+[cdp] phase=search exit=1 keyword=小游戏安利
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 小游戏安利 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=小游戏安利 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=小游戏安利 sort=最新 task=42/42 empty_streak=34 seen_feeds=563
+[search-wait] 6s before keyword=小游戏安利 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 小游戏安利 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=小游戏安利
+[cdp] phase=search exit=1 keyword=小游戏安利
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 小游戏安利 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=小游戏安利 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=益智小游戏 sort=综合 task=43/42 empty_streak=35 seen_feeds=563
+[search-wait] 11s before keyword=益智小游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 益智小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=益智小游戏
+[cdp] phase=search exit=1 keyword=益智小游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 益智小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=益智小游戏 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=益智小游戏 sort=最新 task=44/42 empty_streak=36 seen_feeds=563
+[search-wait] 7s before keyword=益智小游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 益智小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=益智小游戏
+[cdp] phase=search exit=1 keyword=益智小游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 益智小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=益智小游戏 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=烧脑小游戏 sort=综合 task=45/42 empty_streak=37 seen_feeds=563
+[search-wait] 15s before keyword=烧脑小游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 烧脑小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=烧脑小游戏
+[cdp] phase=search exit=1 keyword=烧脑小游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 烧脑小游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=烧脑小游戏 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=烧脑小游戏 sort=最新 task=46/42 empty_streak=38 seen_feeds=563
+[search-wait] 7s before keyword=烧脑小游戏 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 烧脑小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=烧脑小游戏
+[cdp] phase=search exit=1 keyword=烧脑小游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 烧脑小游戏 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=烧脑小游戏 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=推箱子 sort=综合 task=47/42 empty_streak=39 seen_feeds=563
+[search-wait] 7s before keyword=推箱子 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 推箱子 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=推箱子
+[cdp] phase=search exit=1 keyword=推箱子
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 推箱子 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=推箱子 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=推箱子 sort=最新 task=48/42 empty_streak=40 seen_feeds=563
+[search-wait] 9s before keyword=推箱子 sort=最新
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 推箱子 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=推箱子
+[cdp] phase=search exit=1 keyword=推箱子
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 推箱子 --sort-by 最新 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=推箱子 sort=最新 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[queue] empty refilling keyword=解谜游戏 sort=综合 task=49/42 empty_streak=41 seen_feeds=563
+[search-wait] 7s before keyword=解谜游戏 sort=综合
+[cdp] spawn timeout=180s cmd=--reuse-existing-tab search-feeds --keyword 解谜游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp] done exit=1 elapsed=0.2s stdout=0 stderr=1440
+[warn] search failed keyword=解谜游戏
+[cdp] phase=search exit=1 keyword=解谜游戏
+[cdp] cmd=--reuse-existing-tab search-feeds --keyword 解谜游戏 --sort-by 综合 --publish-time 半年内 --search-scrolls 4
+[cdp]   Traceback (most recent call last):
+[cdp]   FileExistsError: [Errno 17] File exists: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\post_to_xhs_publish.lock'
+[cdp]   OSError: [WinError 87] 参数错误。
+[cdp]   Traceback (most recent call last):
+[cdp]   SystemError: <class 'OSError'> returned a result with an exception set
+[search] keyword=解谜游戏 sort=综合 raw=0 skipped=0 usable=0 queued=0 rate_limited=False
+[info] all search tasks tried with no new candidates, stop (search_count=49 empty_streak=42)
+
+=== SUMMARY ===
+{
+  "target": 17,
+  "success": 14,
+  "searchCount": 49,
+  "failures": 7,
+  "logFile": "D:\\Baoyu\\包宇的cocos\\LightPuzzle\\宣传素材\\小红书评论\\campaign_2026-07-19_005943.log",
+  "elapsedSeconds": 2171.8,
+  "elapsedMinutes": 36.2,
+  "dryRun": false,
+  "rateLimits": {
+    "minIntervalSeconds": 60,
+    "maxIntervalSeconds": 120,
+    "maxPerHour": 0,
+    "maxPerDay": 100,
+    "circuitBreakerHours": 24,
+    "searchIntervalSecondsMin": 5,
+    "searchIntervalSecondsMax": 15,
+    "limitUnit": "posts"
+  },
+  "circuitBreakerUntil": null,
+  "finishedAt": "2026-07-19T01:35:55+08:00"
+}
+failures:
+6a563e2600000000080031dd: 
+6a3fd3a00000000006032c00: Error: Another publish process is running (pid=24812), started at 2026-07-18T17:16:17.159356+00:00. Please wait or terminate it before retrying.
+
+6a11f670000000003502e88c: 
+6a58c62a000000000401db82: 
+6a2aeaf5000000001503e961: Error: Another publish process is running (pid=13160), started at 2026-07-18T17:17:20.864159+00:00. Please wait or terminate it before retrying.
+
